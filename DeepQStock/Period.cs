@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace deepQStock
+namespace DeepQStock
 {
     public class Period
     {
+        #region << Public Properties >> 
+
         /// <summary>
         /// Gets or sets the start date.
         /// </summary>        
@@ -57,5 +59,20 @@ namespace deepQStock
         /// </summary>
         public IList<IStockExchangeIndicator> Indicators { get; set; }
 
+
+        #endregion
+
+        #region << Public Methods >>
+
+        /// <summary>
+        /// To the array.
+        /// </summary>
+        /// <returns></returns>
+        public IList<double> ToList()
+        {
+            return null;     
+        }
+
+        #endregion
     }
 }

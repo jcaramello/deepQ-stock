@@ -1,9 +1,11 @@
-﻿using System;
+﻿using DeepQStock;
+using DeepQStock.Config;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace deepQStock.Console
+namespace DeepQStock.Console
 {
     public class Program
     {
@@ -12,13 +14,10 @@ namespace deepQStock.Console
             var stock = new StockExchange(parameters =>
             {
                 parameters.CsvFilePath = "APPL.csv";
+                parameters.Agent = new DeepRLAgent();
             });
-
-            stock.Agent = new Agent();
-
-            stock.Start();
-
             
+            stock.Start();                   
         }
     }
 }

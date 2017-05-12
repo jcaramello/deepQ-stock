@@ -1,11 +1,11 @@
-﻿using deepQStock.Config;
-using deepQStock.Enums;
+﻿using DeepQStock.Config;
+using DeepQStock.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace deepQStock
+namespace DeepQStock
 {
     /// <summary>
     /// Encapsulate the funcionality of a financial stock exchange, this class will be used for simulate the angent'enviroment.
@@ -25,7 +25,7 @@ namespace deepQStock
         /// <summary>
         /// Gets or sets the agent.
         /// </summary>        
-        public Agent Agent { get; set; }
+        public IAgent Agent { get; set; }
 
         #endregion
 
@@ -59,35 +59,19 @@ namespace deepQStock
             if (Agent == null)
                 return;
 
-            IList<Period> episode = null;
-            State st = null;
-            State st_minus_1 = null;
-            double rt = 0.0;
-            double rt_minus_1 = 0.0;
-            ActionType at = ActionType.Wait;
-            ActionType at_minus_1 = ActionType.Wait;
+            IEnumerable<State> episode = null;            
+            double reward = 0.0;            
+            ActionType action = ActionType.Wait;            
 
             while ((episode = NextEpisode()) != null)
             {
-                foreach (var period in episode)
-                {
-                    st_minus_1 = st;
-                    rt_minus_1 = rt;
-                    at_minus_1 = at;
-                                                        
-                    st = GenerateState(st_minus_1, period);                    
-                    at = Agent.Decide(st, rt_minus_1);
-                    rt = Execute(at);
+                foreach (var state in episode)
+                {                                                                                                
+                    action = Agent.Decide(state, reward);
+                    reward = Execute(action);                                                           
+                }
 
-                    if (st_minus_1 != null)
-                    {
-                        Agent.SaveExperience(st_minus_1, at_minus_1, rt_minus_1, st);
-                    }
-
-                    var mini_batch = Agent.GenerateMiniBatch();
-                    //train;
-
-                }                
+                Agent.OnEpisodeComplete();
             }
         }
 
@@ -99,13 +83,13 @@ namespace deepQStock
         /// Generate the next state from 
         /// </summary>
         /// <returns></returns>
-        private IList<Period> NextEpisode()
-        {   
-            // use the params episode length for read period from csv file
-            return new List<Period>()
+        private IEnumerable<State> NextEpisode()
+        {            
+            for (int i = 0; i < Parameters.EpisodeLength; i++)
             {
-                new Period()
-            };
+                // read period from csv file and update the market indicators
+                yield return GenerateState();
+            }                        
         }
 
         /// <summary>
@@ -123,7 +107,7 @@ namespace deepQStock
         /// </summary>
         /// <param name="period">The period.</param>
         /// <returns></returns>
-        private State GenerateState(State st_minus_1, Period period)
+        private State GenerateState()
         {
             return null;
         }

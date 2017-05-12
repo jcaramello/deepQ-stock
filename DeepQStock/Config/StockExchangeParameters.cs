@@ -1,11 +1,11 @@
-﻿using deepQStock.Enums;
-using deepQStock.Indicators;
+﻿using DeepQStock.Enums;
+using DeepQStock.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace deepQStock.Config
+namespace DeepQStock.Config
 {
     public class StockExchangeParameters
     {
@@ -25,6 +25,11 @@ namespace deepQStock.Config
         #endregion
 
         #region << Public Properties >>
+
+        /// <summary>
+        /// Gets or sets the agent.
+        /// </summary>
+        public IAgent Agent { get; set; }
 
         /// <summary>
         /// Gets or sets the CSV file path.

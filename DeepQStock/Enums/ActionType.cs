@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace deepQStock.Enums
+namespace DeepQStock.Enums
 {
     public enum ActionType
     {
-        Buy,
-        Sell, 
-        Wait
+        Buy = 0,
+        Sell = 1, 
+        Wait = 2
     }
 }
