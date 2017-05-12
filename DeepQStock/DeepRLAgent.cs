@@ -124,7 +124,7 @@ namespace DeepQStock
             else
             {
                 var validActions = GetActions();
-                CurrentAction = Q[CurrentState].MaxBy(i => i.Value).Key;
+                CurrentAction = Q[CurrentState].Where(i => validActions.Contains(i.Key)).MaxBy(i => i.Value).Key;
             }
 
             return CurrentAction;
