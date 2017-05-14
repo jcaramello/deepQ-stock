@@ -1,5 +1,7 @@
 ﻿using DeepQStock.Config;
 using DeepQStock.Enums;
+using DeepQStock.Indicators;
+using LINQtoCSV;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,6 @@ namespace DeepQStock
     /// </summary>
     public class StockExchange
     {
-
         #region << Private Properties >>
 
         /// <summary>
@@ -25,7 +26,27 @@ namespace DeepQStock
         /// <summary>
         /// Gets or sets the agent.
         /// </summary>        
-        public IAgent Agent { get; set; }
+        private IAgent Agent { get; set; }
+
+        /// <summary>
+        /// Get or sets the periods
+        /// </summary>
+        private IEnumerable<Period> Periods { get; set; }
+
+        /// <summary>
+        /// Mantaing the numbers of periods already simulated by the agent
+        /// </summary>
+        public int PeriodSimulated { get; set; }
+
+        /// <summary>
+        /// Current State
+        /// </summary>
+        public State CurrentState { get; set; }
+        
+        /// <summary>
+        /// List of stock exchange indicators used in each state
+        /// </summary>
+        public IList<ITechnicalIndicator> Indicators{ get; set; }
 
         #endregion
 
@@ -45,6 +66,8 @@ namespace DeepQStock
             {
                 throw new Exception("You must pass a csv file path for load the simulated data");
             }
+
+            Periods = GetAllPeriodFromCsv();
         }
 
         #endregion
@@ -66,12 +89,14 @@ namespace DeepQStock
             while ((episode = NextEpisode()) != null)
             {
                 foreach (var state in episode)
-                {                                                                                                
+                {
+                    CurrentState = state;                                                                     
                     action = Agent.Decide(state, reward);
                     reward = Execute(action);                                                           
                 }
 
                 Agent.OnEpisodeComplete();
+                PeriodSimulated += Parameters.NumberOfPeriods;
             }
         }
 
@@ -86,8 +111,7 @@ namespace DeepQStock
         private IEnumerable<State> NextEpisode()
         {            
             for (int i = 0; i < Parameters.EpisodeLength; i++)
-            {
-                // read period from csv file and update the market indicators
+            {                
                 yield return GenerateState();
             }                        
         }
@@ -109,7 +133,40 @@ namespace DeepQStock
         /// <returns></returns>
         private State GenerateState()
         {
-            return null;
+            var state = new State();
+            state.Periods = Periods.Skip(PeriodSimulated).Take(Parameters.NumberOfPeriods).ToList();
+
+            if (CurrentState == null)
+            {
+                state.CurrentPeriod.CurrentCapital = Parameters.InitialCapital;
+            }
+
+            foreach (var p in state.Periods)
+            {
+                foreach (var i in p.Indicators)
+                {
+                    i.Calculate()
+                }
+            } 
+
+            return state;
+        }
+
+        /// <summary>
+        /// Get all Period
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerable<Period> GetAllPeriodFromCsv()
+        {
+            CsvFileDescription descriptor = new CsvFileDescription
+            {
+                SeparatorChar = ',',
+                FirstLineHasColumnNames = true
+            };
+
+            CsvContext ctx = new CsvContext();
+
+            return ctx.Read<Period>(Parameters.CsvFilePath, descriptor);
         }
 
         #endregion

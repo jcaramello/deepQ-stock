@@ -19,7 +19,16 @@ namespace DeepQStock.Config
             PeriodTypes = new PeriodType[] { PeriodType.Day, PeriodType.Week, PeriodType.Month };
             EpisodeLength = 7;
             NumberOfPeriods = 14;
-            TransactionCost = 0.01;           
+            TransactionCost = 0.01;
+            Indicators = new List<ITechnicalIndicator>()
+            {
+                new SimpleMovingAverage(8),
+                new ExponentialMovingAverage(20),
+                new ExponentialMovingAverage(50),
+                new ExponentialMovingAverage(200),
+                new RSI(),
+                new DMI()
+            };
         }
 
         #endregion
@@ -54,7 +63,7 @@ namespace DeepQStock.Config
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>
-        public List<IStockExchangeIndicator> Indicators { get; set; }
+        public IList<ITechnicalIndicator> Indicators { get; set; }
 
         /// <summary>
         /// Gets or sets the transaction cost.
@@ -65,6 +74,11 @@ namespace DeepQStock.Config
         /// Gets or sets the simulation velocity.
         /// </summary>
         public int? SimulationVelocity { get; set; }
+
+        /// <summary>
+        /// Get or Set the agent initial capital
+        /// </summary>
+        public double InitialCapital { get; set; }
 
         #endregion
     }

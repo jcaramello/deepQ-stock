@@ -1,23 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace DeepQStock.Indicators
 {
-    public class ExponentialMobileAverage : IStockExchangeIndicator
+    public interface ITechnicalIndicator
     {
-        #region << IStockExchangeIndicator Members >>
-
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<float> GetValue(Period period)
-        {
-            return null;
-        }
-
-        #endregion
+        IEnumerable<double> Calculate(Period period);
     }
 }
