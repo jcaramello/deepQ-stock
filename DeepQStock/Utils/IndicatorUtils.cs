@@ -19,5 +19,28 @@ namespace DeepQStock.Utils
         {
             return (val - previousEMA) * multiplier + previousEMA;
         }
+
+        /// <summary>
+        /// Calculate an standart deviation
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public static double StandardDeviation(IEnumerable<double> values)
+        {
+            double std_dev = 0;
+            int count = values.Count();
+            if (count > 1)
+            {
+                //Compute the Average
+                double avg = values.Average();
+
+                //Perform the Sum of (value-avg)^2
+                double sum = values.Sum(v => Math.Pow(v - avg, 2));
+
+                //Put it all together
+                std_dev = Math.Sqrt(sum / count);
+            }
+            return std_dev;
+        }
     }
 }

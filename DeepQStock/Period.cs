@@ -59,8 +59,20 @@ namespace DeepQStock
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>
-        public IList<double> Indicators { get; set; }
+        public List<double> Indicators { get; set; }
 
+
+        #endregion
+
+        #region << Constructor >>
+
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
+        public Period()
+        {
+            Indicators = new List<double>();
+        }
 
         #endregion
 
@@ -72,7 +84,9 @@ namespace DeepQStock
         /// <returns></returns>
         public IList<double> ToList()
         {
-            return null;     
+            var period = new List<double> { CurrentCapital, ActualPosicion, Open, Close, Volume, High, Low};
+
+            return period.Concat(Indicators).ToList();
         }
 
         #endregion

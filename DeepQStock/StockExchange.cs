@@ -42,11 +42,11 @@ namespace DeepQStock
         /// Current State
         /// </summary>
         public State CurrentState { get; set; }
-        
+
         /// <summary>
         /// List of stock exchange indicators used in each state
         /// </summary>
-        public IList<ITechnicalIndicator> Indicators{ get; set; }
+        public IList<ITechnicalIndicator> Indicators { get; set; }
 
         #endregion
 
@@ -82,17 +82,17 @@ namespace DeepQStock
             if (Agent == null)
                 return;
 
-            IEnumerable<State> episode = null;            
-            double reward = 0.0;            
-            ActionType action = ActionType.Wait;            
+            IEnumerable<State> episode = null;
+            double reward = 0.0;
+            ActionType action = ActionType.Wait;
 
             while ((episode = NextEpisode()) != null)
             {
                 foreach (var state in episode)
                 {
-                    CurrentState = state;                                                                     
+                    CurrentState = state;
                     action = Agent.Decide(state, reward);
-                    reward = Execute(action);                                                           
+                    reward = Execute(action);
                 }
 
                 Agent.OnEpisodeComplete();
@@ -109,11 +109,11 @@ namespace DeepQStock
         /// </summary>
         /// <returns></returns>
         private IEnumerable<State> NextEpisode()
-        {            
+        {
             for (int i = 0; i < Parameters.EpisodeLength; i++)
-            {                
+            {
                 yield return GenerateState();
-            }                        
+            }
         }
 
         /// <summary>
@@ -142,12 +142,12 @@ namespace DeepQStock
             }
 
             foreach (var p in state.Periods)
-            {
-                foreach (var i in p.Indicators)
+            {                               
+                foreach (var i in Indicators)
                 {
-                    i.Calculate()
+                    p.Indicators.AddRange(i.Calculate(p));
                 }
-            } 
+            }
 
             return state;
         }

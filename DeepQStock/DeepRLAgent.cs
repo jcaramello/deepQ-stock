@@ -167,7 +167,7 @@ namespace DeepQStock
             var actions = new List<ActionType>() { ActionType.Wait };
             var avaliableCapital = CurrentState.CurrentPeriod.CurrentCapital * Parameters.InOutStrategy;
 
-            if (avaliableCapital >= CurrentState.CurrentPeriod.ClosePrice)
+            if (avaliableCapital >= CurrentState.CurrentPeriod.Close)
             {
                 actions.Add(ActionType.Buy);
             }

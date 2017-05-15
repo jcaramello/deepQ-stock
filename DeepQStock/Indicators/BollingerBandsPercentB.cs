@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeepQStock.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +15,24 @@ namespace DeepQStock.Indicators
     public class BollingerBandsPercentB : ITechnicalIndicator
     {
         #region << Private Properties >>
-        
+
+        /// <summary>
+        /// Simple moving average of 20 periods
+        /// </summary>
+        public SimpleMovingAverage MA_20 { get; set; }
+
+        #endregion
+
+        #region << Constructor >>
+
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
+        public BollingerBandsPercentB()
+        {
+            MA_20 = new SimpleMovingAverage(20);
+        }
+
         #endregion
 
         #region << IStockExchangeIndicator Members >>
@@ -25,7 +43,13 @@ namespace DeepQStock.Indicators
         /// <returns></returns>
         public IEnumerable<double> Calculate(Period period)
         {
-            return null;
+            var ma_20 = MA_20.Calculate(period).First();
+            var std_dev = IndicatorUtils.StandardDeviation(MA_20.Periods.Select(p => p.Close));
+
+            var upperBand = 2 * std_dev;
+            var lowerBand = -2 * std_dev;
+
+            return new double[3] { upperBand, ma_20, lowerBand };
         }
 
         #endregion

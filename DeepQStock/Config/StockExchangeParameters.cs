@@ -26,8 +26,11 @@ namespace DeepQStock.Config
                 new ExponentialMovingAverage(20),
                 new ExponentialMovingAverage(50),
                 new ExponentialMovingAverage(200),
+                new AverageTrueRange(),
                 new RSI(),
-                new DMI()
+                new DMI(),
+                new MACD(),
+                new BollingerBandsPercentB()
             };
         }
 
