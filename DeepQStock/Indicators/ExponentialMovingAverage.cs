@@ -28,7 +28,7 @@ namespace DeepQStock.Indicators
         /// </summary>
         private double Multiplier
         {
-            get { return (2 / (Size + 1)); }
+            get { return (2.0 / (Size + 1.0)); }
         }
 
         /// <summary>
@@ -56,8 +56,20 @@ namespace DeepQStock.Indicators
         /// <returns></returns>
         protected override double AveragePeriods()
         {
+            if (Periods.Count < Size)
+            {
+                return 0.0;
+            }
+
             var period = Periods.Last();
+
+            if (PreviousEMA == 0.0)
+            {
+                PreviousEMA = base.AveragePeriods();
+            }
+
             PreviousEMA = IndicatorUtils.EMA(period.Close, PreviousEMA, Multiplier);
+
             return PreviousEMA;
         }
 

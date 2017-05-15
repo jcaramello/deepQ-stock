@@ -33,6 +33,20 @@ namespace DeepQStock.Indicators
 
         #endregion
 
+        #region << Constructor >>
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MACD"/> class.
+        /// </summary>
+        public MACD()
+        {
+            EMA_9 = new ExponentialMovingAverage(9);
+            EMA_12 = new ExponentialMovingAverage(12);
+            EMA_26 = new ExponentialMovingAverage(26);
+        }
+
+        #endregion
+
         #region << IStockExchangeIndicator Members >>
 
         /// <summary>

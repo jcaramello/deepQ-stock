@@ -19,6 +19,7 @@ namespace DeepQStock.Config
             PeriodTypes = new PeriodType[] { PeriodType.Day, PeriodType.Week, PeriodType.Month };
             EpisodeLength = 7;
             NumberOfPeriods = 14;
+            InitialCapital = 100000;
             TransactionCost = 0.01;
             Indicators = new List<ITechnicalIndicator>()
             {

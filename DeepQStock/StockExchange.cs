@@ -24,9 +24,15 @@ namespace DeepQStock
         private StockExchangeParameters Parameters { get; set; }
 
         /// <summary>
-        /// Gets or sets the agent.
+        /// Gets the agent.
         /// </summary>        
-        private IAgent Agent { get; set; }
+        private IAgent Agent
+        {
+            get
+            {
+                return Parameters.Agent;
+            }
+        }
 
         /// <summary>
         /// Get or sets the periods
@@ -46,7 +52,13 @@ namespace DeepQStock
         /// <summary>
         /// List of stock exchange indicators used in each state
         /// </summary>
-        public IList<ITechnicalIndicator> Indicators { get; set; }
+        public IList<ITechnicalIndicator> Indicators
+        {
+            get
+            {
+                return Parameters.Indicators;
+            }
+        }
 
         #endregion
 
@@ -95,7 +107,7 @@ namespace DeepQStock
                     reward = Execute(action);
                 }
 
-                Agent.OnEpisodeComplete();
+                //Agent.OnEpisodeComplete();
                 PeriodSimulated += Parameters.NumberOfPeriods;
             }
         }
@@ -142,10 +154,11 @@ namespace DeepQStock
             }
 
             foreach (var p in state.Periods)
-            {                               
+            {
                 foreach (var i in Indicators)
                 {
-                    p.Indicators.AddRange(i.Calculate(p));
+                    var values = i.Calculate(p);
+                    p.Indicators.AddRange(values);
                 }
             }
 
@@ -161,7 +174,8 @@ namespace DeepQStock
             CsvFileDescription descriptor = new CsvFileDescription
             {
                 SeparatorChar = ',',
-                FirstLineHasColumnNames = true
+                FirstLineHasColumnNames = true,
+                FileCultureInfo = System.Globalization.CultureInfo.InvariantCulture
             };
 
             CsvContext ctx = new CsvContext();

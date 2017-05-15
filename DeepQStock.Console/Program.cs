@@ -13,7 +13,7 @@ namespace DeepQStock.Console
         {            
             var stock = new StockExchange(parameters =>
             {
-                parameters.CsvFilePath = "APPL.csv";
+                parameters.CsvFilePath = "../../../data/APPL.csv";
                 parameters.Agent = new DeepRLAgent();
             });
             

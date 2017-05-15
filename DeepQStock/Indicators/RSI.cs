@@ -17,7 +17,6 @@ namespace DeepQStock.Indicators
     /// </summary>
     public class RSI : ITechnicalIndicator
     {
-
         #region << Private Properties >>
 
         /// <summary>
@@ -67,8 +66,9 @@ namespace DeepQStock.Indicators
         {
             double emaU = 0;
             double emaD = 0;
+            double rsi = 0;
 
-            if (PreviousPeriod != null)
+            if (PreviousPeriod != null && (Length >= UpwardPeriods.Periods.Count + DownwardPeriods.Periods.Count))
             {
                 if (PreviousPeriod.Close > period.Close)
                 {
@@ -77,14 +77,15 @@ namespace DeepQStock.Indicators
                 else
                 {
                     emaU = DownwardPeriods.Calculate(period).First();
-                }                
+                }
+
+                var rs = emaU / emaD;
+                rsi = 100 - (100 / 1 + rs);
             }
 
             PreviousPeriod = period;
 
-            var rs = emaU / emaD;
-
-            return new double[1] { 100 - (100 / 1 + rs) };
+            return new double[1] { rsi };
         }
 
         #endregion

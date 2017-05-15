@@ -26,7 +26,7 @@ namespace DeepQStock
         /// Gets or sets the volume.
         /// </summary>       
         [CsvColumn(Name = "volume", FieldIndex = 3)]
-        public int Volume { get; set; }
+        public double Volume { get; set; }
 
         /// <summary>
         /// Gets or sets the open price.

@@ -91,12 +91,12 @@ namespace DeepQStock.Indicators
                 var upMove = period.High - PreviousPeriod.High;
                 var downMove = period.Low - PreviousPeriod.Low;
 
-                var plusDM = upMove > downMove && upMove > 0 ? upMove : 0;
-                var minusDM = downMove > upMove && downMove > 0 ? downMove : 0;
+                var plusDM = upMove > downMove && upMove > 0.0 ? upMove : 0.0;
+                var minusDM = downMove > upMove && downMove > 0.0 ? downMove : 0.0;
 
                 var atr = ATR.Calculate(period).First();
-                var plusDMOverATR = plusDM / atr;
-                var minusDMOverATR = minusDM / atr;
+                var plusDMOverATR = atr != 0.0 ? plusDM / atr : 0.0;
+                var minusDMOverATR =atr != 0.0 ? minusDM / atr : 0.0;
               
                 PreviousEMAPlusDI = IndicatorUtils.EMA(plusDMOverATR , PreviousEMAPlusDI, Multiplier);
                 PreviousEMAMinusDI = IndicatorUtils.EMA(minusDMOverATR, PreviousEMAMinusDI,  Multiplier);
@@ -104,7 +104,7 @@ namespace DeepQStock.Indicators
                 plusDI = 100 * PreviousEMAPlusDI;
                 minusDI = 100 * PreviousEMAMinusDI;
 
-                var val = Math.Abs((plusDI - minusDI) / (plusDI + minusDI));
+                var val = (plusDI + minusDI) != 0.0 ? Math.Abs((plusDI - minusDI) / (plusDI + minusDI)) : 0.0;
                 PreviousEmaADX = IndicatorUtils.EMA(val, PreviousEmaADX, Multiplier);
 
                 adx = 100 * PreviousEmaADX; 
