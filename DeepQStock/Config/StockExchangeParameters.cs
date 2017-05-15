@@ -21,7 +21,7 @@ namespace DeepQStock.Config
             NumberOfPeriods = 14;
             InitialCapital = 100000;
             TransactionCost = 0.01;
-            Indicators = new List<ITechnicalIndicator>()
+            DailyIndicators = new List<ITechnicalIndicator>()
             {
                 new SimpleMovingAverage(8),
                 new ExponentialMovingAverage(20),
@@ -33,6 +33,7 @@ namespace DeepQStock.Config
                 new MACD(),
                 new BollingerBandsPercentB()
             };
+            
         }
 
         #endregion
@@ -67,7 +68,17 @@ namespace DeepQStock.Config
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>
-        public IList<ITechnicalIndicator> Indicators { get; set; }
+        public IList<ITechnicalIndicator> DailyIndicators { get; set; }
+
+        /// <summary>
+        /// Gets or sets the weekly indicators.
+        /// </summary>
+        public IList<ITechnicalIndicator> WeeklyIndicators { get; set; }
+
+        /// <summary>
+        /// Gets or sets the monthly indicators.
+        /// </summary>
+        public IList<ITechnicalIndicator> MonthlyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the transaction cost.

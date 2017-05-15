@@ -50,6 +50,16 @@ namespace DeepQStock.Indicators
         #region << IStockExchangeIndicator Members >>
 
         /// <summary>
+        /// Gets the name.
+        /// </summary>
+        public string Name { get { return "MACD"; } }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        public double[] Value { get; set; }
+
+        /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
@@ -62,7 +72,9 @@ namespace DeepQStock.Indicators
             var signal_line = EMA_9.Calculate(period).First();
             var macd_histogram = macd_line - signal_line;
 
-            return new double[3] { macd_line, signal_line, macd_histogram };
+            Value = new double[3] { macd_line, signal_line, macd_histogram };
+
+            return Value;
         }
 
         #endregion

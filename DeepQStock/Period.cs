@@ -54,13 +54,24 @@ namespace DeepQStock
         /// <summary>
         /// Gets or sets the actual posicion.
         /// </summary>
-        public int ActualPosicion { get; set; }                          
+        public int ActualPosicion { get; set; }
 
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>
-        public List<double> Indicators { get; set; }
+        public IDictionary<string, IEnumerable<double>> Indicators { get; set; }
 
+        /// <summary>
+        /// Gets the indicator string.
+        /// </summary>
+        public string IndicatorString
+        {
+            get
+            {
+                var values = Indicators.Select(p => string.Format("{0}:[{1}]", p.Key, string.Join(",", p.Value.Select(v => v.ToString(System.Globalization.CultureInfo.InvariantCulture)))));
+                return string.Join(" | ", values);
+            }
+        }
 
         #endregion
 
@@ -71,7 +82,7 @@ namespace DeepQStock
         /// </summary>
         public Period()
         {
-            Indicators = new List<double>();
+            Indicators = new Dictionary<string, IEnumerable<double>>();
         }
 
         #endregion
@@ -84,9 +95,14 @@ namespace DeepQStock
         /// <returns></returns>
         public IList<double> ToList()
         {
-            var period = new List<double> { CurrentCapital, ActualPosicion, Open, Close, Volume, High, Low};
+            var period = new List<double> { CurrentCapital, ActualPosicion, Open, Close, Volume, High, Low };
 
-            return period.Concat(Indicators).ToList();
+            foreach (var pair in Indicators)
+            {
+                period.AddRange(pair.Value);
+            }
+
+            return period;
         }
 
         #endregion

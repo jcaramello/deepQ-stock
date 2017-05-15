@@ -12,8 +12,8 @@ namespace DeepQStock.Indicators
     /// https://www.tradingview.com/wiki/Moving_Average
     /// </summary>
     public class SimpleMovingAverage : ITechnicalIndicator
-    {
-        #region << Private Properties >>
+    {       
+        #region << Public Properties >>
 
         /// <summary>
         /// List of Periods to use for calculate the average
@@ -35,13 +35,23 @@ namespace DeepQStock.Indicators
         /// <param name="size">The number of periods to consider</param>
         public SimpleMovingAverage(int size)
         {
-            Size = size;
+            Size = size;            
             Periods = new Queue<Period>(Size);
         }
 
         #endregion
 
         #region << IStockExchangeIndicator Members >>
+
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        public string Name { get { return string.Format("SMA({0})", Size);  } }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        public double[] Value { get; set; }
 
         /// <summary>
         /// Gets the value.
@@ -56,7 +66,8 @@ namespace DeepQStock.Indicators
 
             Periods.Enqueue(period);
 
-            return new double[1] { AveragePeriods() };
+            Value =  new double[1] { AveragePeriods() };
+            return Value;
         }
 
         #endregion

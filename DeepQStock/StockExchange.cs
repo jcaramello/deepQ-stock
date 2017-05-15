@@ -42,7 +42,7 @@ namespace DeepQStock
         /// <summary>
         /// Mantaing the numbers of periods already simulated by the agent
         /// </summary>
-        public int PeriodSimulated { get; set; }
+        public int EpisodeSimulated { get; set; }
 
         /// <summary>
         /// Current State
@@ -50,15 +50,38 @@ namespace DeepQStock
         public State CurrentState { get; set; }
 
         /// <summary>
-        /// List of stock exchange indicators used in each state
+        /// List of stock exchange  daily indicators used in each state
         /// </summary>
-        public IList<ITechnicalIndicator> Indicators
+        public IList<ITechnicalIndicator> DailyIndicators
         {
             get
             {
-                return Parameters.Indicators;
+                return Parameters.DailyIndicators;
             }
         }
+
+        /// <summary>
+        /// List of stock exchange  weekly indicators used in each state
+        /// </summary>
+        public IList<ITechnicalIndicator> WeeklyIndicators
+        {
+            get
+            {
+                return Parameters.WeeklyIndicators;
+            }
+        }
+
+        /// <summary>
+        /// List of stock exchange monthly indicators used in each state
+        /// </summary>
+        public IList<ITechnicalIndicator> MonthlyIndicators
+        {
+            get
+            {
+                return Parameters.MonthlyIndicators;
+            }
+        }
+
 
         #endregion
 
@@ -108,7 +131,7 @@ namespace DeepQStock
                 }
 
                 //Agent.OnEpisodeComplete();
-                PeriodSimulated += Parameters.NumberOfPeriods;
+                EpisodeSimulated++;
             }
         }
 
@@ -146,7 +169,8 @@ namespace DeepQStock
         private State GenerateState()
         {
             var state = new State();
-            state.Periods = Periods.Skip(PeriodSimulated).Take(Parameters.NumberOfPeriods).ToList();
+            var nroOfPeriodSimulated = EpisodeSimulated * Parameters.NumberOfPeriods;
+            state.Periods = Periods.Reverse().Skip(nroOfPeriodSimulated).Take(Parameters.NumberOfPeriods).ToList();
 
             if (CurrentState == null)
             {
@@ -155,10 +179,10 @@ namespace DeepQStock
 
             foreach (var p in state.Periods)
             {
-                foreach (var i in Indicators)
+                foreach (var i in DailyIndicators)
                 {
                     var values = i.Calculate(p);
-                    p.Indicators.AddRange(values);
+                    p.Indicators.Add(i.Name, values);
                 }
             }
 

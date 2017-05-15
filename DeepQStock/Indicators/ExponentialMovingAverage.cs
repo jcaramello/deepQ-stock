@@ -21,7 +21,7 @@ namespace DeepQStock.Indicators
     /// </summary>
     public class ExponentialMovingAverage : SimpleMovingAverage, ITechnicalIndicator
     {
-        #region << Private Properties >>
+        #region << Private Properties >>        
 
         /// <summary>
         /// Get the EMA multiplier
@@ -44,11 +44,18 @@ namespace DeepQStock.Indicators
         /// Default Constructor
         /// </summary>
         /// <param name="size"></param>
-        public ExponentialMovingAverage(int size) : base(size) { }
+        public ExponentialMovingAverage(int size) : base(size)
+        {            
+        }
 
         #endregion
 
-        #region << Overrided Members >>
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        public new string Name { get { return string.Format("EMA({0})", Size); } }
+
+        #region << Overrided Members >>        
 
         /// <summary>
         /// Gets the value.

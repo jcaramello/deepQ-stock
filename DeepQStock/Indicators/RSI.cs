@@ -59,18 +59,28 @@ namespace DeepQStock.Indicators
         #region << IStockExchangeIndicator Members >>
 
         /// <summary>
+        /// Gets the name.
+        /// </summary>
+        public string Name { get { return "RSI"; } }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        public double[] Value { get; set; }
+
+        /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<double> Calculate(Period period)
         {
-            double emaU = 0;
-            double emaD = 0;
-            double rsi = 0;
+            double emaU = UpwardPeriods.Value != null ? UpwardPeriods.Value.First() : 0.0;
+            double emaD = DownwardPeriods.Value != null ? DownwardPeriods.Value.First() : 0.0;
+            double rsi = 0.0;            
 
-            if (PreviousPeriod != null && (Length >= UpwardPeriods.Periods.Count + DownwardPeriods.Periods.Count))
+            if (PreviousPeriod != null)
             {
-                if (PreviousPeriod.Close > period.Close)
+                if (PreviousPeriod.Close <= period.Close)
                 {
                     emaU = UpwardPeriods.Calculate(period).First();
                 }
@@ -79,13 +89,18 @@ namespace DeepQStock.Indicators
                     emaU = DownwardPeriods.Calculate(period).First();
                 }
 
-                var rs = emaU / emaD;
-                rsi = 100 - (100 / 1 + rs);
+                if (emaD > 0.0)
+                {
+                    var rs = emaU / emaD;
+                    rsi = 100.0 - (100.0 / (1.0 + rs));
+                }                
             }
 
             PreviousPeriod = period;
 
-            return new double[1] { rsi };
+            Value = new double[1] { rsi };
+
+            return Value;
         }
 
         #endregion

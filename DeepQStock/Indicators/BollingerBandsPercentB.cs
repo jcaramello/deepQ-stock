@@ -38,6 +38,16 @@ namespace DeepQStock.Indicators
         #region << IStockExchangeIndicator Members >>
 
         /// <summary>
+        /// Gets the name.
+        /// </summary>
+        public string Name { get { return "Bollinger Bands %B"; } }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        public double[] Value { get; set; }
+
+        /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
@@ -49,7 +59,8 @@ namespace DeepQStock.Indicators
             var upperBand = period.Close + two_std_dev;
             var lowerBand = period.Close - two_std_dev;
 
-            return new double[3] { upperBand, ma_20, lowerBand };
+            Value = new double[3] { upperBand, ma_20, lowerBand };
+            return Value;
         }
 
         #endregion

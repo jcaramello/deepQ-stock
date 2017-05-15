@@ -13,7 +13,7 @@ namespace DeepQStock.Indicators
     /// https://www.tradingview.com/wiki/Average_True_Range_(ATR)
     /// </summary>
     public class AverageTrueRange : ITechnicalIndicator
-    {
+    {        
         #region << Private Properties >>
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace DeepQStock.Indicators
         /// </summary>
         private double Multiplier
         {
-            get { return (2 / (Length + 1)); }
+            get { return (2.0 / (Length + 1.0)); }
         }
 
         /// <summary>
@@ -58,6 +58,16 @@ namespace DeepQStock.Indicators
         #region  IStockExchangeIndicators Members >>
 
         /// <summary>
+        /// Gets the name.
+        /// </summary>
+        public string Name { get { return "ATR"; } }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        public double[] Value { get; set; }
+
+        /// <summary>
         /// Calculate the average true range
         /// </summary>
         /// <param name=""></param>
@@ -80,7 +90,8 @@ namespace DeepQStock.Indicators
 
             PreviousPeriod = period;
 
-            return new double[1] { PreviousATR };
+            Value = new double[1] { PreviousATR };
+            return Value;
         }
 
         #endregion

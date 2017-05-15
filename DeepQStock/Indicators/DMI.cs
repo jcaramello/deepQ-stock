@@ -55,7 +55,7 @@ namespace DeepQStock.Indicators
         /// </summary>
         private double Multiplier
         {
-            get { return (2 / (Length + 1)); }
+            get { return (2.0 / (Length + 1.0)); }
         }
 
         #endregion
@@ -75,6 +75,16 @@ namespace DeepQStock.Indicators
         #endregion
 
         #region << IStockExchangeIndicator Members >>
+
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        public string Name { get { return "DMI"; } }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        public double[] Value { get; set; }
 
         /// <summary>
         /// Gets the value.
@@ -112,7 +122,8 @@ namespace DeepQStock.Indicators
 
             PreviousPeriod = period;
 
-            return new double[3] { adx, plusDI, minusDI };
+            Value = new double[3] { adx, plusDI, minusDI };
+            return Value;
         }
 
         #endregion     
