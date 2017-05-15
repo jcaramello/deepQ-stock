@@ -49,7 +49,7 @@ namespace DeepQStock.Indicators
             var upperBand = period.Close + two_std_dev;
             var lowerBand = period.Close - two_std_dev;
 
-            return new decimal[3] { upperBand, ma_20, lowerBand };
+            return new double[3] { upperBand, ma_20, lowerBand };
         }
 
         #endregion
