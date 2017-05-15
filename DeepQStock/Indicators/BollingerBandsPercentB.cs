@@ -44,12 +44,12 @@ namespace DeepQStock.Indicators
         public IEnumerable<double> Calculate(Period period)
         {
             var ma_20 = MA_20.Calculate(period).First();
-            var std_dev = IndicatorUtils.StandardDeviation(MA_20.Periods.Select(p => p.Close));
+            var two_std_dev = 2 * IndicatorUtils.StandardDeviation(MA_20.Periods.Select(p => p.Close));
 
-            var upperBand = 2 * std_dev;
-            var lowerBand = -2 * std_dev;
+            var upperBand = period.Close + two_std_dev;
+            var lowerBand = period.Close - two_std_dev;
 
-            return new double[3] { upperBand, ma_20, lowerBand };
+            return new decimal[3] { upperBand, ma_20, lowerBand };
         }
 
         #endregion
