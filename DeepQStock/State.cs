@@ -8,12 +8,13 @@ namespace DeepQStock
 {
     /// <summary>
     /// Represent the enviroment state.
-    /// We can think it, as cube of 3 levels, each level is a matrix of period
-    /// Each level have a defined size.
+    /// We can think it, as cube of 3 levels, each level is a matrix of periods and
+    /// each level have a pre-defined size.
     /// 
-    /// The first level is a matrix of day's periods, 
-    /// The second level is a matrix of week's periods
-    /// And finally the thrid layer is a matrix of month's periods
+    /// The structure of each layer is the following:
+    ///   - The first level is a matrix of day's periods, 
+    ///   - The second level is a matrix of week's periods
+    ///   - And finally the thrid layer is a matrix of month's periods
     /// 
     /// </summary>
     public class State 
