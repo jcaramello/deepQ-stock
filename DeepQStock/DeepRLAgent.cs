@@ -72,7 +72,7 @@ namespace DeepQStock
         {
             if (Q == null)
             {
-                InitializeNetwork(state);
+                InitializeQNetwork(state);
             }
 
             var previuosState = CurrentState;
@@ -104,7 +104,6 @@ namespace DeepQStock
         }
 
         #endregion
-
 
         #region << Private methods >>
 
@@ -207,7 +206,7 @@ namespace DeepQStock
         /// Initializes the internal neural network.
         /// </summary>
         /// <param name="state">The state.</param>
-        private void InitializeNetwork(State state)
+        private void InitializeQNetwork(State state)
         {
             Q = new QNetwork(p =>
             {
