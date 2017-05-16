@@ -8,7 +8,7 @@ namespace DeepQStock
 {
     /// <summary>
     /// Represent the enviroment state.
-    /// We can think that as cube of 3 levels, each level is a matrix of period
+    /// We can think it, as cube of 3 levels, each level is a matrix of period
     /// Each level have a defined size.
     /// 
     /// The first level is a matrix of day's periods, 
