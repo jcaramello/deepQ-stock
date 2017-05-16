@@ -72,7 +72,7 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<double> Calculate(Period period)
+        public IEnumerable<double> Update(Period period)
         {
             double emaU = UpwardPeriods.Value != null ? UpwardPeriods.Value.First() : 0.0;
             double emaD = DownwardPeriods.Value != null ? DownwardPeriods.Value.First() : 0.0;
@@ -82,11 +82,11 @@ namespace DeepQStock.Indicators
             {
                 if (PreviousPeriod.Close <= period.Close)
                 {
-                    emaU = UpwardPeriods.Calculate(period).First();
+                    emaU = UpwardPeriods.Update(period).First();
                 }
                 else
                 {
-                    emaU = DownwardPeriods.Calculate(period).First();
+                    emaU = DownwardPeriods.Update(period).First();
                 }
 
                 if (emaD > 0.0)

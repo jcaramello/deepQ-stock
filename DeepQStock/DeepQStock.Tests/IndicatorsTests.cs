@@ -21,8 +21,8 @@ namespace DeepQStock.Tests
 
             foreach (var p in periods)
             {
-                sma_value = sma.Calculate(p).First();                
-                ema_value = ema.Calculate(p).First();
+                sma_value = sma.Update(p).First();                
+                ema_value = ema.Update(p).First();
             }
 
             Assert.AreEqual(sma_value, 22.209);

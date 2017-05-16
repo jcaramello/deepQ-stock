@@ -57,7 +57,7 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<double> Calculate(Period period)
+        public IEnumerable<double> Update(Period period)
         {
             if (Periods.Count == Size)
             {

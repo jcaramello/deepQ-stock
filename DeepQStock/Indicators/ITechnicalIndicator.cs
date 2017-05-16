@@ -22,6 +22,6 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<double> Calculate(Period period);
+        IEnumerable<double> Update(Period period);
     }
 }

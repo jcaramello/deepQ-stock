@@ -63,13 +63,13 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<double> Calculate(Period period)
+        public IEnumerable<double> Update(Period period)
         {
-            var ema_12 = EMA_12.Calculate(period).First();
-            var ema_26 = EMA_12.Calculate(period).First();
+            var ema_12 = EMA_12.Update(period).First();
+            var ema_26 = EMA_12.Update(period).First();
 
             var macd_line = ema_12 - ema_26;
-            var signal_line = EMA_9.Calculate(period).First();
+            var signal_line = EMA_9.Update(period).First();
             var macd_histogram = macd_line - signal_line;
 
             Value = new double[3] { macd_line, signal_line, macd_histogram };

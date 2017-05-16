@@ -51,9 +51,9 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<double> Calculate(Period period)
+        public IEnumerable<double> Update(Period period)
         {
-            var ma_20 = MA_20.Calculate(period).First();
+            var ma_20 = MA_20.Update(period).First();
             var two_std_dev = 2 * IndicatorUtils.StandardDeviation(MA_20.Periods.Select(p => p.Close));
 
             var upperBand = period.Close + two_std_dev;

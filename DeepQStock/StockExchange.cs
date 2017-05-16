@@ -1,11 +1,9 @@
 ﻿using DeepQStock.Config;
 using DeepQStock.Enums;
 using DeepQStock.Indicators;
-using LINQtoCSV;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using DeepQStock.Utils;
 
 namespace DeepQStock
 {
@@ -32,12 +30,12 @@ namespace DeepQStock
             {
                 return Parameters.Agent;
             }
-        }
+        }        
 
         /// <summary>
-        /// Get or sets the periods
+        /// Gets or sets the data provider.
         /// </summary>
-        private IEnumerable<Period> Periods { get; set; }
+        public IDataProvider DataProvider { get; set; }
 
         /// <summary>
         /// Mantaing the numbers of periods already simulated by the agent
@@ -102,7 +100,7 @@ namespace DeepQStock
                 throw new Exception("You must pass a csv file path for load the simulated data");
             }
 
-            Periods = GetAllPeriodFromCsv();
+            DataProvider = new CsvDataProvider(Parameters.CsvFilePath, Parameters.NumberOfPeriods, Parameters.StartDate);
         }
 
         #endregion
@@ -125,7 +123,12 @@ namespace DeepQStock
             {
                 foreach (var state in episode)
                 {
-                    CurrentState = state;
+                    if (CurrentState == null)
+                    {                        
+                        state.Today.CurrentCapital = Parameters.InitialCapital;                        
+                    }
+
+                    CurrentState = state;                    
                     action = Agent.Decide(state, reward);
                     reward = Execute(action);
                 }
@@ -140,18 +143,6 @@ namespace DeepQStock
         #region << Private Methods >>
 
         /// <summary>
-        /// Generate the next state from 
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerable<State> NextEpisode()
-        {
-            for (int i = 0; i < Parameters.EpisodeLength; i++)
-            {
-                yield return GenerateState();
-            }
-        }
-
-        /// <summary>
         /// Executes the specified action.
         /// </summary>
         /// <param name="action">The action.</param>
@@ -162,50 +153,75 @@ namespace DeepQStock
         }
 
         /// <summary>
+        /// Generate the next state 
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerable<State> NextEpisode()
+        {
+            var upcomingDays = DataProvider.NextDays();
+
+            foreach (var upcomingDay in upcomingDays)
+            {
+                yield return GenerateState(upcomingDay);
+            }
+        }
+
+        /// <summary>
         /// Generates the state.
         /// </summary>
         /// <param name="period">The period.</param>
         /// <returns></returns>
-        private State GenerateState()
-        {
-            var state = new State();
-            var nroOfPeriodSimulated = EpisodeSimulated * Parameters.NumberOfPeriods;
-            state.Periods = Periods.Reverse().Skip(nroOfPeriodSimulated).Take(Parameters.NumberOfPeriods).ToList();
+        private State GenerateState(Period upcomingDay)
+        {            
+            var state = CurrentState != null ? CurrentState.Clone() : new State();
 
-            if (CurrentState == null)
+            foreach (var indicator in DailyIndicators)
             {
-                state.CurrentPeriod.CurrentCapital = Parameters.InitialCapital;
+                var values = indicator.Update(upcomingDay);
+                upcomingDay.Indicators.Add(indicator.Name, values);
             }
 
-            foreach (var p in state.Periods)
-            {
-                foreach (var i in DailyIndicators)
-                {
-                    var values = i.Calculate(p);
-                    p.Indicators.Add(i.Name, values);
-                }
-            }
+            state.DayLayer.Enqueue(upcomingDay);
+
+            UpdateLayer(state.WeekLayer, upcomingDay, WeeklyIndicators, upcomingDay.Date.IsStartOfWeek());
+            UpdateLayer(state.MonthLayer, upcomingDay, MonthlyIndicators, upcomingDay.Date.IsStartOfMonth());
 
             return state;
         }
 
         /// <summary>
-        /// Get all Period
+        /// Updates a layer of the state.
         /// </summary>
-        /// <returns></returns>
-        private IEnumerable<Period> GetAllPeriodFromCsv()
+        /// <param name="layer">The layer.</param>
+        /// <param name="upcomingDay">The upcoming day.</param>
+        /// <param name="Indicators">The indicators.</param>
+        private void UpdateLayer(CircularQueue<Period> layer, Period upcomingDay, IEnumerable<ITechnicalIndicator> Indicators, bool createNewPeriod)
         {
-            CsvFileDescription descriptor = new CsvFileDescription
+            Period current = null;
+            if (!layer.IsEmpty && !createNewPeriod)
             {
-                SeparatorChar = ',',
-                FirstLineHasColumnNames = true,
-                FileCultureInfo = System.Globalization.CultureInfo.InvariantCulture
-            };
+                current = layer.Peek();
+                current.Merge(upcomingDay);
+            }
+            else
+            {
+                current = upcomingDay.Clone();
+            }
 
-            CsvContext ctx = new CsvContext();
-
-            return ctx.Read<Period>(Parameters.CsvFilePath, descriptor);
+            foreach (var i in Indicators)
+            {
+                var values = i.Update(current);
+                if (current.Indicators.ContainsKey(i.Name))
+                {
+                    current.Indicators[i.Name] = values;
+                }
+                else
+                {
+                    upcomingDay.Indicators.Add(i.Name, values);
+                }
+            }
         }
+
 
         #endregion
 

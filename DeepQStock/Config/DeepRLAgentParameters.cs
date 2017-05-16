@@ -12,7 +12,7 @@ namespace DeepQStock.Config
         /// <summary>
         /// Gets or sets the exploration frequency.
         /// </summary>        
-        public double ExplorationFrequency { get; set; }
+        public double eGreedyProbability { get; set; }
 
         /// <summary>
         /// Gets or sets the in and out strategy, that the agent will be use for buy and sell actions.
@@ -49,7 +49,7 @@ namespace DeepQStock.Config
         /// </summary>
         public DeepRLAgentParameters()
         {
-            ExplorationFrequency = 0.001;
+            eGreedyProbability = 0.001;
             InOutStrategy = 0.25;
             MiniBatchSize = 10;
             DiscountFactor = 0.5;

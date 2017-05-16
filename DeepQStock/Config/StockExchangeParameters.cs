@@ -33,7 +33,7 @@ namespace DeepQStock.Config
                 new MACD(),
                 new BollingerBandsPercentB()
             };
-            
+
         }
 
         #endregion
@@ -49,6 +49,11 @@ namespace DeepQStock.Config
         /// Gets or sets the CSV file path.
         /// </summary>
         public string CsvFilePath { get; set; }
+
+        /// <summary>
+        /// Gets or sets the start date.
+        /// </summary>
+        public DateTime? StartDate { get; set; }
 
         /// <summary>
         /// Gets or sets the period types.

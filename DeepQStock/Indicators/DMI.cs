@@ -90,7 +90,7 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<double> Calculate(Period period)
+        public IEnumerable<double> Update(Period period)
         {
             var adx = 0.0;
             var plusDI = 0.0;
@@ -104,7 +104,7 @@ namespace DeepQStock.Indicators
                 var plusDM = upMove > downMove && upMove > 0.0 ? upMove : 0.0;
                 var minusDM = downMove > upMove && downMove > 0.0 ? downMove : 0.0;
 
-                var atr = ATR.Calculate(period).First();
+                var atr = ATR.Update(period).First();
                 var plusDMOverATR = atr != 0.0 ? plusDM / atr : 0.0;
                 var minusDMOverATR =atr != 0.0 ? minusDM / atr : 0.0;
               

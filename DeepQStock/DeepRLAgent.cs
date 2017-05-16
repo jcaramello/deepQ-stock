@@ -117,7 +117,7 @@ namespace DeepQStock
         {
             var probability = RandomGenerator.NextDouble();
 
-            if (probability <= Parameters.ExplorationFrequency)
+            if (probability <= Parameters.eGreedyProbability)
             {
                 CurrentAction = (ActionType)RandomGenerator.Next(4);
             }
@@ -165,14 +165,14 @@ namespace DeepQStock
         private IList<ActionType> GetActions()
         {
             var actions = new List<ActionType>() { ActionType.Wait };
-            var avaliableCapital = CurrentState.CurrentPeriod.CurrentCapital * Parameters.InOutStrategy;
+            var avaliableCapital = CurrentState.Today.CurrentCapital * Parameters.InOutStrategy;
 
-            if (avaliableCapital >= CurrentState.CurrentPeriod.Close)
+            if (avaliableCapital >= CurrentState.Today.Close)
             {
                 actions.Add(ActionType.Buy);
             }
 
-            if (CurrentState.CurrentPeriod.ActualPosicion > 0)
+            if (CurrentState.Today.ActualPosicion > 0)
             {
                 actions.Add(ActionType.Sell);
             }

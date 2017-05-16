@@ -72,7 +72,7 @@ namespace DeepQStock.Indicators
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        public IEnumerable<double> Calculate(Period period)
+        public IEnumerable<double> Update(Period period)
         {
             if (PreviousPeriod != null)
             {

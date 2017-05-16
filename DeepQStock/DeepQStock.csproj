@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\QNetworkParameters.cs" />
+    <Compile Include="CsvDataProvider.cs" />
     <Compile Include="DeepRLAgent.cs" />
     <Compile Include="Config\DeepRLAgentParameters.cs" />
     <Compile Include="Config\StockExchangeParameters.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Enums\PeriodType.cs" />
     <Compile Include="Experience.cs" />
     <Compile Include="IAgent.cs" />
+    <Compile Include="IDataProvider.cs" />
     <Compile Include="Indicators\AverageTrueRange.cs" />
     <Compile Include="Indicators\BollingerBandsPercentB.cs" />
     <Compile Include="Indicators\DMI.cs" />
@@ -69,8 +71,10 @@
     <Compile Include="QNetwork.cs" />
     <Compile Include="State.cs" />
     <Compile Include="StockExchange.cs" />
+    <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="Utils\IndicatorUtils.cs" />
     <Compile Include="Utils\LinqExtensions.cs" />
+    <Compile Include="Utils\CircularQueue.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

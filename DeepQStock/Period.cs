@@ -59,19 +59,7 @@ namespace DeepQStock
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>
-        public IDictionary<string, IEnumerable<double>> Indicators { get; set; }
-
-        /// <summary>
-        /// Gets the indicator string.
-        /// </summary>
-        public string IndicatorString
-        {
-            get
-            {
-                var values = Indicators.Select(p => string.Format("{0}:[{1}]", p.Key, string.Join(",", p.Value.Select(v => v.ToString(System.Globalization.CultureInfo.InvariantCulture)))));
-                return string.Join(" | ", values);
-            }
-        }
+        public IDictionary<string, IEnumerable<double>> Indicators { get; set; }      
 
         #endregion
 
@@ -90,12 +78,32 @@ namespace DeepQStock
         #region << Public Methods >>
 
         /// <summary>
+        /// Merges the specified period.
+        /// </summary>
+        /// <param name="period">The period.</param>
+        public void Merge(Period period)
+        {
+            Close = period.Close;
+            High = Math.Max(High, period.High);
+            Low = Math.Min(Low, period.Low);
+        }
+
+        /// <summary>
         /// To the array.
         /// </summary>
         /// <returns></returns>
         public IList<double> ToList()
         {
-            var period = new List<double> { CurrentCapital, ActualPosicion, Open, Close, Volume, High, Low };
+            var period = new List<double>
+            {
+                CurrentCapital,
+                ActualPosicion,
+                Open,
+                Close,                
+                High,
+                Low,
+                Volume
+            };
 
             foreach (var pair in Indicators)
             {
@@ -103,6 +111,38 @@ namespace DeepQStock
             }
 
             return period;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var values = Indicators.Select(p => string.Format("{0}:[{1}]", p.Key, string.Join(",", p.Value.Select(v => v.ToString(System.Globalization.CultureInfo.InvariantCulture)))));
+            return string.Join(" | ", values);
+        }
+
+        #endregion
+
+        #region <<  ICloneable Members >>
+
+        public Period Clone()
+        {
+            return new Period()
+            {
+                ActualPosicion = ActualPosicion,
+                CurrentCapital = CurrentCapital,
+                Date = Date,
+                Open = Open,
+                Close = Close,
+                High = High,
+                Low = Low,
+                Volume = Volume
+            };
+
         }
 
         #endregion
