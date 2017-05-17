@@ -1,10 +1,8 @@
-﻿using DeepQStock.Enums;
+﻿using DeepQStock.Domain;
 using LINQtoCSV;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeepQStock
 {
@@ -53,7 +51,6 @@ namespace DeepQStock
         }
 
         #endregion
-
 
         #region << IDataProvider Members >> 
 

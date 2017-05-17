@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeepQStock
+namespace DeepQStock.Domain
 {
     public class Experience
     {

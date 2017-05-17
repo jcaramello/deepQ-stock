@@ -17,7 +17,7 @@ namespace DeepQStock.Storage
         /// <typeparam name="T"></typeparam>
         /// <param name="key">The key.</param>
         /// <returns></returns>
-        T GetBy(string key);
+        T GetById(long id);
 
         /// <summary>
         /// Gets all item of type T from the storage.

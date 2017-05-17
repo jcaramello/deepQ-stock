@@ -1,9 +1,5 @@
-﻿using DeepQStock.Enums;
-using System;
+﻿using DeepQStock.Domain;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeepQStock
 {

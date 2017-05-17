@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Config;
+using DeepQStock.Domain;
 using DeepQStock.Enums;
 using Encog.ML.Data;
 using Encog.ML.Data.Basic;

@@ -1,4 +1,5 @@
-﻿using DeepQStock.Utils;
+﻿using DeepQStock.Domain;
+using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;

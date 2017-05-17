@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DeepQStock.Domain;
+using DeepQStock.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +14,7 @@ namespace DeepQStock.Tests
         /// Gets the sample periods.
         /// </summary>
         /// <returns></returns>
-        public static IList<Period> GetSamplePeriods()
+        public static IList<Period> GetSamplePeriodsWithCloseValue()
         {
             return new List<Period>()
             {
@@ -28,6 +30,47 @@ namespace DeepQStock.Tests
                 new Period() { Close = 22.29 },
                 new Period() { Close = 22.15 }
             };
+        }
+
+        /// <summary>
+        /// Gets the complete sample period.
+        /// </summary>
+        /// <returns></returns>
+        public static Period GetCompleteSamplePeriod(PeriodType type = PeriodType.Day)
+        {
+            return new Period()
+            {
+                Date = DateTime.Today,
+                ActualPosicion = 100,
+                Close = 10,
+                CurrentCapital = 10000,
+                High = 12,
+                Low = 9,
+                Open = 9.5,
+                PeriodType = type,
+                Volume = 1000000.0,
+                Indicators = new Dictionary<string, IEnumerable<double>>
+                {
+                    { "Indicator1", new double[] { 1, 2} },
+                    { "Indicator2", new double[] { 0.5 } },
+                    { "Indicator3", new double[] { 1, 2, 3} },
+                }
+            };
+        }
+
+        /// <summary>
+        /// Gets the complete sample state.
+        /// </summary>
+        /// <returns></returns>
+        public static State GetCompleteSampleState()
+        {
+            var state = new State(1);
+
+            state.DayLayer.Enqueue(GetCompleteSamplePeriod(PeriodType.Day));
+            state.WeekLayer.Enqueue(GetCompleteSamplePeriod(PeriodType.Week));
+            state.MonthLayer.Enqueue(GetCompleteSamplePeriod(PeriodType.Month));
+
+            return state;
         }
     }
 }

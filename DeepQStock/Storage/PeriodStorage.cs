@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DeepQStock.Domain;
+using ServiceStack.Redis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,48 +8,65 @@ using System.Threading.Tasks;
 
 namespace DeepQStock.Storage
 {
-    public class PeriodStorage : IStorage<Period>
+    public class PeriodStorage : BaseStorage<Period>, IStorage<Period>
     {
-
-        #region << Private Properties >>
-
-        /// <summary>
-        /// Redis Context
-        /// </summary>
-        public RedisContext Context { get; set; }
-
-        #endregion
-
         #region << Constructor >>
 
-        public PeriodStorage(RedisContext ctx)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PeriodStorage"/> class.
+        /// </summary>        
+        public PeriodStorage(IRedisClientsManager manager) : base(manager)
         {
-            Context = ctx;
         }
 
         #endregion
 
-        #region << IStorage Members >>
+        #region << IStorage Members >>        
 
-        public void Delete(Period item)
-        {
-            Context.Client.Remove(item.Key);
-        }
-
+        /// <summary>
+        /// Gets all item of type T from the storage.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Period> GetAll()
         {
-            var keys = Context.GetKeys<Period>();
-            return Context.Client.GetAll<Period>(keys).Values.ToList();
+            return Execute((client, periods) => periods.GetAll());
         }
 
-        public Period GetBy(string key)
+        /// <summary>
+        /// Retrieve an item of type T by the given key from the storage.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        public Period GetById(long id)
         {
-            return Context.Client.Get<Period>(key);
+            return Execute((client, periods) => periods.GetById(id));
         }
 
+        /// <summary>
+        /// Saves an item of type T to the storage.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <exception cref="System.NotImplementedException"></exception>
         public void Save(Period item)
         {
-            throw new NotImplementedException();
+            Execute((client, periods) =>
+            {
+                if (item.Id == 0)
+                {
+                    item.Id = periods.GetNextSequence();
+                }
+
+                periods.Store(item);
+            });
+        }
+
+        /// <summary>
+        /// Deletes an item of type T from the storage.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        public void Delete(Period item)
+        {
+            Execute((client, periods) => periods.DeleteById(item.Id));
         }
 
         #endregion

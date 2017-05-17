@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DeepQStock
+namespace DeepQStock.Domain
 {
     /// <summary>
     /// Represent the enviroment state.
@@ -18,15 +18,27 @@ namespace DeepQStock
     ///   - And finally the thrid layer is a matrix of month's periods
     /// 
     /// </summary>
-    public class State 
+    public class State
     {
         #region << Public Properties >>
-              
+
         /// <summary>
-        /// Key
+        /// Gets or sets the identifier.
         /// </summary>
-        [JsonIgnore]
-        public string Key { get; set; }
+        public long Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the size.
+        /// </summary>
+        public int Size { get; set; }
+
+        /// <summary>
+        /// Gets or sets the period ids.
+        /// </summary>
+        /// <value>
+        /// The period ids.
+        /// </value>
+        public IList<long> PeriodIds { get; set; }
 
         /// <summary>
         /// Gets the current period.
@@ -43,26 +55,32 @@ namespace DeepQStock
         /// <summary>
         /// Gets or sets the periods.
         /// </summary>
+        [JsonIgnore]
         public CircularQueue<Period> DayLayer { get; set; }
 
         /// <summary>
         /// Gets or sets the week layer.
         /// </summary>
+        [JsonIgnore]
         public CircularQueue<Period> WeekLayer { get; set; }
 
         /// <summary>
         /// Gets or sets the month layer.
         /// </summary>
-        public CircularQueue<Period> MonthLayer { get; set; }
-
-        #endregion
-
-        #region << Private Properties >> 
+        [JsonIgnore]
+        public CircularQueue<Period> MonthLayer { get; set; }        
 
         /// <summary>
-        /// Gets or sets the size.
+        /// Gets or sets the period ids.
         /// </summary>
-        public int Size { get; set; }
+        [JsonIgnore]
+        public IEnumerable<Period> FlattenPeriods
+        {
+            get
+            {
+                return DayLayer.Concat(WeekLayer).Concat(MonthLayer);
+            }
+        }
 
         #endregion
 
@@ -77,6 +95,7 @@ namespace DeepQStock
             DayLayer = new CircularQueue<Period>(size);
             WeekLayer = new CircularQueue<Period>(size);
             MonthLayer = new CircularQueue<Period>(size);
+            PeriodIds = new List<long>();
         }
 
         #endregion
@@ -95,9 +114,9 @@ namespace DeepQStock
             flattedPeriods.AddRange(FlattenLayer(WeekLayer));
             flattedPeriods.AddRange(FlattenLayer(MonthLayer));
 
-            return flattedPeriods.ToArray();   
+            return flattedPeriods.ToArray();
         }
-
+        
         #endregion
 
         #region << ICloneable Members >>
@@ -110,9 +129,11 @@ namespace DeepQStock
         {
             var clone = new State(Size);
 
-            DayLayer.ToList().ForEach(p => clone.DayLayer.Enqueue(p));
-            WeekLayer.ToList().ForEach(p => clone.WeekLayer.Enqueue(p));
-            MonthLayer.ToList().ForEach(p => clone.MonthLayer.Enqueue(p));
+            clone.Id = Id;
+            DayLayer?.ToList().ForEach(p => clone.DayLayer.Enqueue(p));
+            WeekLayer?.ToList().ForEach(p => clone.WeekLayer.Enqueue(p));
+            MonthLayer?.ToList().ForEach(p => clone.MonthLayer.Enqueue(p));
+            PeriodIds?.ToList().ForEach(id => clone.PeriodIds.Add(id));
 
             return clone;
         }

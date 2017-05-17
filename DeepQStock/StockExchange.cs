@@ -4,6 +4,7 @@ using DeepQStock.Indicators;
 using System;
 using System.Collections.Generic;
 using DeepQStock.Utils;
+using DeepQStock.Domain;
 
 namespace DeepQStock
 {

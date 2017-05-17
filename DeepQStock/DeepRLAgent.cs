@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DeepQStock.Utils;
 using Encog.Engine.Network.Activation;
 using DeepQStock.Storage;
+using DeepQStock.Domain;
 
 namespace DeepQStock
 {

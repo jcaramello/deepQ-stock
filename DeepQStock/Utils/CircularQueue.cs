@@ -41,6 +41,7 @@ namespace DeepQStock.Utils
         public CircularQueue(int capacity)
             :base(capacity)
         {
+            Capacity = capacity;
         }
 
         #endregion

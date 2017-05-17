@@ -6,17 +6,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DeepQStock
+namespace DeepQStock.Domain
 {
     public class Period
     {
         #region << Public Properties >> 
         
         /// <summary>
-        /// Key
-        /// </summary>
-        [JsonIgnore]
-        public string Key { get; set; }
+        /// Id
+        /// </summary>        
+        public long Id { get; set; }
 
         /// <summary>
         /// Period Type
