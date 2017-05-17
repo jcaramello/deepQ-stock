@@ -172,8 +172,8 @@ namespace DeepQStock
 
             state.DayLayer.Enqueue(upcomingDay);
 
-            UpdateLayer(state.WeekLayer, upcomingDay, WeeklyIndicators, upcomingDay.Date.IsStartOfWeek());
-            UpdateLayer(state.MonthLayer, upcomingDay, MonthlyIndicators, upcomingDay.Date.IsStartOfMonth());
+            UpdateLayer(PeriodType.Week, state.WeekLayer, upcomingDay, WeeklyIndicators);
+            UpdateLayer(PeriodType.Month, state.MonthLayer, upcomingDay, MonthlyIndicators);
 
             return state;
         }
@@ -184,29 +184,33 @@ namespace DeepQStock
         /// <param name="layer">The layer.</param>
         /// <param name="upcomingDay">The upcoming day.</param>
         /// <param name="Indicators">The indicators.</param>
-        private void UpdateLayer(CircularQueue<Period> layer, Period upcomingDay, IEnumerable<ITechnicalIndicator> Indicators, bool createNewPeriod)
+        private void UpdateLayer(PeriodType type, CircularQueue<Period> layer, Period upcomingDay, IEnumerable<ITechnicalIndicator> Indicators)
         {
             Period current = null;
-            if (!layer.IsEmpty && !createNewPeriod)
+            var needNewPeriod = type == PeriodType.Week ? upcomingDay.Date.IsStartOfWeek() : upcomingDay.Date.IsStartOfMonth();
+
+            if (layer.IsEmpty || needNewPeriod)
+            {
+                current = upcomingDay.Clone();
+                current.PeriodType = type;
+                layer.Enqueue(current);
+            }
+            else
             {
                 current = layer.Peek();
                 current.Merge(upcomingDay);
             }
-            else
-            {
-                current = upcomingDay.Clone();
-            }
 
-            foreach (var i in Indicators)
+            foreach (var indicator in Indicators)
             {
-                var values = i.Update(current);
-                if (current.Indicators.ContainsKey(i.Name))
+                var newValues = indicator.Update(current);
+                if (current.Indicators.ContainsKey(indicator.Name))
                 {
-                    current.Indicators[i.Name] = values;
+                    current.Indicators[indicator.Name] = newValues;
                 }
                 else
                 {
-                    upcomingDay.Indicators.Add(i.Name, values);
+                    upcomingDay.Indicators.Add(indicator.Name, newValues);
                 }
             }
         }

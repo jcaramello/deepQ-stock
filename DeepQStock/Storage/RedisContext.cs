@@ -1,6 +1,8 @@
 ﻿using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core;
 using StackExchange.Redis.Extensions.Newtonsoft;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace DeepQStock.Storage
 {
@@ -20,6 +22,16 @@ namespace DeepQStock.Storage
         /// Gets or sets the serializer.
         /// </summary>
         private ISerializer Serializer { get; set; }
+
+        /// <summary>
+        /// lock object
+        /// </summary>
+        private static readonly object _lock = new object();
+
+        /// <summary>
+        /// Template for redis keyes
+        /// </summary>
+        private const string KeyTemplate = "{0}:id";
 
         #endregion
 
@@ -61,19 +73,27 @@ namespace DeepQStock.Storage
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public string GenerateKey<T>()
-        {
-            // Make thread safe
-            var keyGenerator = string.Format("{0}:id", typeof(T).Name);
-            if (!Client.Exists(keyGenerator))
-            {
-                Client.Add<long>(keyGenerator, 0);
+        {            
+            var key = string.Format(KeyTemplate, typeof(T).Name);
+            long id = 0;
+
+            lock (_lock)
+            {                
+                id = Client.Database.StringIncrement(key);                          
             }
 
-            // Increment the key
-            //Client.Database.
+            return string.Format("{0}:{1}", key, id);
+        }
 
-            var newKey = string.Format("{0}:{1}", keyGenerator, Client.Get<long>(keyGenerator));
-            return newKey;    
+        /// <summary>
+        /// Get all keys
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public IEnumerable<string> GetKeys<T>()
+        {
+            var key = string.Format(KeyTemplate, typeof(T).Name);
+            return Client.SearchKeys(key);
         }
 
         #endregion

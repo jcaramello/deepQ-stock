@@ -25,14 +25,18 @@ namespace DeepQStock.Storage
             Context = ctx;
         }
 
-        
+        #endregion
+
+        #region << IStorage Members >>
+
         public void Delete(Period item)
         {
-            Context.Client.Remove<Period>()
+            Context.Client.Remove(item.Key);
         }
 
-        public IEnumerable<Period> GetAll(IEnumerable<string> keys)
+        public IEnumerable<Period> GetAll()
         {
+            var keys = Context.GetKeys<Period>();
             return Context.Client.GetAll<Period>(keys).Values.ToList();
         }
 
@@ -45,12 +49,6 @@ namespace DeepQStock.Storage
         {
             throw new NotImplementedException();
         }
-
-        #endregion
-
-        #region << IStorage Members >>
-
-
 
         #endregion
 

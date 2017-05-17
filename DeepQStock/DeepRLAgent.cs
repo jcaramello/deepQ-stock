@@ -46,9 +46,9 @@ namespace DeepQStock
         private QNetwork Q { get; set; }
 
         /// <summary>
-        /// Storage Service
+        /// Period Storage
         /// </summary>
-        public IStorage Storage { get; set; }
+        public IStorage<Period> PeriodStorage { get; set; }
 
         #endregion
 
@@ -58,9 +58,9 @@ namespace DeepQStock
         /// Initializes a new instance of the <see cref="DeepRLAgent"/> class.
         /// </summary>
         /// <param name="initializer">The initializer.</param>
-        public DeepRLAgent(IStorage storage, Action<DeepRLAgentParameters> initializer = null)
+        public DeepRLAgent(IStorage<Period> storage, Action<DeepRLAgentParameters> initializer = null)
         {
-            Storage = storage;
+            PeriodStorage = storage;
             Parameters = new DeepRLAgentParameters();
             initializer?.Invoke(Parameters);
             RandomGenerator = new Random();

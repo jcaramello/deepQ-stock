@@ -1,4 +1,6 @@
-﻿using LINQtoCSV;
+﻿using DeepQStock.Enums;
+using LINQtoCSV;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,17 @@ namespace DeepQStock
     public class Period
     {
         #region << Public Properties >> 
+        
+        /// <summary>
+        /// Key
+        /// </summary>
+        [JsonIgnore]
+        public string Key { get; set; }
+
+        /// <summary>
+        /// Period Type
+        /// </summary>
+        public PeriodType  PeriodType{ get; set; }
 
         /// <summary>
         /// Gets or sets the start date.
@@ -71,6 +84,7 @@ namespace DeepQStock
         public Period()
         {
             Indicators = new Dictionary<string, IEnumerable<double>>();
+            PeriodType = PeriodType.Day;
         }
 
         #endregion

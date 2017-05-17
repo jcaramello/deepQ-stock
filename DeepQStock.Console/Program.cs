@@ -13,15 +13,16 @@ namespace DeepQStock.Console
         public static void Main(string[] args)
         {
             var episodeLength = 5;
-            var storage = new RedisContext();
-            var agent = new DeepRLAgent(storage);
+            var ctx = new RedisContext();
+            var periodStorage = new PeriodStorage(ctx);
+            var agent = new DeepRLAgent(periodStorage);
             var dataProvider = new CsvDataProvider("../../../data/APPL.csv", episodeLength);
-            var stock = new StockExchange(agent, dataProvider, p => 
+            var stock = new StockExchange(agent, dataProvider, p =>
             {
                 p.EpisodeLength = episodeLength;
             });
-            
-            stock.Start();                   
+
+            stock.Start();
         }
     }
 }

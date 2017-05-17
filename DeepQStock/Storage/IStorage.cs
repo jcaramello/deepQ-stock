@@ -24,7 +24,7 @@ namespace DeepQStock.Storage
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        IEnumerable<T> GetAll(IEnumerable<string> keys);
+        IEnumerable<T> GetAll();
 
         /// <summary>
         /// Saves an item of type T to the storage.

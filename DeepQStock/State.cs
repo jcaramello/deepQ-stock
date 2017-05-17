@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +20,18 @@ namespace DeepQStock
     /// </summary>
     public class State 
     {
-        #region << Public Properties >>      
+        #region << Public Properties >>
+              
+        /// <summary>
+        /// Key
+        /// </summary>
+        [JsonIgnore]
+        public string Key { get; set; }
 
         /// <summary>
         /// Gets the current period.
         /// </summary>
+        [JsonIgnore]
         public Period Today
         {
             get
