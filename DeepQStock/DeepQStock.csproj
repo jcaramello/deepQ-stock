@@ -67,8 +67,9 @@
   <ItemGroup>
     <Compile Include="Config\QNetworkParameters.cs" />
     <Compile Include="CsvDataProvider.cs" />
-    <Compile Include="Storage\IStorageService.cs" />
-    <Compile Include="Storage\RedisStorageService.cs" />
+    <Compile Include="Storage\IStorage.cs" />
+    <Compile Include="Storage\PeriodStorage.cs" />
+    <Compile Include="Storage\RedisContext.cs" />
     <Compile Include="DeepRLAgent.cs" />
     <Compile Include="Config\DeepRLAgentParameters.cs" />
     <Compile Include="Config\StockExchangeParameters.cs" />

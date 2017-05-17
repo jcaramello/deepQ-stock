@@ -8,53 +8,9 @@ using System.Threading.Tasks;
 namespace DeepQStock.Config
 {
     public class StockExchangeParameters
-    {
-        #region << Constructor >>
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StockExchangeParameters"/> class.
-        /// </summary>
-        public StockExchangeParameters()
-        {
-            PeriodTypes = new PeriodType[] { PeriodType.Day, PeriodType.Week, PeriodType.Month };
-            EpisodeLength = 7;
-            NumberOfPeriods = 14;
-            InitialCapital = 100000;
-            TransactionCost = 0.01;
-            DailyIndicators = new List<ITechnicalIndicator>()
-            {
-                new SimpleMovingAverage(8),
-                new ExponentialMovingAverage(20),
-                new ExponentialMovingAverage(50),
-                new ExponentialMovingAverage(200),
-                new AverageTrueRange(),
-                new RSI(),
-                new DMI(),
-                new MACD(),
-                new BollingerBandsPercentB()
-            };
-
-        }
-
-        #endregion
-
-        #region << Public Properties >>
-
-        /// <summary>
-        /// Gets or sets the agent.
-        /// </summary>
-        public IAgent Agent { get; set; }
-
-        /// <summary>
-        /// Gets or sets the CSV file path.
-        /// </summary>
-        public string CsvFilePath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the start date.
-        /// </summary>
-        public DateTime? StartDate { get; set; }
-
+    {      
+        #region << Public Properties >>      
+      
         /// <summary>
         /// Gets or sets the period types.
         /// </summary>
@@ -99,6 +55,35 @@ namespace DeepQStock.Config
         /// Get or Set the agent initial capital
         /// </summary>
         public double InitialCapital { get; set; }
+
+        #endregion
+
+        #region << Constructor >>
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StockExchangeParameters"/> class.
+        /// </summary>
+        public StockExchangeParameters()
+        {
+            PeriodTypes = new PeriodType[] { PeriodType.Day, PeriodType.Week, PeriodType.Month };
+            EpisodeLength = 7;
+            NumberOfPeriods = 14;
+            InitialCapital = 100000;
+            TransactionCost = 0.01;
+            DailyIndicators = new List<ITechnicalIndicator>()
+            {
+                new SimpleMovingAverage(8),
+                new ExponentialMovingAverage(20),
+                new ExponentialMovingAverage(50),
+                new ExponentialMovingAverage(200),
+                new AverageTrueRange(),
+                new RSI(),
+                new DMI(),
+                new MACD(),
+                new BollingerBandsPercentB()
+            };
+
+        }
 
         #endregion
     }

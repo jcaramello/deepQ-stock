@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DeepQStock.Utils;
 using Encog.Engine.Network.Activation;
+using DeepQStock.Storage;
 
 namespace DeepQStock
 {
@@ -44,6 +45,11 @@ namespace DeepQStock
         /// </value>
         private QNetwork Q { get; set; }
 
+        /// <summary>
+        /// Storage Service
+        /// </summary>
+        public IStorage Storage { get; set; }
+
         #endregion
 
         #region << Constructor >>
@@ -52,8 +58,9 @@ namespace DeepQStock
         /// Initializes a new instance of the <see cref="DeepRLAgent"/> class.
         /// </summary>
         /// <param name="initializer">The initializer.</param>
-        public DeepRLAgent(Action<DeepRLAgentParameters> initializer = null)
+        public DeepRLAgent(IStorage storage, Action<DeepRLAgentParameters> initializer = null)
         {
+            Storage = storage;
             Parameters = new DeepRLAgentParameters();
             initializer?.Invoke(Parameters);
             RandomGenerator = new Random();

@@ -24,13 +24,7 @@ namespace DeepQStock
         /// <summary>
         /// Gets the agent.
         /// </summary>        
-        private IAgent Agent
-        {
-            get
-            {
-                return Parameters.Agent;
-            }
-        }        
+        private IAgent Agent { get; set; }
 
         /// <summary>
         /// Gets or sets the data provider.
@@ -90,17 +84,12 @@ namespace DeepQStock
         /// </summary>
         /// <param name="initializer">The initializer.</param>
         /// <exception cref="System.Exception">You must pass a csv file path for load the simulated data</exception>
-        public StockExchange(Action<StockExchangeParameters> initializer = null)
+        public StockExchange(IAgent agent, IDataProvider provider, Action<StockExchangeParameters> initializer = null)
         {
+            Agent = agent;
+            DataProvider = provider;
             Parameters = new StockExchangeParameters();
-            initializer?.Invoke(Parameters);
-
-            if (Parameters.CsvFilePath == null)
-            {
-                throw new Exception("You must pass a csv file path for load the simulated data");
-            }
-
-            DataProvider = new CsvDataProvider(Parameters.CsvFilePath, Parameters.NumberOfPeriods, Parameters.StartDate);
+            initializer?.Invoke(Parameters);         
         }
 
         #endregion
@@ -124,11 +113,11 @@ namespace DeepQStock
                 foreach (var state in episode)
                 {
                     if (CurrentState == null)
-                    {                        
-                        state.Today.CurrentCapital = Parameters.InitialCapital;                        
+                    {
+                        state.Today.CurrentCapital = Parameters.InitialCapital;
                     }
 
-                    CurrentState = state;                    
+                    CurrentState = state;
                     action = Agent.Decide(state, reward);
                     reward = Execute(action);
                 }
@@ -172,7 +161,7 @@ namespace DeepQStock
         /// <param name="period">The period.</param>
         /// <returns></returns>
         private State GenerateState(Period upcomingDay)
-        {            
+        {
             var state = CurrentState != null ? CurrentState.Clone() : new State();
 
             foreach (var indicator in DailyIndicators)
