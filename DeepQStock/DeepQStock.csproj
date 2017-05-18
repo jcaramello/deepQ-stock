@@ -69,14 +69,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config\QNetworkParameters.cs" />
+    <Compile Include="DeepRLAgent\DeepRLAgentEvents.cs" />
+    <Compile Include="DeepRLAgent\QNetworkParameters.cs" />
+    <Compile Include="Stocks\StockExchangeEvents.cs" />
     <Compile Include="Utils\CsvDataProvider.cs" />
     <Compile Include="Storage\BaseStorage.cs" />
     <Compile Include="Storage\IStorage.cs" />
     <Compile Include="Storage\PeriodStorage.cs" />
-    <Compile Include="DeepRLAgent.cs" />
-    <Compile Include="Config\DeepRLAgentParameters.cs" />
-    <Compile Include="Config\StockExchangeParameters.cs" />
+    <Compile Include="DeepRLAgent\DeepRLAgent.cs" />
+    <Compile Include="DeepRLAgent\DeepRLAgentParameters.cs" />
+    <Compile Include="Stocks\StockExchangeParameters.cs" />
     <Compile Include="Enums\ActionType.cs" />
     <Compile Include="Enums\PeriodType.cs" />
     <Compile Include="Domain\Experience.cs" />
@@ -92,9 +94,9 @@
     <Compile Include="Indicators\ITechnicalIndicator.cs" />
     <Compile Include="Domain\Period.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QNetwork.cs" />
+    <Compile Include="DeepRLAgent\QNetwork.cs" />
     <Compile Include="Domain\State.cs" />
-    <Compile Include="StockExchange.cs" />
+    <Compile Include="Stocks\StockExchange.cs" />
     <Compile Include="Storage\StateStorage.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="Utils\IndicatorUtils.cs" />
