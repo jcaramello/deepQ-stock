@@ -47,6 +47,11 @@ namespace DeepQStock
         private QNetwork Q { get; set; }
 
         /// <summary>
+        /// Internal memory relplay
+        /// </summary>
+        private CircularQueue<Experience> MemoryReplay { get; set; }
+
+        /// <summary>
         /// Period Storage
         /// </summary>
         public IStorage<Period> PeriodStorage { get; set; }
@@ -65,6 +70,7 @@ namespace DeepQStock
             Parameters = new DeepRLAgentParameters();
             initializer?.Invoke(Parameters);
             RandomGenerator = new Random();
+            MemoryReplay = new CircularQueue<Experience>(Parameters.MemoryReplaySize);
         }
 
         #endregion
@@ -87,16 +93,8 @@ namespace DeepQStock
             CurrentState = state;
 
             if (previuosState != null)
-            {
-                var experience = new Experience()
-                {
-                    From = previuosState,
-                    Action = CurrentAction,
-                    Reward = reward,
-                    To = CurrentState
-                };
-
-                SaveExperience(experience);
+            {                
+                SaveExperience(previuosState, CurrentAction, reward, CurrentState);
             }
 
             return PolicyPi();
@@ -144,9 +142,17 @@ namespace DeepQStock
         /// <param name="action">At.</param>
         /// <param name="reward">The rt_plus_1.</param>
         /// <param name="nextState">The st_plus_1.</param>
-        private void SaveExperience(Experience experience)
+        private void SaveExperience(State from, ActionType action, double reward, State to)
         {
+            var experience = new Experience()
+            {
+                From = from,
+                Action = CurrentAction,
+                Reward = reward,
+                To = to
+            };
 
+            MemoryReplay.Enqueue(experience);        
         }
 
         /// <summary>

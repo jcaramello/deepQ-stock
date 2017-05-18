@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Enums;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,13 @@ namespace DeepQStock.Domain
         /// <summary>
         /// Gets or sets from.
         /// </summary>
+        [JsonIgnore]
         public State From { get; set; }
+
+        /// <summary>
+        /// State From id
+        /// </summary>
+        public long FromId { get; set; }
 
         /// <summary>
         /// Gets or sets the action.
@@ -27,6 +34,12 @@ namespace DeepQStock.Domain
         /// <summary>
         /// Gets or sets to.
         /// </summary>
-        public State To { get; set; }        
+        [JsonIgnore]
+        public State To { get; set; }
+
+        /// <summary>
+        /// State To Id
+        /// </summary>
+        public long ToId { get; set; }
     }
 }

@@ -15,8 +15,8 @@ namespace DeepQStock.Config
         public double eGreedyProbability { get; set; }
 
         /// <summary>
-        /// Gets or sets the in and out strategy, that the agent will be use for buy and sell actions.
-        /// It should be a value between 0 and 1 that represent the percentage that the agente buy o sell in each transaction.
+        /// Gets or sets the in and out strategy that the agent will be use for buy and sell actions.
+        /// It should be a value between 0 and 1 that represent the percentage that the agent buy o sell in each transaction.
         /// </summary>
         public double InOutStrategy { get; set; }
 
@@ -40,6 +40,11 @@ namespace DeepQStock.Config
         /// </summary>
         public int NeuronCountForHiddenLayers { get; set; }
 
+        /// <summary>
+        /// Get or set the size of the internal agent's memory replay
+        /// </summary>
+        public int MemoryReplaySize { get; set; }
+
         #endregion
 
         #region << Constructor >>
@@ -55,6 +60,7 @@ namespace DeepQStock.Config
             DiscountFactor = 0.5;
             HiddenLayersCount = 2;
             NeuronCountForHiddenLayers = HiddenLayersCount * 2;
+            MemoryReplaySize = 2000;
         }
 
         #endregion
