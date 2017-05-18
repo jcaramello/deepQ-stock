@@ -85,7 +85,7 @@ namespace DeepQStock
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
         public void Train(IList<Tuple<State, double[]>> trainingSet)
-        {
+        {            
             var testInputs = new List<double[]>();
             var expectedResults = new List<double[]>();
 
@@ -102,7 +102,8 @@ namespace DeepQStock
             do
             {
                 train.Iteration();
-                Console.WriteLine(@"Epoch #{0} - Error: {1}", epoch, train.Error);
+                Console.SetCursorPosition(0, 1);
+                Console.WriteLine(@"Start Training - Epoch #{0} - Error: {1}", epoch, train.Error);
                 epoch++;
             } while (train.Error > Parameters.TrainingError);
         }

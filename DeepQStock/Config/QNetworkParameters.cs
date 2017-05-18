@@ -56,7 +56,7 @@ namespace DeepQStock.Config
         public QNetworkParameters()
         {
             Layers = new List<LayerParameters>();
-            TrainingError = 0.01;
+            TrainingError = 0.00001;
         }
         
         #endregion

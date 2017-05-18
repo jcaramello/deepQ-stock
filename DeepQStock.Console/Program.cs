@@ -1,6 +1,7 @@
 ﻿using DeepQStock;
 using DeepQStock.Config;
 using DeepQStock.Storage;
+using DeepQStock.Utils;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,9 @@ namespace DeepQStock.Console
             var episodeLength = 5;
             var manager = new BasicRedisClientManager("localhost:6379");
             var periodStorage = new PeriodStorage(manager);
-            var agent = new DeepRLAgent(periodStorage);
+            var agent = new DeepRLAgent();
             var dataProvider = new CsvDataProvider("../../../data/APPL.csv", episodeLength);
+
             var stock = new StockExchange(agent, dataProvider, p =>
             {
                 p.EpisodeLength = episodeLength;

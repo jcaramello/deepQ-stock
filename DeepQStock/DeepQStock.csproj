@@ -70,9 +70,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\QNetworkParameters.cs" />
-    <Compile Include="CsvDataProvider.cs" />
+    <Compile Include="Utils\CsvDataProvider.cs" />
     <Compile Include="Storage\BaseStorage.cs" />
-    <Compile Include="Storage\IRedisClientsManager.cs" />
     <Compile Include="Storage\IStorage.cs" />
     <Compile Include="Storage\PeriodStorage.cs" />
     <Compile Include="DeepRLAgent.cs" />

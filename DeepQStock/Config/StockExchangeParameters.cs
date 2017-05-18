@@ -82,6 +82,31 @@ namespace DeepQStock.Config
                 new MACD(),
                 new BollingerBandsPercentB()
             };
+            WeeklyIndicators = new List<ITechnicalIndicator>()
+            {
+                new SimpleMovingAverage(8),
+                new ExponentialMovingAverage(20),
+                new ExponentialMovingAverage(50),
+                new ExponentialMovingAverage(200),
+                new AverageTrueRange(),
+                new RSI(),
+                new DMI(),
+                new MACD(),
+                new BollingerBandsPercentB()
+            };
+            MonthlyIndicators = new List<ITechnicalIndicator>()
+            {
+                new SimpleMovingAverage(8),
+                new ExponentialMovingAverage(20),
+                new ExponentialMovingAverage(50),
+                new ExponentialMovingAverage(200),
+                new AverageTrueRange(),
+                new RSI(),
+                new DMI(),
+                new MACD(),
+                new BollingerBandsPercentB()
+            };
+
 
         }
 

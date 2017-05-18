@@ -43,6 +43,17 @@ namespace DeepQStock
         public State CurrentState { get; set; }
 
         /// <summary>
+        /// Gets or sets the current period.
+        /// </summary>
+        public Period CurrentPeriod
+        {
+            get
+            {
+                return CurrentState != null ? CurrentState.DayLayer.Peek() : null;
+            }
+        }
+
+        /// <summary>
         /// List of stock exchange  daily indicators used in each state
         /// </summary>
         public IList<ITechnicalIndicator> DailyIndicators
@@ -112,20 +123,34 @@ namespace DeepQStock
             while ((episode = NextEpisode()) != null)
             {
                 foreach (var state in episode)
-                {
+                {                    
                     if (CurrentState == null)
                     {
                         state.Today.CurrentCapital = Parameters.InitialCapital;
                     }
 
                     CurrentState = state;
+
+                    Console.SetCursorPosition(0, 0);
+                    Console.WriteLine(string.Format("Day {0} - Ganancia: ${1:0.00}", CurrentPeriod.Date.ToShortDateString(), GetProfits()));
+
                     action = Agent.Decide(state, reward);
                     reward = Execute(action);
                 }
 
-                //Agent.OnEpisodeComplete();
+                Agent.OnEpisodeComplete();
                 EpisodeSimulated++;
             }
+        }
+
+
+        /// <summary>
+        /// Gets the profits.
+        /// </summary>
+        /// <returns></returns>
+        public double GetProfits()
+        {
+            return CurrentPeriod.CurrentCapital + (CurrentPeriod.ActualPosicion * CurrentPeriod.Close);
         }
 
         #endregion
@@ -185,10 +210,10 @@ namespace DeepQStock
         /// <param name="layer">The layer.</param>
         /// <param name="upcomingDay">The upcoming day.</param>
         /// <param name="Indicators">The indicators.</param>
-        private void UpdateLayer(PeriodType type, CircularQueue<Period> layer, Period upcomingDay, IEnumerable<ITechnicalIndicator> Indicators)
+        private void UpdateLayer(PeriodType type, CircularQueue<Period> layer, Period upcomingDay, IEnumerable<ITechnicalIndicator> indicators)
         {
             Period current = null;
-            var needNewPeriod = type == PeriodType.Week ? upcomingDay.Date.IsStartOfWeek() : upcomingDay.Date.IsStartOfMonth();
+            bool needNewPeriod = type == PeriodType.Week ? upcomingDay.Date.IsStartOfWeek() : upcomingDay.Date.IsStartOfMonth();
 
             if (layer.IsEmpty || needNewPeriod)
             {
@@ -202,7 +227,7 @@ namespace DeepQStock
                 current.Merge(upcomingDay);
             }
 
-            foreach (var indicator in Indicators)
+            foreach (var indicator in indicators)
             {
                 var newValues = indicator.Update(current);
                 if (current.Indicators.ContainsKey(indicator.Name))
@@ -211,7 +236,7 @@ namespace DeepQStock
                 }
                 else
                 {
-                    upcomingDay.Indicators.Add(indicator.Name, newValues);
+                    current.Indicators.Add(indicator.Name, newValues);
                 }
             }
         }

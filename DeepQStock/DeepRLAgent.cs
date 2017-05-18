@@ -49,12 +49,7 @@ namespace DeepQStock
         /// <summary>
         /// Internal memory relplay
         /// </summary>
-        private CircularQueue<Experience> MemoryReplay { get; set; }
-
-        /// <summary>
-        /// Period Storage
-        /// </summary>
-        public IStorage<Period> PeriodStorage { get; set; }
+        private CircularQueue<Experience> MemoryReplay { get; set; }       
 
         #endregion
 
@@ -64,9 +59,8 @@ namespace DeepQStock
         /// Initializes a new instance of the <see cref="DeepRLAgent"/> class.
         /// </summary>
         /// <param name="initializer">The initializer.</param>
-        public DeepRLAgent(IStorage<Period> storage, Action<DeepRLAgentParameters> initializer = null)
-        {
-            PeriodStorage = storage;
+        public DeepRLAgent(Action<DeepRLAgentParameters> initializer = null)
+        {            
             Parameters = new DeepRLAgentParameters();
             initializer?.Invoke(Parameters);
             RandomGenerator = new Random();
@@ -160,15 +154,16 @@ namespace DeepQStock
         /// </summary>
         /// <returns></returns>
         private IList<Experience> GenerateMiniBatch()
-        {
-            var minibatch = new List<Experience>();
-
-            for (int i = 0; i < Parameters.MiniBatchSize; i++)
+        {            
+            if (MemoryReplay.Count <= Parameters.MiniBatchSize)
             {
-                minibatch.Add(new Experience());
+                return MemoryReplay.ToList();
             }
-
-            return minibatch;
+            else
+            {
+                var indexes = Enumerable.Range(0, MemoryReplay.Count - 1).OrderBy(x => RandomGenerator.Next());
+                return MemoryReplay.Where((e, i) => indexes.Contains(i)).ToList();
+            }            
         }
 
         /// <summary>
