@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using System;
 
 namespace DeepQStock
 {
@@ -11,7 +12,7 @@ namespace DeepQStock
         /// <param name="state">The state.</param>
         /// <param name="reward">The reward.</param>
         /// <returns></returns>
-        ActionType Decide(State state, double reward);
+        Tuple<ActionType, double> Decide(State state, double reward);
 
         /// <summary>
         /// Called when [episode complete].

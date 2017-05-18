@@ -57,8 +57,8 @@ namespace DeepQStock.Config
             eGreedyProbability = 0.001;
             InOutStrategy = 0.25;
             MiniBatchSize = 100;
-            DiscountFactor = 0.5;
-            HiddenLayersCount = 2;
+            DiscountFactor = 0.1;
+            HiddenLayersCount = 4;
             NeuronCountForHiddenLayers = HiddenLayersCount * 2;
             MemoryReplaySize = 2000;
         }

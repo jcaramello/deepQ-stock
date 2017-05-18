@@ -76,7 +76,7 @@ namespace DeepQStock
         /// </summary>
         /// <param name="state">The st.</param>
         /// <returns></returns>
-        public ActionType Decide(State state, double reward)
+        public Tuple<ActionType, double> Decide(State state, double reward)
         {
             if (Q == null)
             {
@@ -112,7 +112,7 @@ namespace DeepQStock
         /// otherwise select the action a' that max a' Q(s, a')
         /// </summary>
         /// <returns></returns>
-        private ActionType PolicyPi()
+        private Tuple<ActionType, double> PolicyPi()
         {
             var probability = RandomGenerator.NextDouble();
 
@@ -126,7 +126,7 @@ namespace DeepQStock
                 CurrentAction = Q[CurrentState].Where(i => validActions.Contains(i.Key)).MaxBy(i => i.Value).Key;
             }
 
-            return CurrentAction;
+            return Tuple.Create(CurrentAction, Parameters.InOutStrategy);
         }
 
         /// <summary>

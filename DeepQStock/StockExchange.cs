@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using DeepQStock.Utils;
 using DeepQStock.Domain;
+using Newtonsoft.Json;
 
 namespace DeepQStock
 {
@@ -30,6 +31,7 @@ namespace DeepQStock
         /// <summary>
         /// Gets or sets the data provider.
         /// </summary>
+        [JsonIgnore]
         public IDataProvider DataProvider { get; set; }
 
         /// <summary>
@@ -38,13 +40,20 @@ namespace DeepQStock
         public int EpisodeSimulated { get; set; }
 
         /// <summary>
+        /// Gets or sets the days simulated.
+        /// </summary>
+        public int DaysSimulated { get; set; }
+
+        /// <summary>
         /// Current State
         /// </summary>
+        [JsonIgnore]
         public State CurrentState { get; set; }
 
         /// <summary>
         /// Gets or sets the current period.
         /// </summary>
+        [JsonIgnore]
         public Period CurrentPeriod
         {
             get
@@ -56,6 +65,7 @@ namespace DeepQStock
         /// <summary>
         /// List of stock exchange  daily indicators used in each state
         /// </summary>
+        [JsonIgnore]
         public IList<ITechnicalIndicator> DailyIndicators
         {
             get
@@ -67,6 +77,7 @@ namespace DeepQStock
         /// <summary>
         /// List of stock exchange  weekly indicators used in each state
         /// </summary>
+        [JsonIgnore]
         public IList<ITechnicalIndicator> WeeklyIndicators
         {
             get
@@ -78,6 +89,7 @@ namespace DeepQStock
         /// <summary>
         /// List of stock exchange monthly indicators used in each state
         /// </summary>
+        [JsonIgnore]
         public IList<ITechnicalIndicator> MonthlyIndicators
         {
             get
@@ -85,7 +97,6 @@ namespace DeepQStock
                 return Parameters.MonthlyIndicators;
             }
         }
-
 
         #endregion
 
@@ -101,7 +112,7 @@ namespace DeepQStock
             Agent = agent;
             DataProvider = provider;
             Parameters = new StockExchangeParameters();
-            initializer?.Invoke(Parameters);         
+            initializer?.Invoke(Parameters);
         }
 
         #endregion
@@ -117,25 +128,21 @@ namespace DeepQStock
                 return;
 
             IEnumerable<State> episode = null;
+            var actionStrategy = new Tuple<ActionType, double>(ActionType.Wait, 0.0);
             double reward = 0.0;
-            ActionType action = ActionType.Wait;
 
             while ((episode = NextEpisode()) != null)
             {
                 foreach (var state in episode)
                 {                    
-                    if (CurrentState == null)
-                    {
-                        state.Today.CurrentCapital = Parameters.InitialCapital;
-                    }
-
                     CurrentState = state;
+                    actionStrategy = Agent.Decide(state, reward);
+                    reward = Execute(actionStrategy.Item1, actionStrategy.Item2);
+                    DaysSimulated++;
 
+                    var templateMsg = "Day {0} {1} - Selected Action: {2} - Reward: {3} - Ganancia Acumulada: ${4:0.00}";
                     Console.SetCursorPosition(0, 0);
-                    Console.WriteLine(string.Format("Day {0} - Ganancia: ${1:0.00}", CurrentPeriod.Date.ToShortDateString(), GetProfits()));
-
-                    action = Agent.Decide(state, reward);
-                    reward = Execute(action);
+                    Console.WriteLine(string.Format(templateMsg, DaysSimulated , CurrentPeriod.Date.ToShortDateString(), actionStrategy.Item1.ToString(), reward, GetProfits()));
                 }
 
                 Agent.OnEpisodeComplete();
@@ -150,7 +157,7 @@ namespace DeepQStock
         /// <returns></returns>
         public double GetProfits()
         {
-            return CurrentPeriod.CurrentCapital + (CurrentPeriod.ActualPosicion * CurrentPeriod.Close);
+            return Parameters.InitialCapital - (CurrentPeriod.CurrentCapital + (CurrentPeriod.ActualPosicion * CurrentPeriod.Close));
         }
 
         #endregion
@@ -162,9 +169,46 @@ namespace DeepQStock
         /// </summary>
         /// <param name="action">The action.</param>
         /// <returns></returns>
-        private double Execute(ActionType action)
+        private double Execute(ActionType action, double inOutStrategy)
         {
-            return 0.0;
+            var reward = 0.0;
+            var actionPrice = CurrentPeriod.Close;
+            var capital = CurrentPeriod.CurrentCapital;
+            var position = CurrentPeriod.ActualPosicion;
+
+            if (action == ActionType.Buy && capital > 0)
+            {
+                var totalToBuy = inOutStrategy * capital;
+                if (totalToBuy > actionPrice)
+                {
+                    var actionsToBuy = (int)Math.Truncate(totalToBuy / actionPrice);
+                    var transactionCost = actionsToBuy * actionPrice * (1 + Parameters.TransactionCost);
+                    if (transactionCost <= capital)
+                    {
+                        CurrentPeriod.ActualPosicion += actionsToBuy;
+                        CurrentPeriod.CurrentCapital -= transactionCost;
+                    }
+                }
+            }
+            else if (action == ActionType.Sell && position > 0)
+            {
+                var actionsToSell = (int)Math.Truncate(inOutStrategy * position);
+                if (actionsToSell == 0)
+                {
+                    //liquidated the whole position
+                    actionsToSell = position;
+                }
+
+                var transactionCost = actionsToSell * actionPrice * (1 + Parameters.TransactionCost);
+                if (transactionCost <= capital)
+                {
+                    CurrentPeriod.ActualPosicion -= actionsToSell;
+                    CurrentPeriod.CurrentCapital += transactionCost;
+                }
+
+            }
+
+            return reward;
         }
 
         /// <summary>
@@ -177,10 +221,20 @@ namespace DeepQStock
 
             foreach (var upcomingDay in upcomingDays)
             {
+                if (CurrentPeriod != null)
+                {
+                    upcomingDay.ActualPosicion = CurrentPeriod.ActualPosicion;
+                    upcomingDay.CurrentCapital = CurrentPeriod.CurrentCapital;
+                }
+                else
+                {
+                    upcomingDay.CurrentCapital = Parameters.InitialCapital;
+                }                
+
                 yield return GenerateState(upcomingDay);
             }
         }
-
+        
         /// <summary>
         /// Generates the state.
         /// </summary>
