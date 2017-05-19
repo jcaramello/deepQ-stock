@@ -46,7 +46,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the simulation velocity in miliseconds.
         /// </summary>
-        public int? SimulationVelocity { get; set; }
+        public int SimulationVelocity { get; set; }
 
         /// <summary>
         /// Get or Set the agent initial capital
@@ -71,7 +71,7 @@ namespace DeepQStock.Stocks
             EpisodeLength = 7;
             NumberOfPeriods = 14;
             InitialCapital = 100000;
-            TransactionCost = 0.001;
+            TransactionCost = 0.01;
             InOutStrategy = 0.25;
             SimulationVelocity = 500;
             DailyIndicators = new List<ITechnicalIndicator>()

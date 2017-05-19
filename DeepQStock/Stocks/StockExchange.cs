@@ -162,7 +162,12 @@ namespace DeepQStock.Stocks
                         Reward = reward,
                         AccumulatedProfit = GetProfits(),
                         Period = CurrentPeriod
-                    });                    
+                    });
+
+                    if (Parameters.SimulationVelocity > 0)
+                    {
+                        Thread.Sleep(Parameters.SimulationVelocity);
+                    }
                 }
 
                 Agent.OnEpisodeComplete();
@@ -179,7 +184,9 @@ namespace DeepQStock.Stocks
         /// <returns></returns>
         public double GetProfits()
         {
-            return Parameters.InitialCapital - (CurrentPeriod.CurrentCapital + (CurrentPeriod.ActualPosicion * CurrentPeriod.Close));
+            double capitalization = (CurrentPeriod.CurrentCapital + (CurrentPeriod.ActualPosicion * CurrentPeriod.Close));
+
+            return capitalization - Parameters.InitialCapital;
         }
 
         #endregion
@@ -194,6 +201,7 @@ namespace DeepQStock.Stocks
         private double Execute(ActionType action, double inOutStrategy)
         {            
             var transactionCost = 0.0;
+            var profits = 0.0;
             var actionPrice = CurrentPeriod.Close;
             var capital = CurrentPeriod.CurrentCapital;
             var position = CurrentPeriod.ActualPosicion;
@@ -203,12 +211,13 @@ namespace DeepQStock.Stocks
                 var totalToBuy = inOutStrategy * capital;
                 if (totalToBuy > actionPrice)
                 {
-                    var actionsToBuy = (int)Math.Truncate(totalToBuy / actionPrice);
-                    transactionCost = actionsToBuy * actionPrice *  Parameters.TransactionCost;
+                    var actionsToQuantity = (int)Math.Truncate(totalToBuy / actionPrice);
+                    transactionCost = actionsToQuantity * actionPrice *  Parameters.TransactionCost;                    
                     if (transactionCost <= capital)
                     {
-                        CurrentPeriod.ActualPosicion += actionsToBuy;
-                        CurrentPeriod.CurrentCapital -= transactionCost;                        
+                        var operationCost = actionPrice * actionsToQuantity;
+                        CurrentPeriod.ActualPosicion += actionsToQuantity;
+                        CurrentPeriod.CurrentCapital -= operationCost + transactionCost;                        
                     }
                 }
             }
@@ -216,8 +225,7 @@ namespace DeepQStock.Stocks
             {
                 var actionsToSell = (int)Math.Truncate(inOutStrategy * position);
                 if (actionsToSell == 0)
-                {
-                    //liquidated the whole position
+                {                    
                     actionsToSell = position;
                 }
 
@@ -225,12 +233,16 @@ namespace DeepQStock.Stocks
                 if (transactionCost <= capital)
                 {
                     CurrentPeriod.ActualPosicion -= actionsToSell;
-                    CurrentPeriod.CurrentCapital += transactionCost;                    
+                    CurrentPeriod.CurrentCapital += (actionsToSell * actionPrice) - transactionCost;                    
                 }
-
             }
 
-            return CurrentPeriod.Close - CurrentPeriod.Open - transactionCost; 
+            if (position > 0)
+            {
+                profits =  position * (CurrentPeriod.Close - CurrentPeriod.Open) ;
+            }
+
+            return profits - transactionCost;
         }
 
         /// <summary>
