@@ -29,11 +29,11 @@ namespace DeepQStock.Console
             });
 
             System.Console.Clear();
-            DrawLine();
+            System.Console.WriteLine();
             System.Console.WriteLine("\tUniversidad Nacional Del Sur");
             System.Console.WriteLine("\tProyecto Final 2017");
             System.Console.WriteLine("\tDeepQ-Stock");
-            DrawLine();
+            DrawLine('*');
 
             var mainSectionLine = 6;
             var statusBarLine = 30;
@@ -44,7 +44,8 @@ namespace DeepQStock.Console
                 ClearLine();                
                 System.Console.WriteLine(" Periodo: ");
                 DrawLine();
-                System.Console.WriteLine(" Fecha {0} - Open: {1:C} - High: {2:C} - Low: {3:C} - Close: {4:C}", a.Date.ToShortDateString(), a.Period.Open, a.Period.High, a.Period.Low, a.Period.Close);                                
+                System.Console.WriteLine(" Fecha {0} - Open: {1:C} - High: {2:C} - Low: {3:C} - Close: {4:C}", a.Date.ToShortDateString(), a.Period.Open, a.Period.High, a.Period.Low, a.Period.Close);
+                System.Console.WriteLine();
                 System.Console.WriteLine(" Indicadores Bursatiles: ");
                 DrawLine();                
                 a.Period.ToString().Split('|').ToList().ForEach(i => System.Console.WriteLine(" " + i.Trim()));
