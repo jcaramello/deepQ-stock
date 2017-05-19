@@ -46,9 +46,9 @@ namespace DeepQStock.Console
                 DrawLine();
                 System.Console.WriteLine(" Fecha {0} - Open: {1:C} - High: {2:C} - Low: {3:C} - Close: {4:C}", a.Date.ToShortDateString(), a.Period.Open, a.Period.High, a.Period.Low, a.Period.Close);
                 System.Console.WriteLine();
-                System.Console.WriteLine(" Indicadores Bursatiles: ");
+                System.Console.WriteLine(" Indicadores Bursatiles: ");                
+                DrawLine();
                 System.Console.WriteLine();
-                DrawLine();                
                 a.Period.ToString().Split('|').ToList().ForEach(i => System.Console.WriteLine("\t" + i.Trim()));
                 System.Console.WriteLine();                
                 System.Console.WriteLine(" Estado del Agente Dia {0}", a.DayNumber);
