@@ -115,7 +115,7 @@ namespace DeepQStock.DeppRLAgent
                     Error = train.Error
                 });
 
-            } while (train.Error > Parameters.TrainingError);
+            } while (train.Error > Parameters.TrainingError && epoch < Parameters.MaxIterationPerTrainging);
         }
 
         #endregion

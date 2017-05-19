@@ -12,7 +12,7 @@ namespace DeepQStock
         /// <param name="state">The state.</param>
         /// <param name="reward">The reward.</param>
         /// <returns></returns>
-        Tuple<ActionType, double> Decide(State state, double reward);
+        ActionType Decide(State state, double reward);
 
         /// <summary>
         /// Called when [episode complete].

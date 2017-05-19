@@ -1,4 +1,5 @@
-﻿using DeepQStock.Enums;
+﻿using DeepQStock.Domain;
+using DeepQStock.Enums;
 using System;
 
 namespace DeepQStock.Stocks
@@ -40,11 +41,6 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the actual position.
         /// </summary>
-        public int ActualPosition { get; set; }
-
-        /// <summary>
-        /// Gets or sets the current capital.
-        /// </summary>
-        public double CurrentCapital { get; set; }
+        public Period Period{ get; set; }
     }
 }

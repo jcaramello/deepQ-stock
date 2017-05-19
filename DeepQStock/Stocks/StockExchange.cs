@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using DeepQStock.Utils;
 using DeepQStock.Domain;
 using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DeepQStock.Stocks
 {
@@ -102,6 +104,11 @@ namespace DeepQStock.Stocks
         /// </summary>
         public event EventHandler<OnDayCompleteArgs> OnDayComplete;
 
+        /// <summary>
+        /// Gets or sets the status.
+        /// </summary>
+        public StockExchangeStatus Status { get; set; }
+
         #endregion
 
         #region << Constructor >>
@@ -131,8 +138,11 @@ namespace DeepQStock.Stocks
             if (Agent == null)
                 return;
 
+            Status = StockExchangeStatus.Running;
+        
+
             IEnumerable<State> episode = null;
-            var actionStrategy = new Tuple<ActionType, double>(ActionType.Wait, 0.0);
+            var action = ActionType.Wait;
             double reward = 0.0;
 
             while ((episode = NextEpisode()) != null)
@@ -140,25 +150,26 @@ namespace DeepQStock.Stocks
                 foreach (var state in episode)
                 {                    
                     CurrentState = state;
-                    actionStrategy = Agent.Decide(state, reward);
-                    reward = Execute(actionStrategy.Item1, actionStrategy.Item2);
+                    action = Agent.Decide(state, reward);
+                    reward = Execute(action, Parameters.InOutStrategy);
                     DaysSimulated++;
 
                     OnDayComplete?.Invoke(this, new OnDayCompleteArgs()
                     {
                         DayNumber = DaysSimulated,
                         Date = CurrentPeriod.Date,
-                        SelectedAction = actionStrategy.Item1,
+                        SelectedAction = action,
                         Reward = reward,
                         AccumulatedProfit = GetProfits(),
-                        ActualPosition = CurrentPeriod.ActualPosicion,
-                        CurrentCapital = CurrentPeriod.CurrentCapital
+                        Period = CurrentPeriod
                     });                    
                 }
 
                 Agent.OnEpisodeComplete();
-                EpisodeSimulated++;
+                EpisodeSimulated++;                          
             }
+
+            Status = StockExchangeStatus.Stopped;
         }
 
 
@@ -181,8 +192,8 @@ namespace DeepQStock.Stocks
         /// <param name="action">The action.</param>
         /// <returns></returns>
         private double Execute(ActionType action, double inOutStrategy)
-        {
-            var reward = 0.0;
+        {            
+            var transactionCost = 0.0;
             var actionPrice = CurrentPeriod.Close;
             var capital = CurrentPeriod.CurrentCapital;
             var position = CurrentPeriod.ActualPosicion;
@@ -193,11 +204,11 @@ namespace DeepQStock.Stocks
                 if (totalToBuy > actionPrice)
                 {
                     var actionsToBuy = (int)Math.Truncate(totalToBuy / actionPrice);
-                    var transactionCost = actionsToBuy * actionPrice * (1 + Parameters.TransactionCost);
+                    transactionCost = actionsToBuy * actionPrice *  Parameters.TransactionCost;
                     if (transactionCost <= capital)
                     {
                         CurrentPeriod.ActualPosicion += actionsToBuy;
-                        CurrentPeriod.CurrentCapital -= transactionCost;
+                        CurrentPeriod.CurrentCapital -= transactionCost;                        
                     }
                 }
             }
@@ -210,16 +221,16 @@ namespace DeepQStock.Stocks
                     actionsToSell = position;
                 }
 
-                var transactionCost = actionsToSell * actionPrice * (1 + Parameters.TransactionCost);
+                transactionCost = actionsToSell * actionPrice * Parameters.TransactionCost;
                 if (transactionCost <= capital)
                 {
                     CurrentPeriod.ActualPosicion -= actionsToSell;
-                    CurrentPeriod.CurrentCapital += transactionCost;
+                    CurrentPeriod.CurrentCapital += transactionCost;                    
                 }
 
             }
 
-            return reward;
+            return CurrentPeriod.Close - CurrentPeriod.Open - transactionCost; 
         }
 
         /// <summary>

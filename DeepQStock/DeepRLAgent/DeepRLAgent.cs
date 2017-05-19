@@ -83,7 +83,7 @@ namespace DeepQStock.DeppRLAgent
         /// </summary>
         /// <param name="state">The st.</param>
         /// <returns></returns>
-        public Tuple<ActionType, double> Decide(State state, double reward)
+        public ActionType Decide(State state, double reward)
         {
             if (Q == null)
             {
@@ -119,13 +119,13 @@ namespace DeepQStock.DeppRLAgent
         /// otherwise select the action a' that max a' Q(s, a')
         /// </summary>
         /// <returns></returns>
-        private Tuple<ActionType, double> PolicyPi()
+        private ActionType PolicyPi()
         {
             var probability = RandomGenerator.NextDouble();
 
             if (probability <= Parameters.eGreedyProbability)
             {
-                CurrentAction = (ActionType)RandomGenerator.Next(4);
+                CurrentAction = (ActionType)RandomGenerator.Next(3);
             }
             else
             {
@@ -133,7 +133,7 @@ namespace DeepQStock.DeppRLAgent
                 CurrentAction = Q[CurrentState].Where(i => validActions.Contains(i.Key)).MaxBy(i => i.Value).Key;
             }
 
-            return Tuple.Create(CurrentAction, Parameters.InOutStrategy);
+            return CurrentAction;
         }
 
         /// <summary>

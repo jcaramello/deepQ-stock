@@ -5,9 +5,9 @@ using System.Collections.Generic;
 namespace DeepQStock.Stocks
 {
     public class StockExchangeParameters
-    {      
+    {
         #region << Public Properties >>      
-      
+
         /// <summary>
         /// Gets or sets the period types.
         /// </summary>
@@ -44,7 +44,7 @@ namespace DeepQStock.Stocks
         public double TransactionCost { get; set; }
 
         /// <summary>
-        /// Gets or sets the simulation velocity.
+        /// Gets or sets the simulation velocity in miliseconds.
         /// </summary>
         public int? SimulationVelocity { get; set; }
 
@@ -52,6 +52,11 @@ namespace DeepQStock.Stocks
         /// Get or Set the agent initial capital
         /// </summary>
         public double InitialCapital { get; set; }
+
+        /// Gets or sets the in and out strategy that the agent will be use for buy and sell actions.
+        /// It should be a value between 0 and 1 that represent the percentage that the agent buy o sell in each transaction.
+        /// </summary>
+        public double InOutStrategy { get; set; }
 
         #endregion
 
@@ -66,7 +71,9 @@ namespace DeepQStock.Stocks
             EpisodeLength = 7;
             NumberOfPeriods = 14;
             InitialCapital = 100000;
-            TransactionCost = 0.01;
+            TransactionCost = 0.001;
+            InOutStrategy = 0.25;
+            SimulationVelocity = 500;
             DailyIndicators = new List<ITechnicalIndicator>()
             {
                 new SimpleMovingAverage(8),

@@ -56,7 +56,8 @@ namespace DeepQStock.DeppRLAgent
         public QNetworkParameters()
         {
             Layers = new List<LayerParameters>();
-            TrainingError = 0.00001;
+            TrainingError = 0.001;
+            MaxIterationPerTrainging = 10000;
         }
         
         #endregion
@@ -73,6 +74,11 @@ namespace DeepQStock.DeppRLAgent
         /// Gets or sets the training error.
         /// </summary>
         public double TrainingError { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum iteration per trainging.
+        /// </summary>
+        public int MaxIterationPerTrainging { get; set; }
 
         #endregion
     }

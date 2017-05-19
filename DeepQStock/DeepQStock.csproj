@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="DeepRLAgent\DeepRLAgentEvents.cs" />
     <Compile Include="DeepRLAgent\QNetworkParameters.cs" />
+    <Compile Include="Enums\StockExchangeStatus.cs" />
     <Compile Include="Stocks\StockExchangeEvents.cs" />
     <Compile Include="Utils\CsvDataProvider.cs" />
     <Compile Include="Storage\BaseStorage.cs" />

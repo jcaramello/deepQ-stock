@@ -96,7 +96,7 @@ namespace DeepQStock.Utils
                 Data = Data.Where(d => d.Date >= startDate.Value);
             }            
 
-            Data.OrderByDescending(d => d.Date);
+            Data = Data.OrderBy(d => d.Date);
         }
 
         #endregion
