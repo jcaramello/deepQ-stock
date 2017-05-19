@@ -73,7 +73,7 @@ namespace DeepQStock.Stocks
             InitialCapital = 100000;
             TransactionCost = 0.01;
             InOutStrategy = 0.25;
-            SimulationVelocity = 500;
+            SimulationVelocity = 0;
             DailyIndicators = new List<ITechnicalIndicator>()
             {
                 new SimpleMovingAverage(8),

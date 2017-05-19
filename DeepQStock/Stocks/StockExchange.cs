@@ -6,7 +6,7 @@ using DeepQStock.Utils;
 using DeepQStock.Domain;
 using Newtonsoft.Json;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace DeepQStock.Stocks
 {
@@ -145,8 +145,16 @@ namespace DeepQStock.Stocks
             var action = ActionType.Wait;
             double reward = 0.0;
 
-            while ((episode = NextEpisode()) != null)
+            while (Status == StockExchangeStatus.Running)
             {
+                episode = NextEpisode();
+
+                if (episode == null || episode.Count() == 0)
+                {
+                    Status = StockExchangeStatus.Stopped;
+                    break;
+                }
+
                 foreach (var state in episode)
                 {                    
                     CurrentState = state;
@@ -172,9 +180,7 @@ namespace DeepQStock.Stocks
 
                 Agent.OnEpisodeComplete();
                 EpisodeSimulated++;                          
-            }
-
-            Status = StockExchangeStatus.Stopped;
+            }            
         }
 
 
@@ -251,7 +257,7 @@ namespace DeepQStock.Stocks
         /// <returns></returns>
         private IEnumerable<State> NextEpisode()
         {
-            var upcomingDays = DataProvider.NextDays();
+            var upcomingDays = DataProvider.NextDays();            
 
             foreach (var upcomingDay in upcomingDays)
             {

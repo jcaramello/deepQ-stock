@@ -5,6 +5,7 @@ using Encog.ML.Data.Basic;
 using Encog.ML.Train;
 using Encog.Neural.Networks;
 using Encog.Neural.Networks.Layers;
+using Encog.Neural.Networks.Training.Propagation.Back;
 using Encog.Neural.Networks.Training.Propagation.Resilient;
 using System;
 using System.Collections.Generic;
@@ -101,6 +102,7 @@ namespace DeepQStock.DeppRLAgent
             }
 
             IMLDataSet dataSet = new BasicMLDataSet(testInputs.ToArray(), expectedResults.ToArray());
+            //IMLTrain train = new Backpropagation(NeuralNetwork, dataSet, Parameters.LearningRate, Parameters.LearningMomemtum);
             IMLTrain train = new ResilientPropagation(NeuralNetwork, dataSet);
 
             int epoch = 1;

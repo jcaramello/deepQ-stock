@@ -226,15 +226,20 @@ namespace DeepQStock.DeppRLAgent
         /// <param name="state">The state.</param>
         private void InitializeQNetwork(State state)
         {
+            var inputLength = state.ToArray().Length;
+
             Q = new QNetwork(p =>
             {
+                p.LearningMomemtum = Parameters.LearningMomemtum;
+                p.LearningRate = Parameters.LearningRate;
+
                 // Input Layer
-                p.Layers.Add(new LayerParameters(null, true, state.ToArray().Length));
+                p.Layers.Add(new LayerParameters(null, true, inputLength));
 
                 // Hidden Layers
                 for (int i = 0; i < Parameters.HiddenLayersCount; i++)
                 {
-                    p.Layers.Add(new LayerParameters(new ActivationSigmoid(), true, Parameters.NeuronCountForHiddenLayers));
+                    p.Layers.Add(new LayerParameters(new ActivationSigmoid(), true, Parameters.NeuronCountForHiddenLayers));                    
                 }
 
                 // Output Layer

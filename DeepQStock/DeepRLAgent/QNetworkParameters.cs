@@ -57,13 +57,23 @@ namespace DeepQStock.DeppRLAgent
         {
             Layers = new List<LayerParameters>();
             TrainingError = 0.001;
-            MaxIterationPerTrainging = 10000;
+            MaxIterationPerTrainging = 20;
         }
-        
+
         #endregion
 
 
         #region << Public Properties >>
+
+        /// <summary>
+        /// Gets or sets the learning rate.
+        /// </summary>
+        public double LearningRate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the learning momemtum.
+        /// </summary>
+        public double LearningMomemtum { get; set; }
 
         /// <summary>
         /// Gets or sets the layers.

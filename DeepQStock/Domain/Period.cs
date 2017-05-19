@@ -3,6 +3,7 @@ using LINQtoCSV;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -120,7 +121,7 @@ namespace DeepQStock.Domain
 
             foreach (var pair in Indicators)
             {
-                period.AddRange(pair.Value);
+                period.AddRange(pair.Value.Select(v => Math.Round(v, 4)));
             }
 
             return period;
@@ -134,7 +135,7 @@ namespace DeepQStock.Domain
         /// </returns>
         public override string ToString()
         {
-            var values = Indicators.Select(p => string.Format("{0}:[{1}]", p.Key, string.Join(",", p.Value.Select(v => v.ToString(System.Globalization.CultureInfo.InvariantCulture)))));
+            var values = Indicators.Select(p => string.Format("{0}:[{1}]", p.Key, string.Join(",", p.Value.Select(v => v.ToString("N4", CultureInfo.InvariantCulture)))));
             return string.Join(" | ", values);
         }
 
