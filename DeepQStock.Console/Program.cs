@@ -44,13 +44,11 @@ namespace DeepQStock.Console
                 ClearLine();                
                 System.Console.WriteLine(" Periodo: ");
                 DrawLine();
-                System.Console.WriteLine(" Fecha {0} - Open: {1:C} - High: {2:C} - Low: {3:C} - Close: {4:C}", a.Date.ToShortDateString(), a.Period.Open, a.Period.High, a.Period.Low, a.Period.Close);                
-                DrawLine();
+                System.Console.WriteLine(" Fecha {0} - Open: {1:C} - High: {2:C} - Low: {3:C} - Close: {4:C}", a.Date.ToShortDateString(), a.Period.Open, a.Period.High, a.Period.Low, a.Period.Close);                                
                 System.Console.WriteLine(" Indicadores Bursatiles: ");
                 DrawLine();                
                 a.Period.ToString().Split('|').ToList().ForEach(i => System.Console.WriteLine(" " + i.Trim()));
-                System.Console.WriteLine();
-                DrawLine();
+                System.Console.WriteLine();                
                 System.Console.WriteLine(" Estado del Agente Dia {0}", a.DayNumber);
                 DrawLine();
                 System.Console.WriteLine();
@@ -61,8 +59,7 @@ namespace DeepQStock.Console
             agent.OnTrainingEpochComplete += (e, a) =>
             {
                 System.Console.SetCursorPosition(0, statusBarLine);
-                ClearLine();
-                DrawLine();
+                ClearLine();                
                 System.Console.WriteLine("  Q Network: ");
                 DrawLine();
                 System.Console.WriteLine(@" Epoch #{0} - Error: {1:0.0000000000}", a.Epoch, a.Error);
