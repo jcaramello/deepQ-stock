@@ -58,6 +58,9 @@ namespace DeepQStock.DeppRLAgent
         /// </summary>
         public event EventHandler<OnTrainingEpochCompleteArgs> OnTrainingEpochComplete;
 
+
+        public string NetworkPath { get; set; }
+
         #endregion
 
         #region << Constructor >>
@@ -67,7 +70,7 @@ namespace DeepQStock.DeppRLAgent
         /// </summary>
         /// <param name="initializer">The initializer.</param>
         public DeepRLAgent(Action<DeepRLAgentParameters> initializer = null)
-        {            
+        {
             Parameters = new DeepRLAgentParameters();
             initializer?.Invoke(Parameters);
             RandomGenerator = new Random();
@@ -94,7 +97,7 @@ namespace DeepQStock.DeppRLAgent
             CurrentState = state;
 
             if (previuosState != null)
-            {                
+            {
                 SaveExperience(previuosState, CurrentAction, reward, CurrentState);
             }
 
@@ -109,6 +112,11 @@ namespace DeepQStock.DeppRLAgent
         {
             UpdateKnowledge();
         }
+
+        public void Save(string path)
+        {
+            Q.Save(path);
+        }      
 
         #endregion
 
@@ -153,7 +161,7 @@ namespace DeepQStock.DeppRLAgent
                 To = to
             };
 
-            MemoryReplay.Enqueue(experience);        
+            MemoryReplay.Enqueue(experience);
         }
 
         /// <summary>
@@ -161,7 +169,7 @@ namespace DeepQStock.DeppRLAgent
         /// </summary>
         /// <returns></returns>
         private IList<Experience> GenerateMiniBatch()
-        {            
+        {
             if (MemoryReplay.Count <= Parameters.MiniBatchSize)
             {
                 return MemoryReplay.ToList();
@@ -170,7 +178,7 @@ namespace DeepQStock.DeppRLAgent
             {
                 var indexes = Enumerable.Range(0, MemoryReplay.Count - 1).OrderBy(x => RandomGenerator.Next());
                 return MemoryReplay.Where((e, i) => indexes.Contains(i)).ToList();
-            }            
+            }
         }
 
         /// <summary>
@@ -226,27 +234,34 @@ namespace DeepQStock.DeppRLAgent
         /// <param name="state">The state.</param>
         private void InitializeQNetwork(State state)
         {
-            var inputLength = state.ToArray().Length;
-
-            Q = new QNetwork(p =>
+            if (!string.IsNullOrEmpty(NetworkPath))
             {
-                p.LearningMomemtum = Parameters.LearningMomemtum;
-                p.LearningRate = Parameters.LearningRate;
+                Q = new QNetwork(NetworkPath);                
+            }
+            else
+            {
+                var inputLength = state.ToArray().Length;
 
-                // Input Layer
-                p.Layers.Add(new LayerParameters(null, true, inputLength));
-
-                // Hidden Layers
-                for (int i = 0; i < Parameters.HiddenLayersCount; i++)
+                Q = new QNetwork(p =>
                 {
-                    p.Layers.Add(new LayerParameters(new ActivationSigmoid(), true, Parameters.NeuronCountForHiddenLayers));                    
-                }
+                    p.LearningMomemtum = Parameters.LearningMomemtum;
+                    p.LearningRate = Parameters.LearningRate;
 
-                // Output Layer
-                p.Layers.Add(new LayerParameters(new ActivationSigmoid(), false, 3));
-            });
+                    // Input Layer
+                    p.Layers.Add(new LayerParameters(null, true, inputLength));
 
-            Q.OnTrainingEpochComplete += (e, a) => OnTrainingEpochComplete?.Invoke(e, a);
+                    // Hidden Layers
+                    for (int i = 0; i < Parameters.HiddenLayersCount; i++)
+                    {
+                        p.Layers.Add(new LayerParameters(new ActivationTANH(), true, Parameters.NeuronCountForHiddenLayers));
+                    }
+
+                    // Output Layer
+                    p.Layers.Add(new LayerParameters(new ActivationTANH(), false, 3));
+                });
+
+                Q.OnTrainingEpochComplete += (e, a) => OnTrainingEpochComplete?.Invoke(e, a);
+            }
         }
 
 

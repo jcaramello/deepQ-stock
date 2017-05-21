@@ -9,6 +9,7 @@ using Encog.Neural.Networks.Training.Propagation.Back;
 using Encog.Neural.Networks.Training.Propagation.Resilient;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace DeepQStock.DeppRLAgent
 {
@@ -51,6 +52,14 @@ namespace DeepQStock.DeppRLAgent
             Parameters = new QNetworkParameters();
             initializer?.Invoke(Parameters);
             InitializeNetwork();
+        }
+
+        public QNetwork(string path)
+        {
+            Parameters = new QNetworkParameters();
+            FileInfo networkFile = new FileInfo(string.Format(@"{0}\QNetwork.eg", path));
+            NeuralNetwork = (BasicNetwork)(Encog.Persist.EncogDirectoryPersistence.LoadObject(networkFile));
+
         }
 
         #endregion
@@ -119,6 +128,12 @@ namespace DeepQStock.DeppRLAgent
 
             } while (train.Error > Parameters.TrainingError && epoch < Parameters.MaxIterationPerTrainging);
         }
+
+        public void Save(string path)
+        {
+            FileInfo networkFile = new FileInfo(string.Format(@"{0}\QNetwork.eg", path));
+            Encog.Persist.EncogDirectoryPersistence.SaveObject(networkFile, (BasicNetwork)NeuralNetwork);
+        }     
 
         #endregion
 

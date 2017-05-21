@@ -6,9 +6,7 @@ namespace DeepQStock.Stocks
 {
     public class OnEpisodeCompleteArgs : EventArgs
     {
-        
-
-
+        public double Reward { get; set; }
     }
 
     public class OnDayCompleteArgs : EventArgs

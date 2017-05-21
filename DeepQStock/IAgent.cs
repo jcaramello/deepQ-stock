@@ -1,6 +1,8 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace DeepQStock
 {
@@ -17,6 +19,6 @@ namespace DeepQStock
         /// <summary>
         /// Called when [episode complete].
         /// </summary>        
-        void OnEpisodeComplete();
+        void OnEpisodeComplete();  
     }
 }

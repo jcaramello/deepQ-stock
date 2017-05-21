@@ -64,14 +64,14 @@ namespace DeepQStock.DeppRLAgent
         /// </summary>
         public DeepRLAgentParameters()
         {
-            eGreedyProbability = 0.3;
+            eGreedyProbability = 0.07;
             InOutStrategy = 0.25;
-            MiniBatchSize = 250;
-            DiscountFactor = 0.6;
+            MiniBatchSize = 25;
+            DiscountFactor = 0.5;
             LearningRate = 0.5;
             LearningMomemtum = 0.01;
             HiddenLayersCount = 8;
-            NeuronCountForHiddenLayers = 10;
+            NeuronCountForHiddenLayers = 32;
             MemoryReplaySize = 1000;
         }
 

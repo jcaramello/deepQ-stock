@@ -16,6 +16,11 @@ namespace DeepQStock.Utils
         public DateTime? StartDate { get; set; }
 
         /// <summary>
+        /// get or set the end date
+        /// </summary>
+        public DateTime? EndDate { get; set; }
+
+        /// <summary>
         /// Gets or sets the file path.
         /// </summary>
         public string FilePath { get; set; }
@@ -33,7 +38,7 @@ namespace DeepQStock.Utils
         /// <summary>
         /// Gets or sets the period loaded.
         /// </summary>
-        public int PeriodLoaded { get; set; }
+        public int PeriodLoaded { get; set; }      
 
         #endregion
 
@@ -43,12 +48,11 @@ namespace DeepQStock.Utils
         /// Initializes a new instance of the <see cref="CsvDataProvider"/> class.
         /// </summary>
         /// <param name="startDate">The start date.</param>
-        public CsvDataProvider(string filePath, int batchSize,  DateTime? startDate = null)
-        {
-            StartDate = startDate;
+        public CsvDataProvider(string filePath, int batchSize)
+        {         
             BatchSize = batchSize;
             FilePath = filePath;
-            GetAllDataFromCsv(startDate);
+            Seek();
         }
 
         #endregion
@@ -63,23 +67,34 @@ namespace DeepQStock.Utils
         /// <param name="size"></param>
         /// <returns></returns>
         public IEnumerable<Period> NextDays()
-        {            
+        {
             var result = Data.Skip(PeriodLoaded).Take(BatchSize);
             PeriodLoaded += BatchSize;
 
             return result;
         }
 
-        #endregion
-
-        #region << Private Methods >>
 
         /// <summary>
-        /// Get all Period
+        /// Return the min date in the file
         /// </summary>
         /// <returns></returns>
-        private void GetAllDataFromCsv(DateTime? startDate)
+        public IEnumerable<Period> GetAll()
         {
+            return Data; 
+        }
+
+
+        /// <summary>
+        /// Initialize the provider
+        /// </summary>
+        /// <returns></returns>
+        public void Seek(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            StartDate = startDate;
+            EndDate = endDate;
+            PeriodLoaded = 0;     
+
             CsvFileDescription descriptor = new CsvFileDescription
             {
                 SeparatorChar = ',',
@@ -90,12 +105,17 @@ namespace DeepQStock.Utils
             CsvContext ctx = new CsvContext();
 
             Data = ctx.Read<Period>(FilePath, descriptor);
-            
-            if (startDate.HasValue)
-            {
-                Data = Data.Where(d => d.Date >= startDate.Value);
-            }            
 
+            if (StartDate.HasValue)
+            {
+                Data = Data.Where(d => d.Date >= StartDate.Value);
+            }
+
+            if (EndDate.HasValue)
+            {
+                Data = Data.Where(d => d.Date < EndDate);
+            }
+          
             Data = Data.OrderBy(d => d.Date);
         }
 

@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Domain;
+using System;
 using System.Collections.Generic;
 
 namespace DeepQStock
@@ -11,5 +12,18 @@ namespace DeepQStock
         /// <param name="type">The type.</param>
         /// <returns></returns>
         IEnumerable<Period> NextDays();
+
+        /// <summary>
+        /// Return all the data
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<Period> GetAll();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        void Seek(DateTime? startDate = null, DateTime? endDate = null);
     }
 }
