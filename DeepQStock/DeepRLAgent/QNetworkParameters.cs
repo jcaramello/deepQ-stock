@@ -56,7 +56,7 @@ namespace DeepQStock.DeppRLAgent
         public QNetworkParameters()
         {
             Layers = new List<LayerParameters>();
-            TrainingError = 0.001;
+            TrainingError = 0.00001;
             MaxIterationPerTrainging = 20;
         }
 

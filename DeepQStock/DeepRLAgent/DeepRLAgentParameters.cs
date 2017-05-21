@@ -43,17 +43,7 @@ namespace DeepQStock.DeppRLAgent
         /// <summary>
         /// Get or set the size of the internal agent's memory replay
         /// </summary>
-        public int MemoryReplaySize { get; set; }
-
-        /// <summary>
-        /// Gets or sets the learning rate.
-        /// </summary>
-        public double LearningRate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the learning momemtum.
-        /// </summary>
-        public double LearningMomemtum { get; set; }
+        public int MemoryReplaySize { get; set; } 
 
         #endregion
 
@@ -64,15 +54,13 @@ namespace DeepQStock.DeppRLAgent
         /// </summary>
         public DeepRLAgentParameters()
         {
-            eGreedyProbability = 0.07;
+            eGreedyProbability = 0.05;
             InOutStrategy = 0.25;
-            MiniBatchSize = 25;
-            DiscountFactor = 0.5;
-            LearningRate = 0.5;
-            LearningMomemtum = 0.01;
-            HiddenLayersCount = 8;
-            NeuronCountForHiddenLayers = 32;
-            MemoryReplaySize = 1000;
+            MiniBatchSize = 50;
+            DiscountFactor = 0.8;         
+            HiddenLayersCount = 4;
+            NeuronCountForHiddenLayers = HiddenLayersCount * 4;
+            MemoryReplaySize = 2000;
         }
 
         #endregion

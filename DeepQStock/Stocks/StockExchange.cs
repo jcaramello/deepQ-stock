@@ -102,9 +102,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Occurs when [on episode complete].
         /// </summary>
-        public event EventHandler<OnDayCompleteArgs> OnDayComplete;
-
-        public event EventHandler<OnDayCompleteArgs> OnEpisodeComplete;
+        public event EventHandler<OnDayCompleteArgs> OnDayComplete;        
 
         /// <summary>
         /// Gets or sets the status.
@@ -270,7 +268,9 @@ namespace DeepQStock.Stocks
                  profits = position * (CurrentPeriod.Close - CurrentPeriod.Open);                
             }
 
-            return profits - transactionCost;            
+            //return profits - transactionCost;            //Reward 1 - best performance - big error
+
+            return (profits - transactionCost) / NetCapital;
         }
 
         /// <summary>

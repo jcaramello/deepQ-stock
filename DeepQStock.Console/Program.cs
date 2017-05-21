@@ -27,7 +27,7 @@ namespace DeepQStock.Console
             if (parsed && !string.IsNullOrEmpty(options.InputFile))
             {
                 var companyName = "";
-                var status = "Etapa: Entrenamiento";
+                var status = "";
                 var episodeLength = 5;
                 var manager = new BasicRedisClientManager("localhost:6379");
                 var periodStorage = new PeriodStorage(manager);
@@ -60,12 +60,7 @@ namespace DeepQStock.Console
                     totalYears = (actualYear.Value - firstYear.Value) + 1;
 
                     DrawSummarySection(companyName, status, totalYears, initialCapital, a);
-                };
-
-                stock.OnEpisodeComplete += (e, a) =>
-                {
-                    DrawSummarySection(companyName, status, totalYears, initialCapital, a);
-                };
+                };                
 
                 agent.OnTrainingEpochComplete += DrawStatusBar;
 
@@ -74,12 +69,18 @@ namespace DeepQStock.Console
 
                 do
                 {
-                    stock.DataProvider = new CsvDataProvider(companyName, episodeLength);                    
+                    stock.DataProvider = new CsvDataProvider(companyName, episodeLength);
+                    DateTime endTraining = DateTime.Today;
 
-                    var firstDay = stock.DataProvider.GetAll().ToList().Select(s => s.Date).Min();                    
-                    var endTraining = firstDay.AddYears(options.TrainingPhase);                    
+                    if (options.TrainingPhase > 0)
+                    {
+                        var firstDay = stock.DataProvider.GetAll().ToList().Select(s => s.Date).Min();
+                        endTraining = firstDay.AddYears(options.TrainingPhase);
 
-                    stock.DataProvider.Seek(endDate: endTraining);
+                        stock.DataProvider.Seek(endDate: endTraining);
+                        status = "Etapa: Entrenamiento";
+                    }
+
 
                     System.Console.Clear();
                     System.Console.SetCursorPosition(0, 0);
@@ -88,31 +89,34 @@ namespace DeepQStock.Console
                     var stockTask = Task.Run(() => stock.Start());
                     stockTask.Wait();
 
-                    status = "Etapa: Entrenamiento Completado";
-                    WriteLine(StatusBarLine + 5, "Etapa de entrenamiento Completada, Presione una tecla para con la etapa de evaluacion... ");
-                    System.Console.ReadLine();
-                    ClearCurrentLine();
-
-                    status = "Etapa: Evaluacion";
-
-                    stock.CurrentState = null;                    
-                    stock.DataProvider.Seek(startDate: endTraining);
-                    agent.Save(@"./");
-                    
-                    agent = new DeepRLAgent(p =>
+                    if (options.TrainingPhase > 0)
                     {
-                        p.DiscountFactor = options.DiscountFactor > 0 ? options.DiscountFactor : p.DiscountFactor;
-                        p.eGreedyProbability = options.eGreedyProbability > 0 ? options.eGreedyProbability : p.eGreedyProbability;
-                        p.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : p.MiniBatchSize;
-                        p.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : p.MemoryReplaySize;
-                    });
+                        status = "Etapa: Entrenamiento Completado";
+                        WriteLine(StatusBarLine + 5, "Etapa de entrenamiento Completada, Presione una tecla para con la etapa de evaluacion... ");
+                        System.Console.ReadLine();
+                        ClearCurrentLine();
 
-                    
-                    agent.NetworkPath = "./";
-                    stock.Agent = agent;
+                        status = "Etapa: Evaluacion";
 
-                    stockTask = Task.Run(() => stock.Start());
-                    stockTask.Wait();
+                        stock.CurrentState = null;
+                        stock.DataProvider.Seek(startDate: endTraining);
+                        agent.Save(@"./");
+
+                        agent = new DeepRLAgent(p =>
+                        {
+                            p.DiscountFactor = options.DiscountFactor > 0 ? options.DiscountFactor : p.DiscountFactor;
+                            p.eGreedyProbability = options.eGreedyProbability > 0 ? options.eGreedyProbability : p.eGreedyProbability;
+                            p.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : p.MiniBatchSize;
+                            p.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : p.MemoryReplaySize;
+                        });
+
+
+                        agent.NetworkPath = "./";
+                        stock.Agent = agent;
+
+                        stockTask = Task.Run(() => stock.Start());
+                        stockTask.Wait();
+                    }
 
                     WriteLine(StatusBarLine + 5, "Simulacion Finalizada, Presione una tecla para finalizar o ingrese otro papel : ");
                     var previousCompany = companyName;
@@ -204,7 +208,7 @@ namespace DeepQStock.Console
         static void DrawSummarySection(string companyName, string status, int totalYears, int initialCapital, OnDayCompleteArgs a)
         {
 
-            WriteLine(MainSectionLine, " Compañia {0} - {1}", companyName, status);
+            WriteLine(MainSectionLine, " Simbolo {0} - {1}", companyName, status);
             DrawLine(MainSectionLine + 1);
             WriteLine(MainSectionLine + 2, " Periodo: ");
             WriteLine(MainSectionLine + 3, " Fecha {0} - Open: {1:C} - High: {2:C} - Low: {3:C} - Close: {4:C}", a.Date.ToShortDateString(), a.Period.Open, a.Period.High, a.Period.Low, a.Period.Close);
@@ -228,7 +232,7 @@ namespace DeepQStock.Console
             DrawLine(agentSummary + 1);
             WriteLine(agentSummary + 2, " Estado del Agente - Año {0} - Dia {1}", totalYears, a.DayNumber);
             WriteLine(agentSummary + 3);
-            WriteLine(agentSummary + 4, " Accion: {0}\t Recompenza: {1:C}\t", a.SelectedAction, a.Reward);
+            WriteLine(agentSummary + 4, " Accion: {0}\t Recompenza: {1:N5}\t", a.SelectedAction, a.Reward);
 
             var annualProfits = a.AccumulatedProfit / totalYears;
             WriteLine(agentSummary + 5, " Capital Actual: {0:C}\t Cantidad de Acciones: {1}\t Ganancia Acumulada: {2:C}\t Renta Anual: {3:P2}",
@@ -243,7 +247,7 @@ namespace DeepQStock.Console
         static void DrawStatusBar(object e, OnTrainingEpochCompleteArgs a)
         {
             DrawLine(StatusBarLine);
-            WriteLine(StatusBarLine + 2, " Q Network: Epoch #{0} - Error: {1}", a.Epoch, a.Error.ToString("N5"));
+            WriteLine(StatusBarLine + 2, " Q Network: Training Epoch #{0} - Error: {1}", a.Epoch, a.Error.ToString("N9"));
             WriteLine(StatusBarLine + 3);
         }
 
