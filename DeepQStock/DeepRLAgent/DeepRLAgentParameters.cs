@@ -60,7 +60,7 @@ namespace DeepQStock.DeppRLAgent
             DiscountFactor = 0.8;         
             HiddenLayersCount = 4;
             NeuronCountForHiddenLayers = HiddenLayersCount * 4;
-            MemoryReplaySize = 2000;
+            MemoryReplaySize = 1000;
         }
 
         #endregion
