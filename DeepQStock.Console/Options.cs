@@ -17,7 +17,7 @@ namespace DeepQStock.Console
         public int TrainingPhase { get; set; }
 
         [Option('e', "egreedy", HelpText = "Probabilidad de seleccion de accion random, default value = 0.05")]
-        public int eGreedyProbability { get; set; }
+        public double eGreedyProbability { get; set; }
 
         [Option('b', "batch", HelpText = "Tamaño del mini batch de entrenamiento, default value = 50")]
         public int MiniBatchSize { get; set; }
@@ -27,6 +27,9 @@ namespace DeepQStock.Console
 
         [Option('i', "iterations", HelpText = "Numero maximo de iteraciones de entrenamiento, default value = 20")]
         public int MaxIterationPerTrainging { get; set; }
+
+        [Option('r', "trainingerror", HelpText = "Error maximo en cada iteracion de entrenamiento, default value = 0.00000001")]
+        public double TrainingError { get; set; }
 
         [Option('c', "tcost", HelpText = "Costo de cada transaccion realizada por el agente, representa un porcentaje del total de la operacion, default value = 0.01")]
         public double TransactionCost { get; set; }
@@ -41,7 +44,7 @@ namespace DeepQStock.Console
         public int NeuronCountForHiddenLayers { get; set; }
 
         [Option('l', "layers", HelpText = "Numero de hidden layers - default value = 4")]
-        public double HiddenLayersCount { get; set; }
+        public int HiddenLayersCount { get; set; }
 
 
         [ParserState]
@@ -53,14 +56,14 @@ namespace DeepQStock.Console
             var help = new HelpText
             {
                 Heading = new HeadingInfo("DeepQ Stock", "1.0.0"),
-                Copyright = new CopyrightInfo("Jose Caramello", DateTime.Today.Year),
+                Copyright = new CopyrightInfo("- Jose Caramello", DateTime.Today.Year),
                 AdditionalNewLineAfterOption = true,
                 AddDashesToOption = true,
                 MaximumDisplayWidth = System.Console.WindowWidth,
             };
 
             help.AddPreOptionsLine(Environment.NewLine);
-            help.AddPreOptionsLine("Usage: DeepQStock.Console.exe -f <<file>>.csv");
+            help.AddPreOptionsLine("Usage: dqs -f [file]");
             help.AddOptions(this);
 
             var haveError = LastParserState != null && LastParserState.Errors != null && LastParserState.Errors.Count > 0;

@@ -243,7 +243,10 @@ namespace DeepQStock.DeppRLAgent
                 var inputLength = state.ToArray().Length;
 
                 Q = new QNetwork(p =>
-                {                 
+                {
+                    p.TrainingError = Parameters.TrainingError > 0 ? Parameters.TrainingError : p.TrainingError;
+                    p.MaxIterationPerTrainging = Parameters.MaxIterationPerTrainging > 0 ? Parameters.MaxIterationPerTrainging : p.MaxIterationPerTrainging;
+
                     // Input Layer
                     p.Layers.Add(new LayerParameters(null, true, inputLength));
 

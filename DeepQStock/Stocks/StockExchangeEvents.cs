@@ -37,6 +37,21 @@ namespace DeepQStock.Stocks
         public double AccumulatedProfit { get; set; }
 
         /// <summary>
+        /// Gets or sets the annual rent.
+        /// </summary>
+        public double AnnualRent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the annual profits.
+        /// </summary>
+        public double AnnualProfits { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total of years.
+        /// </summary>
+        public int TotalOfYears { get; set; }
+
+        /// <summary>
         /// Gets or sets the actual position.
         /// </summary>
         public Period Period{ get; set; }

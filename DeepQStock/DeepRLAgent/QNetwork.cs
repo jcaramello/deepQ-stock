@@ -86,7 +86,7 @@ namespace DeepQStock.DeppRLAgent
                     {ActionType.Sell, result[1] },
                     {ActionType.Wait, result[2] }
                 };
-            }            
+            }
         }
 
         #endregion
@@ -100,24 +100,26 @@ namespace DeepQStock.DeppRLAgent
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
         public void Train(IList<Tuple<State, double[]>> trainingSet)
-        {            
-            var testInputs = new List<double[]>();
-            var expectedResults = new List<double[]>();
+        {
+            var trainingData = new List<IMLDataPair>();
 
             foreach (var sample in trainingSet)
             {
-                testInputs.Add(sample.Item1.ToArray());
-                expectedResults.Add(sample.Item2);
+                var flattenState = sample.Item1.ToArray();
+                var data = new BasicMLData(flattenState);
+                var results = new BasicMLData(sample.Item2);
+
+                trainingData.Add(new BasicMLDataPair(data, results));
             }
 
-            IMLDataSet dataSet = new BasicMLDataSet(testInputs.ToArray(), expectedResults.ToArray());
+            IMLDataSet dataSet = new BasicMLDataSet(trainingData);
             //IMLTrain train = new Backpropagation(NeuralNetwork, dataSet, Parameters.LearningRate, Parameters.LearningMomemtum);
             IMLTrain train = new ResilientPropagation(NeuralNetwork, dataSet);
 
             int epoch = 1;
             do
             {
-                train.Iteration();                
+                train.Iteration();
                 epoch++;
 
                 OnTrainingEpochComplete?.Invoke(this, new OnTrainingEpochCompleteArgs()
@@ -133,7 +135,7 @@ namespace DeepQStock.DeppRLAgent
         {
             FileInfo networkFile = new FileInfo(string.Format(@"{0}\QNetwork.eg", path));
             Encog.Persist.EncogDirectoryPersistence.SaveObject(networkFile, (BasicNetwork)NeuralNetwork);
-        }     
+        }
 
         #endregion
 

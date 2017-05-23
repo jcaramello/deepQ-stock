@@ -14,13 +14,14 @@ namespace DeepQStock.Console
         public static int StartLine = System.Console.WindowTop;
         public static int MainSectionLine = StartLine + 7;
         public static int StatusBarLine = StartLine + 35;
+        public static double initialValue = 0.0;
 
         /// <summary>
         /// Mains the specified arguments.
         /// </summary>
         /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
-        {
+        {            
             var options = new Options();
             var parsed = CommandLine.Parser.Default.ParseArguments(args, options);
 
@@ -31,10 +32,9 @@ namespace DeepQStock.Console
                 var episodeLength = 5;
                 var manager = new BasicRedisClientManager("localhost:6379");
                 var periodStorage = new PeriodStorage(manager);
-                var initialCapital = 100000;
-                int? firstYear = null;
-                int? actualYear = null;
-                int totalYears = 1;
+                var initialCapital = 100000;                
+                var dayNumber = 0;
+                int totalTrainingDays = 0;
 
                 var agent = new DeepRLAgent(p =>
                 {
@@ -42,10 +42,11 @@ namespace DeepQStock.Console
                     p.eGreedyProbability = options.eGreedyProbability > 0 ? options.eGreedyProbability : p.eGreedyProbability;
                     p.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : p.MiniBatchSize;
                     p.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : p.MemoryReplaySize;
-
+                    p.MaxIterationPerTrainging = options.MaxIterationPerTrainging > 0 ? options.MaxIterationPerTrainging : p.MaxIterationPerTrainging;
+                    p.TrainingError = options.TrainingError > 0 ? options.TrainingError : p.TrainingError;
                 });
 
-                var stock = new StockExchange(agent, null, p =>
+                var stock = new StockExchange(agent, null, RewardCalculator.WinningsOverLoosings, p =>
                 {
                     p.EpisodeLength = episodeLength;
                     p.InitialCapital = initialCapital;
@@ -54,12 +55,10 @@ namespace DeepQStock.Console
                 });
 
                 stock.OnDayComplete += (e, a) =>
-                {
-                    firstYear = firstYear == null ? a.Period.Date.Year : firstYear;
-                    actualYear = a.Period.Date.Year;
-                    totalYears = (actualYear.Value - firstYear.Value) + 1;
-
-                    DrawSummarySection(companyName, status, totalYears, initialCapital, a);
+                {                    
+                    dayNumber = a.DayNumber - totalTrainingDays;
+                    initialValue = initialValue == 0.0 ? a.Period.Open : initialValue;
+                    DrawSummarySection(companyName, status, dayNumber, initialCapital, a);
                 };                
 
                 agent.OnTrainingEpochComplete += DrawStatusBar;
@@ -92,9 +91,11 @@ namespace DeepQStock.Console
                     if (options.TrainingPhase > 0)
                     {
                         status = "Etapa: Entrenamiento Completado";
-                        WriteLine(StatusBarLine + 5, "Etapa de entrenamiento Completada, Presione una tecla para con la etapa de evaluacion... ");
+                        WriteLine(StatusBarLine + 5, "Etapa de entrenamiento Completada, Presione una tecla para continuar con la etapa de evaluacion... ");
                         System.Console.ReadLine();
-                        ClearCurrentLine();
+                        ClearCurrentLine();                        
+                        totalTrainingDays = dayNumber;
+                        stock.TotalOfYears = 0;
 
                         status = "Etapa: Evaluacion";
 
@@ -205,13 +206,13 @@ namespace DeepQStock.Console
         /// <param name="totalYears"></param>
         /// <param name="initialCapital"></param>
         /// <param name="a"></param>
-        static void DrawSummarySection(string companyName, string status, int totalYears, int initialCapital, OnDayCompleteArgs a)
+        static void DrawSummarySection(string companyName, string status, int dayNumber, int initialCapital, OnDayCompleteArgs a)
         {
 
             WriteLine(MainSectionLine, " Simbolo {0} - {1}", companyName, status);
             DrawLine(MainSectionLine + 1);
             WriteLine(MainSectionLine + 2, " Periodo: ");
-            WriteLine(MainSectionLine + 3, " Fecha {0} - Open: {1:C} - High: {2:C} - Low: {3:C} - Close: {4:C}", a.Date.ToShortDateString(), a.Period.Open, a.Period.High, a.Period.Low, a.Period.Close);
+            WriteLine(MainSectionLine + 3, " Fecha {0} - Open: {1:C} - High: {2:C} - Low: {3:C} - Close: {4:C} \t\t\t Incremento: {5:P2}", a.Date.ToShortDateString(), a.Period.Open, a.Period.High, a.Period.Low, a.Period.Close, (a.Period.Close - initialValue) / initialValue );
             WriteLine(MainSectionLine + 4);
             DrawLine(MainSectionLine + 5);
             WriteLine(MainSectionLine + 6, " Indicadores Bursatiles: ");
@@ -230,13 +231,10 @@ namespace DeepQStock.Console
 
             WriteLine(agentSummary);
             DrawLine(agentSummary + 1);
-            WriteLine(agentSummary + 2, " Estado del Agente - Año {0} - Dia {1}", totalYears, a.DayNumber);
+            WriteLine(agentSummary + 2, " Estado del Agente - Año {0} - Dia {1}", a.TotalOfYears, dayNumber);
             WriteLine(agentSummary + 3);
-            WriteLine(agentSummary + 4, " Accion: {0}\t Recompenza: {1:N5}\t", a.SelectedAction, a.Reward);
-
-            var annualProfits = a.AccumulatedProfit / totalYears;
-            WriteLine(agentSummary + 5, " Capital Actual: {0:C}\t Cantidad de Acciones: {1}\t Ganancia Acumulada: {2:C}\t Renta Anual: {3:P2}",
-                a.Period.CurrentCapital, a.Period.ActualPosicion, a.AccumulatedProfit, annualProfits / initialCapital);
+            WriteLine(agentSummary + 4, " Accion: {0}\t Recompenza: {1:N9}\t", a.SelectedAction, a.Reward);            
+            WriteLine(agentSummary + 5, " Capital Actual: {0:C}\t Cantidad de Acciones: {1}\t Ganancia Acumulada: {2:C}\t\t Renta Anual: {3:P2}", a.Period.CurrentCapital, a.Period.ActualPosicion, a.AccumulatedProfit, a.AnnualRent);
         }
 
         /// <summary>
