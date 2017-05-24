@@ -67,7 +67,7 @@ namespace DeepQStock.Stocks
                 reward = totalWinnings;
             }
 
-            return reward;
+            return Math.Round(reward, 2);
         }
 
         /// <summary>
