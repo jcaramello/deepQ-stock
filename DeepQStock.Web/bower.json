@@ -1,0 +1,31 @@
+{
+  "name": "DeepQ Stock",
+  "description": "An agent that use deep learngin and reinforcement learning to learn how to invest in a stock market",
+  "main": "main.ts",
+  "authors": [
+    "jcaramello <jose.caramello@assertia.com.ar>"
+  ],
+  "license": "GPL 3.0",
+  "keywords": [
+    "deep",
+    "learning",
+    "reinforcement",
+    "learning",
+    "stock",
+    "market",
+    "exchange"
+  ],
+  "homepage": "https://github.com/jcaramello/deepQ-stock",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "amcharts3": "^3.21.2",
+    "amstock3": "^3.21.2"
+  }
+}
