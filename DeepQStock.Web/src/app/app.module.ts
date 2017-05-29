@@ -11,6 +11,8 @@ import { SIDEBAR_TOGGLE_DIRECTIVES } from './shared/sidebar.directive';
 import { AsideToggleDirective } from './shared/aside.directive';
 import { BreadcrumbsComponent } from './shared/breadcrumb.component';
 
+import { StockExchangeService } from './services/stock.exchange.service';
+
 // Routing Module
 import { AppRoutingModule } from './app.routing';
 
@@ -22,7 +24,7 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
     BrowserModule,
     AppRoutingModule,
     DropdownModule.forRoot(),
-    TabsModule.forRoot(),    
+    TabsModule.forRoot(),
   ],
   declarations: [
     AppComponent,
@@ -32,10 +34,10 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
     SIDEBAR_TOGGLE_DIRECTIVES,
     AsideToggleDirective
   ],
-  providers: [{
-    provide: LocationStrategy,
-    useClass: HashLocationStrategy
-  }],
-  bootstrap: [ AppComponent ]
+  providers: [
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: StockExchangeService, useClass: StockExchangeService }
+  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

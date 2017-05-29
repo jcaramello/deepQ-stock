@@ -1,13 +1,12 @@
 import { NgModule } from '@angular/core';
 import { DashboardComponent } from './dashboard.component';
-import { CandleStickComponent } from '../components/candleStick.component';
+import { CandlestickComponent } from '../components/candlestick.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 
 @NgModule({
   imports: [
-    DashboardRoutingModule,
-    CandleStickComponent
+    DashboardRoutingModule    
   ],
-  declarations: [ DashboardComponent ]
+  declarations: [ DashboardComponent, CandlestickComponent ]
 })
 export class DashboardModule { }
