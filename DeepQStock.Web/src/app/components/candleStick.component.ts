@@ -38,9 +38,11 @@ export class CandlestickComponent {
    */
   ngOnInit(): void {
 
-    AmCharts.ready(this.initializeCharts.bind(this));
+    AmCharts.ready(this.init.bind(this));
 
   }
+
+ 
 
   /**
    * Initialize the charts
@@ -49,18 +51,32 @@ export class CandlestickComponent {
    * 
    * @memberof CandleStickComponent
    */
-  private initializeCharts() {
+  private init() {
+
+    var symbol = "MSFT";
 
     var chart = this.chart = new AmCharts.AmStockChart();
     chart.theme = 'light';
     chart.pathToImages = "/bower_components/amcharts3/amcharts/images/";
+    chart['dataDateFormat'] = "YYYY/MM/DD";
     chart.valueAxesSettings.position = 'right';
-    chart.chartScrollbarSettings.enabled = false;
-    chart.categoryAxesSettings.minPeriod = 'DD';
+    chart.valueAxesSettings.inside = false;
     chart.categoryAxesSettings.equalSpacing = true;
+    //chart.categoryAxesSettings.groupToPeriods = ["DD", "WW"];
 
     var dataSet = new AmCharts.DataSet();
-    dataSet.dataProvider = this.data;
+    //dataSet.dataProvider = this.data;
+    var loader = {
+      url: "assets/data/" + symbol + ".csv",
+      format: "csv",
+      showCurtain: true,
+      showErrors: true,
+      async: true,
+      reverse: true,
+      delimiter: ",",
+      useColumnNames: true
+    };
+
     dataSet.fieldMappings = [
       { fromField: "date", toField: "date" },
       { fromField: "close", toField: "close" },
@@ -79,11 +95,6 @@ export class CandlestickComponent {
     pricePanel.percentHeight = 80;
     pricePanel.categoryAxis.parseDates = true;
 
-    var volPanel = this.volPanel = new AmCharts.StockPanel();
-    volPanel.mouseWheelZoomEnabled = true;
-    volPanel.mouseWheelScrollEnabled = false;
-    volPanel.percentHeight = 20;    
-
     var legend = new AmCharts.StockLegend();
     pricePanel.stockLegend = legend;
 
@@ -92,66 +103,71 @@ export class CandlestickComponent {
 
     chart.panelsSettings = panelsSettings;
 
-    var graph = new AmCharts.StockGraph();
-    graph.valueField = "close";
-    graph.type = "candlestick";
-    graph.lowField = 'low';
-    graph.highField = 'high';
-    graph.openField = 'open';
-    graph.closeField = 'close';
-    graph.balloonText = "Open:<b>[[open]]</b><br>Low:<b>[[low]]</b><br>High:<b>[[high]]</b><br>Close:<b>[[close]]</b><br>";
-    graph.title = "APPL";
-    graph.fillColors = "#66cc66";
-    graph.useDataSetColors = false;
-    graph.lineColor = '#595959';
-    graph.fillAlphas = 0.9;
-    graph.negativeFillColors = "#db4c3c";
-    graph.negativeLineColor = "#595959";
-
-    pricePanel.addStockGraph(graph);
+    var priceGraph = new AmCharts.StockGraph();
+    priceGraph.valueField = "close";
+    priceGraph.type = "candlestick";
+    priceGraph.lowField = 'low';
+    priceGraph.highField = 'high';
+    priceGraph.openField = 'open';
+    priceGraph.closeField = 'close';
+    priceGraph.balloonText = "Open:<b>[[open]]</b><br>Low:<b>[[low]]</b><br>High:<b>[[high]]</b><br>Close:<b>[[close]]</b><br>";
+    priceGraph.title = symbol;
+    priceGraph.fillColors = "#66cc66";
+    priceGraph.useDataSetColors = false;
+    priceGraph.lineColor = '#595959';
+    priceGraph.fillAlphas = 0.9;
+    priceGraph.negativeFillColors = "#db4c3c";
+    priceGraph.negativeLineColor = "#595959";
+    pricePanel.addStockGraph(priceGraph);
 
     var volGraph = new AmCharts.StockGraph();
-    volGraph.valueField = "close";
+    volGraph.valueField = "volume";
     volGraph.type = "column";
     volGraph.showBalloon = false;
     volGraph.comparable = true;
     volGraph.fillColors = '#ffeb99';
     volGraph.useDataSetColors = false;
     volGraph.fillAlphas = 1
-    volGraph.compareField = 'close';
+    volGraph.compareField = 'volume';
     volGraph.fillColors = "#ffeb99";
     volGraph.lineColor = '#ffeb99';
 
+    var volPanel = this.volPanel = new AmCharts.StockPanel();
+    volPanel.mouseWheelZoomEnabled = true;
+    volPanel.mouseWheelScrollEnabled = false;
+    volPanel.percentHeight = 20;
     volPanel.addStockGraph(volGraph);
 
+    var volLegend = new AmCharts.StockLegend();
+    volLegend.labelText = "Volumen"
+    volPanel.stockLegend = volLegend;
+
     var sbsettings = new AmCharts.ChartScrollbarSettings();
-    sbsettings.graph = graph;
+    sbsettings.graph = priceGraph;
     sbsettings.autoGridCount = true;
+    sbsettings.updateOnReleaseOnly = false;
     sbsettings.graphType = 'line';
     chart.chartScrollbarSettings = sbsettings;
 
     chart.chartCursorSettings.bulletsEnabled = true;
     chart.chartCursorSettings.valueBalloonsEnabled = true;
+    chart.chartCursorSettings.cursorColor = "#8c8c8c"
     chart.chartCursorSettings.zoomable = true;
 
     var periodSelector = new AmCharts.PeriodSelector();
-    chart.periodSelector = periodSelector;
-
     periodSelector.periods = [
-      { period: "DD", count: 1, label: "Dia" },
-      { period: "DD", count: 5, label: "Semana" },
-      { period: "MM", count: 1, label: "Mes" },
-      { period: "YYYY", count: 1, label: "Año" },
-      { period: "MAX", selected: true, label: "Max" }
+      { period: "MM", count: 1, label: "1M", selected: true },
+      { period: "MM", count: 6, label: "6M" },
+      { period: "YYYY", count: 1, label: "1Y" },
+      { period: "YYYY", count: 5, label: "5Y" }
     ];
 
     chart.periodSelector = periodSelector;
+
     chart.panels = [pricePanel, volPanel];
     chart.addListener("rendered", this.zoomChart.bind(this));
-    this.zoomChart();    
-
     chart.write('candlestick-' + this.id);
-    this.chart = chart;
+    this.zoomChart();
   }
 
   // this method is called when chart is first inited as we listen for "rendered" event
