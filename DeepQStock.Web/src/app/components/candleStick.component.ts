@@ -42,7 +42,7 @@ export class CandlestickComponent {
 
   }
 
- 
+
 
   /**
    * Initialize the charts
@@ -53,7 +53,7 @@ export class CandlestickComponent {
    */
   private init() {
 
-    var symbol = "MSFT";
+    var symbol = "APPL";
 
     var chart = this.chart = new AmCharts.AmStockChart();
     chart.theme = 'light';
@@ -62,9 +62,8 @@ export class CandlestickComponent {
     chart.valueAxesSettings.position = 'right';
     chart.valueAxesSettings.inside = false;
     chart.categoryAxesSettings.equalSpacing = true;
-    //chart.categoryAxesSettings.groupToPeriods = ["DD", "WW"];
+    chart.categoryAxesSettings.groupToPeriods = ["DD"];
 
-    var dataSet = new AmCharts.DataSet();
     //dataSet.dataProvider = this.data;
     var loader = {
       url: "assets/data/" + symbol + ".csv",
@@ -77,6 +76,8 @@ export class CandlestickComponent {
       useColumnNames: true
     };
 
+    var dataSet = new AmCharts.DataSet();
+    dataSet['dataLoader'] = loader;
     dataSet.fieldMappings = [
       { fromField: "date", toField: "date" },
       { fromField: "close", toField: "close" },
@@ -98,8 +99,7 @@ export class CandlestickComponent {
     var legend = new AmCharts.StockLegend();
     pricePanel.stockLegend = legend;
 
-    var panelsSettings = new AmCharts.PanelsSettings();
-    panelsSettings.startDuration = 1;
+    var panelsSettings = new AmCharts.PanelsSettings();    
 
     chart.panelsSettings = panelsSettings;
 
@@ -124,13 +124,12 @@ export class CandlestickComponent {
     volGraph.valueField = "volume";
     volGraph.type = "column";
     volGraph.showBalloon = false;
-    volGraph.comparable = true;
-    volGraph.fillColors = '#ffeb99';
+    volGraph.comparable = true;    
     volGraph.useDataSetColors = false;
     volGraph.fillAlphas = 1
     volGraph.compareField = 'volume';
-    volGraph.fillColors = "#ffeb99";
-    volGraph.lineColor = '#ffeb99';
+    volGraph.fillColors = "#ffec63";
+    volGraph.lineColor = '#ffe216';
 
     var volPanel = this.volPanel = new AmCharts.StockPanel();
     volPanel.mouseWheelZoomEnabled = true;
@@ -144,22 +143,24 @@ export class CandlestickComponent {
 
     var sbsettings = new AmCharts.ChartScrollbarSettings();
     sbsettings.graph = priceGraph;
-    sbsettings.autoGridCount = true;
+    sbsettings.autoGridCount = false;
     sbsettings.updateOnReleaseOnly = false;
+    sbsettings['usePeriod'] = 'DD'
+    
     sbsettings.graphType = 'line';
+
     chart.chartScrollbarSettings = sbsettings;
 
     chart.chartCursorSettings.bulletsEnabled = true;
     chart.chartCursorSettings.valueBalloonsEnabled = true;
     chart.chartCursorSettings.cursorColor = "#8c8c8c"
-    chart.chartCursorSettings.zoomable = true;
+    chart.chartCursorSettings.zoomable = true;    
 
     var periodSelector = new AmCharts.PeriodSelector();
-    periodSelector.periods = [
-      { period: "MM", count: 1, label: "1M", selected: true },
-      { period: "MM", count: 6, label: "6M" },
-      { period: "YYYY", count: 1, label: "1Y" },
-      { period: "YYYY", count: 5, label: "5Y" }
+    periodSelector.periods = [      
+      { period: "MM", count: 1, label: "1M" },
+      { period: "MM", count: 6, label: "6M", selected: true },      
+      { period: "YYYY", count: 1, label: "1A" }      
     ];
 
     chart.periodSelector = periodSelector;
@@ -174,6 +175,6 @@ export class CandlestickComponent {
   private zoomChart() {
     // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
 
-    this.pricePanel.zoomToIndexes(this.data.length - 100, this.data.length - 1);
+    this.pricePanel.zoomToIndexes(this.data.length - 5, this.data.length - 1);
   }
 }
