@@ -59,8 +59,9 @@ export class CandlestickComponent {
     chart.theme = 'light';
     chart.pathToImages = "/bower_components/amcharts3/amcharts/images/";
     chart['dataDateFormat'] = "YYYY/MM/DD";
+    chart['mouseWheelScrollEnabled'] = true;
     chart.valueAxesSettings.position = 'right';
-    chart.valueAxesSettings.inside = false;
+
     chart.categoryAxesSettings.equalSpacing = true;
     chart.categoryAxesSettings.groupToPeriods = ["DD"];
 
@@ -90,7 +91,7 @@ export class CandlestickComponent {
     chart.dataSets = [dataSet];
 
     var pricePanel = this.pricePanel = new AmCharts.StockPanel();
-    pricePanel.mouseWheelZoomEnabled = true;
+    pricePanel.mouseWheelZoomEnabled = false;
     pricePanel.mouseWheelScrollEnabled = false;
     pricePanel.categoryField = 'date';
     pricePanel.percentHeight = 80;
@@ -99,8 +100,7 @@ export class CandlestickComponent {
     var legend = new AmCharts.StockLegend();
     pricePanel.stockLegend = legend;
 
-    var panelsSettings = new AmCharts.PanelsSettings();    
-
+    var panelsSettings = new AmCharts.PanelsSettings();
     chart.panelsSettings = panelsSettings;
 
     var priceGraph = new AmCharts.StockGraph();
@@ -124,7 +124,7 @@ export class CandlestickComponent {
     volGraph.valueField = "volume";
     volGraph.type = "column";
     volGraph.showBalloon = false;
-    volGraph.comparable = true;    
+    volGraph.comparable = true;
     volGraph.useDataSetColors = false;
     volGraph.fillAlphas = 1
     volGraph.compareField = 'volume';
@@ -146,21 +146,20 @@ export class CandlestickComponent {
     sbsettings.autoGridCount = false;
     sbsettings.updateOnReleaseOnly = false;
     sbsettings['usePeriod'] = 'DD'
-    
     sbsettings.graphType = 'line';
-
     chart.chartScrollbarSettings = sbsettings;
 
     chart.chartCursorSettings.bulletsEnabled = true;
     chart.chartCursorSettings.valueBalloonsEnabled = true;
     chart.chartCursorSettings.cursorColor = "#8c8c8c"
-    chart.chartCursorSettings.zoomable = true;    
-
+    chart.chartCursorSettings.zoomable = true;
+    
     var periodSelector = new AmCharts.PeriodSelector();
-    periodSelector.periods = [      
+    periodSelector.periods = [
       { period: "MM", count: 1, label: "1M" },
-      { period: "MM", count: 6, label: "6M", selected: true },      
-      { period: "YYYY", count: 1, label: "1A" }      
+      { period: "MM", count: 6, label: "6M", selected: true },
+      { period: "YYYY", count: 1, label: "1A" },
+      { period: "MAX", label: "Max" }
     ];
 
     chart.periodSelector = periodSelector;
@@ -175,6 +174,6 @@ export class CandlestickComponent {
   private zoomChart() {
     // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
 
-    this.pricePanel.zoomToIndexes(this.data.length - 5, this.data.length - 1);
+    this.pricePanel.zoomToIndexes(this.data.length - 3, this.data.length - 1);
   }
 }
