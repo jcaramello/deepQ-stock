@@ -26,6 +26,7 @@
   ],
   "dependencies": {
     "amcharts3": "^3.21.2",
-    "amstock3": "^3.21.2"
+    "amstock3": "^3.21.2",
+    "signalr": "2.*.*"
   }
 }
