@@ -25,12 +25,12 @@
         <nav class="sidebar-nav">
             <ul class="nav">
                 <li class="nav-item">
-                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/dashboard']">
+                    <a class="nav-link">
                         <i class="icon-speedometer"></i> Agents <button class="badge badge-info">NEW</button>
                     </a>
                 </li>
                 <li *ngFor="let a of agents">
-                    <a class="nav-link"><i class="icon-speedometer"></i> {{ a.name }}</a>
+                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/dashboard', a.id]"><i class="fa fa-angle-double-right"></i> {{ a.name }}</a>
                 </li>
             </ul>
         </nav>

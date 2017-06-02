@@ -1,6 +1,7 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, EventEmitter, Input, Output } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { StockExchangeService } from '../services/stock.exchange.service';
+import { Agent } from '../models/agent';
 
 /**
 * Allows to draw a candlestick chart
@@ -11,6 +12,9 @@ import { StockExchangeService } from '../services/stock.exchange.service';
 })
 export class CandlestickComponent {
 
+  @Input() 
+  public agent: Agent = new Agent();  
+  
   public static IdGenerator = 1;
   public id: number;
 
@@ -53,7 +57,7 @@ export class CandlestickComponent {
    */
   private init() {
 
-    var symbol = "APPL";
+    var symbol = this.agent.symbol;
 
     var chart = this.chart = new AmCharts.AmStockChart();
     chart.theme = 'light';
@@ -153,7 +157,7 @@ export class CandlestickComponent {
     chart.chartCursorSettings.valueBalloonsEnabled = true;
     chart.chartCursorSettings.cursorColor = "#8c8c8c"
     chart.chartCursorSettings.zoomable = true;
-    
+
     var periodSelector = new AmCharts.PeriodSelector();
     periodSelector.periods = [
       { period: "MM", count: 1, label: "1M" },

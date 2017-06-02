@@ -1,5 +1,6 @@
 export  class Agent{
 
-    public guid: string;
+    public id: number;
     public name:string;
+    public symbol: string;
 }

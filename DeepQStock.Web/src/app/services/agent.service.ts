@@ -32,4 +32,12 @@ export class AgentService extends BaseService {
     public getAll() {
         return this.execute('getAll');
     }
+
+    /**
+     * Get an agent by id 
+     * @param id
+     */
+    public getById(id: number){
+        return this.execute('getById', id)
+    }
 }

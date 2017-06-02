@@ -26,8 +26,8 @@ namespace DeepQStock.Server.Hubs
         {
             Agents = new List<AgentModel>()
             {
-                new AgentModel() { Guid = Guid.NewGuid().ToString(), Name ="Dummy Agent 1" },
-                new AgentModel() { Guid = Guid.NewGuid().ToString(), Name ="Dummy Agent 2" },
+                new AgentModel() { Id = 1, Name ="Agent APPL",  Symbol = "MSFT" },
+                new AgentModel() { Id = 2, Name ="Agent MSFT", Symbol = "APPL"},
             };
 
         }
@@ -44,6 +44,15 @@ namespace DeepQStock.Server.Hubs
         }
 
         /// <summary>
+        /// Get all instance of agents
+        /// </summary>
+        /// <returns></returns>
+        public AgentModel GetById(long id)
+        {
+            return Agents.SingleOrDefault(a => a.Id == id); 
+        }
+
+        /// <summary>
         /// Create a new instance of an agent
         /// </summary>
         /// <param name="name"></param>
@@ -51,7 +60,7 @@ namespace DeepQStock.Server.Hubs
         {
             var agent = new AgentModel()
             {
-                Guid = Guid.NewGuid().ToString(),
+                Id = Agents.Max(a => a.Id) + 1,
                 Name = name
             };
 

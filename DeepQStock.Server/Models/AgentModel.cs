@@ -8,8 +8,12 @@ namespace DeepQStock.Server.Models
 {
     public class AgentModel
     {
-        public string Guid { get; set; }
+        public long Id { get; set; }
 
         public string Name { get; set; }
+
+        public string Symbol { get; set; }
+
+
     }
 }

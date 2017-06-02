@@ -38,7 +38,7 @@ export class BaseService {
      * 
      * @memberof BaseService
      */
-    protected execute(method: string, ...args: any[]) {
-        return this.onConnected.then(() => Promise.resolve(this.proxy.invoke('getAll')));
+    protected execute(method: string, ...args: any[]) {        
+        return this.onConnected.then(() => Promise.resolve(this.proxy.invoke(method, args)));
     }
 }
