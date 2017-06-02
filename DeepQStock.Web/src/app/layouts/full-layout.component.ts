@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AgentService } from '../services/agent.service';
+import { Agent } from '../models/agent';
 
 @Component({
   selector: 'app-dashboard',
@@ -6,20 +8,54 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FullLayoutComponent implements OnInit {
 
-  constructor() { }
 
-  public disabled:boolean = false;
-  public status:{isopen:boolean} = {isopen: false};
+  // Public Properties
+  public agents: Agent[] = [];
+  public disabled: boolean = false;
+  public status: { isopen: boolean } = { isopen: false };
 
-  public toggled(open:boolean):void {
-    console.log('Dropdown is now: ', open);
-  }
+  /**
+   * Creates an instance of FullLayoutComponent.
+   * @param {AgentService} agentService 
+   * 
+   * @memberof FullLayoutComponent
+   */
+  constructor(private agentService: AgentService) { }
 
-  public toggleDropdown($event:MouseEvent):void {
+
+
+  /**
+   * Toogle left panel
+   * 
+   * @param {MouseEvent} $event 
+   * 
+   * @memberof FullLayoutComponent
+   */
+  public toggleDropdown($event: MouseEvent): void {
     $event.preventDefault();
     $event.stopPropagation();
     this.status.isopen = !this.status.isopen;
   }
 
-  ngOnInit(): void {}
+  /**
+   * on toogle panel
+   * 
+   * @param {boolean} open 
+   * 
+   * @memberof FullLayoutComponent
+   */
+  public toggled(open: boolean): void {
+
+  }
+
+
+  /**
+   * Initialize the component
+   * 
+   * 
+   * @memberof FullLayoutComponent
+   */
+  ngOnInit(): void {
+    this.agentService.getAll().then(a => this.agents = a);
+  }
 }

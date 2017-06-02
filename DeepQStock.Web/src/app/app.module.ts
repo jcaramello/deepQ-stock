@@ -12,6 +12,7 @@ import { AsideToggleDirective } from './shared/aside.directive';
 import { BreadcrumbsComponent } from './shared/breadcrumb.component';
 
 import { StockExchangeService } from './services/stock.exchange.service';
+import { AgentService } from './services/agent.service';
 
 // Routing Module
 import { AppRoutingModule } from './app.routing';
@@ -36,8 +37,9 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
-    { provide: StockExchangeService, useClass: StockExchangeService }
+    { provide: StockExchangeService, useClass: StockExchangeService },
+    { provide: AgentService, useClass: AgentService }
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

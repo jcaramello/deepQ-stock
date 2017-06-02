@@ -1,0 +1,15 @@
+{
+    "version": "0.1.0",
+    "configurations": [{
+        "name": "localhost",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:4200",
+        "trace": true,
+        "sourceMaps": true,
+        "webRoot": "${workspaceRoot}/wwwroot",
+        "sourceMapPathOverrides": {
+            "webpack:///./*": "${workspaceRoot}/*"
+        }
+    }]
+}

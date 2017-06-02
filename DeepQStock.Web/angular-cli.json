@@ -1,36 +1,39 @@
 {
   "project": {
-    "version": "1.0.0-alpha.3",
-    "name": "core-ui"
+    "version": "1.0.0-alpha.1",
+    "name": "deepQStock"
   },
-  "apps": [
-    {
-      "root": "src",
-      "outDir": "dist",
-      "assets": ["assets"],
-      "index": "index.html",
-      "main": "main.ts",
-      "polyfills": "polyfills.ts",
-      "test": "test.ts",
-      "tsconfig": "tsconfig.json",
-      "prefix": "app",
-      "mobile": false,
-      "styles": [
-        "scss/style.scss"
-      ],
-      "scripts": [
-        "../node_modules/chart.js/dist/Chart.bundle.min.js",
-        "../node_modules/chart.js/dist/Chart.min.js"
-      ],
-      "environmentSource": "environments/environment.ts",
-      "environments": {
-        "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
-      }
+  "apps": [{
+    "root": "src",
+    "outDir": "dist",
+    "assets": ["assets"],
+    "index": "index.html",
+    "main": "main.ts",
+    "polyfills": "polyfills.ts",
+    "test": "test.ts",
+    "tsconfig": "tsconfig.json",
+    "prefix": "app",
+    "mobile": false,
+    "styles": [
+      "scss/style.scss"
+    ],
+    "scripts": [
+      "../bower_components/amcharts3/amcharts/amcharts.js",
+      "../bower_components/amcharts3/amcharts/serial.js",
+      "../bower_components/amstock3/amcharts/amstock.js",
+      "../bower_components/amstock3/amcharts/plugins/dataloader/dataloader.js",
+      "../bower_components/amstock3/amcharts/themes/light.js",
+      "../bower_components/lodash/dist/lodash.min.js",
+      "../bower_components/jquery/dist/jquery.min.js",
+      "../bower_components/signalr/jquery.signalR.min.js"
+    ],
+    "environmentSource": "environments/environment.ts",
+    "environments": {
+      "dev": "environments/environment.ts",
+      "prod": "environments/environment.prod.ts"
     }
-  ],  
-  "lint": [
-    {
+  }],
+  "lint": [{
       "files": "src/**/*.ts",
       "project": "src/tsconfig.json"
     },
@@ -38,7 +41,7 @@
       "files": "e2e/**/*.ts",
       "project": "e2e/tsconfig.json"
     }
-  ], 
+  ],
   "defaults": {
     "styleExt": "scss",
     "prefixInterfaces": false

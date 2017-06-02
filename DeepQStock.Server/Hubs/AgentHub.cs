@@ -1,0 +1,63 @@
+﻿using DeepQStock.Server.Models;
+using Microsoft.AspNet.SignalR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DeepQStock.Server.Hubs
+{
+    public class AgentHub : Hub
+    {
+
+        #region << Private Properties >>
+
+        public IList<AgentModel> Agents { get; set; }
+
+        #endregion
+
+        #region << Constructor >> 
+
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
+        public AgentHub()
+        {
+            Agents = new List<AgentModel>()
+            {
+                new AgentModel() { Guid = Guid.NewGuid().ToString(), Name ="Dummy Agent 1" },
+                new AgentModel() { Guid = Guid.NewGuid().ToString(), Name ="Dummy Agent 2" },
+            };
+
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Get all instance of agents
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<AgentModel> GetAll()
+        {
+            return Agents;
+        }
+
+        /// <summary>
+        /// Create a new instance of an agent
+        /// </summary>
+        /// <param name="name"></param>
+        public void CreateAgent(string name)
+        {
+            var agent = new AgentModel()
+            {
+                Guid = Guid.NewGuid().ToString(),
+                Name = name
+            };
+
+            Agents.Add(agent);
+
+            Clients.All.onCreatedAgent(agent);
+        }
+    }
+}
