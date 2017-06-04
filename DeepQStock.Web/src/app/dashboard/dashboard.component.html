@@ -5,12 +5,13 @@
                         <div class="row">
                                 <div class="col-4">
                                         <div style="float:left;margin-right: 20px">
-                                                <h5>{{ agent.name + ' (#' + agent.id + ')'}}</h5>
+                                                <h5>{{ '#' + agent.id + ' ' + agent.name}}</h5>
                                         </div>
                                         <div class="btn-group" role="group" aria-label="Basic example">
-                                                <button type="button" class="btn btn-sm btn-secondary" (click)="play($event)"><i class="fa fa-play"></i></button>
+                                                <button type="button" class="btn btn-sm btn-secondary" (click)="play($event, addEditAgent)"><i class="fa fa-play"></i></button>
                                                 <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-pause"></i></button>
                                                 <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-stop"></i></button>
+                                                <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-eject"></i></button>
                                         </div>
 
                                 </div>
@@ -49,7 +50,7 @@
                                 <br>
                                 <strong class="h4">{{agent.actualCapital || 0.00}}</strong>
                                 <span class="h4 text-muted text-xs-right" style="margin-left:10px;">
-                                                <i class="fa fa-dollar"></i>
+                                                <i class="fa fa-money"></i>
                                         </span>
                         </div>
                 </div>
@@ -95,3 +96,19 @@
                 </div>
         </div>
 </div>
+
+<ng-template #addEditAgent let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Nuevo Agente</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>One fine body&hellip;</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="c('Close click')">Cancelar</button>
+    <button type="button" class="btn btn-secondary" (click)="c('Close click')">Cancelar</button>
+  </div>
+</ng-template>

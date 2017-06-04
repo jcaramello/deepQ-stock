@@ -14,6 +14,7 @@ import { BreadcrumbsComponent } from './shared/breadcrumb.component';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { StockExchangeService } from './services/stock.exchange.service';
 import { AgentService } from './services/agent.service';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 // Routing Module
 import { AppRoutingModule } from './app.routing';
@@ -27,6 +28,7 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
     BrowserAnimationsModule,
     AppRoutingModule,
     DropdownModule.forRoot(),
+    NgbModule.forRoot(),
     TabsModule.forRoot(),
     SimpleNotificationsModule.forRoot()
   ],

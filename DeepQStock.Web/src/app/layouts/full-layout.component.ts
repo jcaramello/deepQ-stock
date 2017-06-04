@@ -14,10 +14,6 @@ export class FullLayoutComponent implements OnInit {
   public disabled: boolean = false;
   public status: { isopen: boolean } = { isopen: false };
 
-  public notificationsOptions = {
-
-  }
-
   /**
    * Creates an instance of FullLayoutComponent.
    * @param {AgentService} agentService 

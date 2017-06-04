@@ -4,6 +4,7 @@ import { Agent } from '../models/agent';
 import { OnDayCompletedArgs } from '../models/on-day-completed-args';
 import { AgentService } from '../services/agent.service';
 import { NotificationsService } from 'angular2-notifications';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   templateUrl: 'dashboard.component.html'
@@ -24,7 +25,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 
    * @memberof DashboardComponent
    */
-  constructor(private route: ActivatedRoute, private agentService: AgentService,  private notificationService: NotificationsService ) { }
+  constructor(private route: ActivatedRoute,
+    private agentService: AgentService,
+    private notificationService: NotificationsService,
+    private modalService: NgbModal) { }
 
   /**
    * initialize the component
@@ -64,7 +68,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 
    * @memberof DashboardComponent
    */
-  public play(event){
-      this.notificationService.info("Info", "Simulacion iniciada");
+  public play(event, addEditAgent) {
+
+    this.modalService.open(addEditAgent).result.then((result) => {
+       this.notificationService.warn("Info", "Simulacion iniciada"); 
+    }, (reason) => {
+      this.notificationService.info("Info", "Simulacion iniciada");  
+    });
+
+    
   }
 }

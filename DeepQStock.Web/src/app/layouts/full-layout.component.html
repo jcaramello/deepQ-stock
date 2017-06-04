@@ -25,12 +25,13 @@
         <nav class="sidebar-nav">
             <ul class="nav">
                 <li class="nav-title">
-                    Agentes
-                    <!--<button class="btn btn-outline-primary active">CREAR</button>-->
-                </li>
-
+                    <button class="btn btn-block btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp; Agregar</button>
+                </li>                
+                <li class="nav-title">
+                    <i class="fa fa-line-chart"></i>&nbsp;&nbsp;&nbsp;Agentes
+                </li>                
                 <li class="nav-item" *ngFor="let a of agents">
-                    <a class="nav-link" [routerLink]="['/dashboard', a.id]"><i class="fa fa-line-chart"></i> {{ a.name }}</a>
+                    <a class="nav-link" [routerLink]="['/dashboard', a.id]"><i class="fa fa-tag"></i> {{ a.name }}</a>
                 </li>
             </ul>
         </nav>
@@ -41,7 +42,7 @@
         <div class="container-fluid">
             <router-outlet></router-outlet>
         </div>
-        <!-- /.conainer-fluid -->v
+        <!-- /.conainer-fluid -->
     </main>
 </div>
 <footer class="app-footer">
