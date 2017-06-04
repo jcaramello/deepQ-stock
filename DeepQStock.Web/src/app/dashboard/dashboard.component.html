@@ -1,4 +1,97 @@
 <div class="animated fadeIn">
-        {{ agent.name + '(' + agent.id + ')'}}
-        <!--<candlestick></candlestick>-->
+        <br>
+        <div class="row">
+                <div class="col">
+                        <div class="row">
+                                <div class="col-4">
+                                        <div style="float:left;margin-right: 20px">
+                                                <h5>{{ agent.name + ' (#' + agent.id + ')'}}</h5>
+                                        </div>
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                                <button type="button" class="btn btn-sm btn-secondary" (click)="play($event)"><i class="fa fa-play"></i></button>
+                                                <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-pause"></i></button>
+                                                <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-stop"></i></button>
+                                        </div>
+
+                                </div>
+                                <div class="col">
+                                        <strong>Dia:</strong> {{today.period.dayNumber}}
+                                </div>
+                                <div class="col">
+                                        <strong>Año:</strong> {{today.period.Date}}
+                                </div>
+                                <div class="col">
+                                        <strong>Fecha:</strong> {{today.period.Date}}
+                                </div>
+                                <div class="col">
+                                        <strong>Accion:</strong> {{today.period.selecetedAction}}
+                                </div>
+                                <div class="col">
+                                        <strong>Recompenza:</strong> {{today.period.reward}}
+                                </div>
+                        </div>
+                </div>
+        </div>
+        <div class="row">
+                <div class="col">
+                        <div class="callout callout-success">
+                                <span class="text-muted">Capital Inicial</span>
+                                <br>
+                                <strong class="h4">{{agent.initialCapital || 0.00}}</strong>
+                                <span class="h4 text-muted text-xs-right" style="margin-left:10px;">
+                                                <i class="fa fa-money"></i>
+                                        </span>
+                        </div>
+                </div>
+                <div class="col">
+                        <div class="callout callout-default">
+                                <span class="text-muted">Capital Actual</span>
+                                <br>
+                                <strong class="h4">{{agent.actualCapital || 0.00}}</strong>
+                                <span class="h4 text-muted text-xs-right" style="margin-left:10px;">
+                                                <i class="fa fa-dollar"></i>
+                                        </span>
+                        </div>
+                </div>
+                <div class="col">
+                        <div class="callout callout-danger">
+                                <span class="text-muted">Posicion Actual</span>
+                                <br>
+                                <strong class="h4">{{today.period.actualPosition || 0.00}}</strong>
+                                <span class="h4 text-muted text-xs-right" style="margin-left:10px;">
+                                                <i class="fa fa-files-o"></i>
+                                        </span>
+                        </div>
+
+                </div>
+                <div class="col">
+
+                        <div class="callout callout-warning">
+                                <span class="text-muted">Ganancia Acumulada</span>
+                                <br>
+                                <strong class="h4">{{today.period.accumulatedProfits || 0.00}}</strong>
+                                <span class="h4 text-muted text-xs-right" style="margin-left:10px;">
+                                                <i class="fa fa-calculator"></i>
+                                        </span>
+                        </div>
+
+                </div>
+                <div class="col">
+
+                        <div class="callout callout-info">
+                                <span class="text-muted">Renta anual</span>
+                                <br>
+                                <strong class="h4">{{today.period.annualRent || 0.00}}</strong>
+                                <span class="h4 text-muted text-xs-right" style="margin-left:10px;">
+                                                <i class="fa fa-percent"></i>
+                                        </span>
+                        </div>
+                </div>
+        </div>
+
+        <div class="row">
+                <div class="col">
+                        <candlestick [agent]="agent"></candlestick>
+                </div>
+        </div>
 </div>

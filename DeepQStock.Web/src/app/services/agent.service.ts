@@ -1,6 +1,8 @@
 
 import { Injectable, EventEmitter } from '@angular/core';
 import { Agent } from '../models/agent';
+import { OnDayCompletedArgs } from '../models/on-day-completed-args';
+
 import { BaseService } from './base.service';
 
 /**
@@ -13,7 +15,8 @@ import { BaseService } from './base.service';
 export class AgentService extends BaseService {
 
     // public events
-    public onCreatedAgent: EventEmitter<Agent>;   
+    public onCreatedAgent: EventEmitter<Agent>;
+    public onDayCompleted: EventEmitter<OnDayCompletedArgs>;
 
     /**
      * Creates an instance of AgentService.
@@ -23,7 +26,8 @@ export class AgentService extends BaseService {
     constructor() {
         super('agentHub');
 
-        this.onCreatedAgent = new EventEmitter<Agent>();       
+        this.onCreatedAgent = new EventEmitter<Agent>();
+        this.onDayCompleted = new EventEmitter<OnDayCompletedArgs>();
     }
 
     /**
@@ -37,7 +41,23 @@ export class AgentService extends BaseService {
      * Get an agent by id 
      * @param id
      */
-    public getById(id: number){
+    public getById(id: number) {
         return this.execute('getById', id)
+    }
+
+    /**
+     * Start the simulation of a particular agent      
+     * @memberof AgentService
+     */
+    public start(id: number) {
+        this.execute('start', id);
+    }
+
+    /**
+     * 
+     * @param args Trigger when the agent complete the simulation of a day
+     */
+    public dayCompleted(args: OnDayCompletedArgs) {
+        this.onDayCompleted.emit(args);
     }
 }

@@ -26,8 +26,8 @@ namespace DeepQStock.Server.Hubs
         {
             Agents = new List<AgentModel>()
             {
-                new AgentModel() { Id = 1, Name ="Agent APPL",  Symbol = "MSFT" },
-                new AgentModel() { Id = 2, Name ="Agent MSFT", Symbol = "APPL"},
+                new AgentModel() { Id = 1, Name ="Moe",  Symbol = "APPL" },
+                new AgentModel() { Id = 2, Name ="Luke Skywalker", Symbol = "MSFT"},
             };
 
         }

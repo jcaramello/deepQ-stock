@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { AppComponent } from './app.component';
@@ -10,7 +11,7 @@ import { NAV_DROPDOWN_DIRECTIVES } from './shared/nav-dropdown.directive';
 import { SIDEBAR_TOGGLE_DIRECTIVES } from './shared/sidebar.directive';
 import { AsideToggleDirective } from './shared/aside.directive';
 import { BreadcrumbsComponent } from './shared/breadcrumb.component';
-
+import { SimpleNotificationsModule } from 'angular2-notifications';
 import { StockExchangeService } from './services/stock.exchange.service';
 import { AgentService } from './services/agent.service';
 
@@ -22,14 +23,16 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
 
 @NgModule({
   imports: [
-    BrowserModule,
+    BrowserModule,  
+    BrowserAnimationsModule,
     AppRoutingModule,
     DropdownModule.forRoot(),
     TabsModule.forRoot(),
+    SimpleNotificationsModule.forRoot()
   ],
   declarations: [
     AppComponent,
-    FullLayoutComponent,
+    FullLayoutComponent,      
     NAV_DROPDOWN_DIRECTIVES,
     BreadcrumbsComponent,
     SIDEBAR_TOGGLE_DIRECTIVES,

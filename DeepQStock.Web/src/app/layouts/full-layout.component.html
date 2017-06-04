@@ -24,13 +24,13 @@
     <div class="sidebar">
         <nav class="sidebar-nav">
             <ul class="nav">
-                <li class="nav-item">
-                    <a class="nav-link">
-                        <i class="icon-speedometer"></i> Agents <button class="badge badge-info">NEW</button>
-                    </a>
+                <li class="nav-title">
+                    Agentes
+                    <!--<button class="btn btn-outline-primary active">CREAR</button>-->
                 </li>
-                <li *ngFor="let a of agents">
-                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/dashboard', a.id]"><i class="fa fa-angle-double-right"></i> {{ a.name }}</a>
+
+                <li class="nav-item" *ngFor="let a of agents">
+                    <a class="nav-link" [routerLink]="['/dashboard', a.id]"><i class="fa fa-line-chart"></i> {{ a.name }}</a>
                 </li>
             </ul>
         </nav>
@@ -38,21 +38,13 @@
 
     <!-- Main content -->
     <main class="main">
-
-        <!-- Breadcrumb -->
-        <ol class="breadcrumb">
-            <breadcrumbs></breadcrumbs>
-        </ol>
-
         <div class="container-fluid">
             <router-outlet></router-outlet>
         </div>
-        <!-- /.conainer-fluid -->
+        <!-- /.conainer-fluid -->v
     </main>
 </div>
-
 <footer class="app-footer">
-    <a href="http://coreui.io">deepQ Stock</a> &copy; 2017.
-    <span class="float-right">Powered by <a href="http://coreui.io">CoreUI</a>
-    </span>
+    <a href="https://github.com/jcaramello/deepQ-stock/" target="_blank">deepQ Stock</a> &copy; 2017.
+    <span class="float-right">Powered by <a href="http://coreui.io">CoreUI</a></span>
 </footer>

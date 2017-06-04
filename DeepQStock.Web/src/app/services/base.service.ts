@@ -24,8 +24,9 @@ export class BaseService {
     constructor(hubName: string) {
 
         this.connection = $.hubConnection(environment.signalrUrl);
+        this.connection.logging = environment.signalRloggingEnabled;
         this.proxy = this.connection.createHubProxy(hubName);
-        this.onConnected = Promise.resolve(this.connection.start().then(() =>  console.log(`connnection established with ${hubName}`)));
+        this.onConnected = Promise.resolve(this.connection.start().then(() => console.log(`connnection established with ${hubName}`)));
     }
 
     /**
@@ -38,7 +39,10 @@ export class BaseService {
      * 
      * @memberof BaseService
      */
-    protected execute(method: string, ...args: any[]) {        
-        return this.onConnected.then(() => Promise.resolve(this.proxy.invoke(method, args)));
+    protected execute(method: string, ...parameters: any[]) {
+        return this.onConnected.then(() => {            
+            var args = [method].concat(parameters);
+            return Promise.resolve(this.proxy.invoke.apply(this.proxy, args));
+        });
     }
 }

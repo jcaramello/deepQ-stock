@@ -1,4 +1,4 @@
-import { Component, HostListener, EventEmitter, Input, Output } from '@angular/core';
+import { Component, HostListener, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { StockExchangeService } from '../services/stock.exchange.service';
 import { Agent } from '../models/agent';
@@ -8,15 +8,12 @@ import { Agent } from '../models/agent';
 */
 @Component({
   selector: 'candlestick',
-  template: '<div id="candlestick-{{id}}" class="candlestick-container"></div>'
+  template: '<div id="candlestick-container"></div>'
 })
 export class CandlestickComponent {
 
-  @Input() 
-  public agent: Agent = new Agent();  
-  
-  public static IdGenerator = 1;
-  public id: number;
+  @Input()
+  public agent;
 
   private chart: AmCharts.AmStockChart;
   private pricePanel: AmCharts.StockPanel;
@@ -31,7 +28,6 @@ export class CandlestickComponent {
    * @memberof BreadcrumbsComponent
    */
   constructor(private router: Router, private route: ActivatedRoute, private stockExchange: StockExchangeService) {
-    this.id = CandlestickComponent.IdGenerator++;
     this.data = this.stockExchange.getPeriods();
   }
 
@@ -42,8 +38,14 @@ export class CandlestickComponent {
    */
   ngOnInit(): void {
 
-    AmCharts.ready(this.init.bind(this));
+  }
 
+  /**
+   * Trigger when inputs changes
+   */
+  ngOnChanges(changes: SimpleChanges): void {
+    this.agent = changes['agent'].currentValue;
+    this.init();
   }
 
 
@@ -57,11 +59,11 @@ export class CandlestickComponent {
    */
   private init() {
 
-    var symbol = this.agent.symbol;
+    if (!this.agent || !this.agent.id) return;
 
     var chart = this.chart = new AmCharts.AmStockChart();
-    chart.theme = 'light';
-    chart.pathToImages = "/bower_components/amcharts3/amcharts/images/";
+    chart['theme'] = 'light';
+    chart['pathToImages'] = "/bower_components/amcharts3/amcharts/images/";
     chart['dataDateFormat'] = "YYYY/MM/DD";
     chart['mouseWheelScrollEnabled'] = true;
     chart.valueAxesSettings.position = 'right';
@@ -71,7 +73,7 @@ export class CandlestickComponent {
 
     //dataSet.dataProvider = this.data;
     var loader = {
-      url: "assets/data/" + symbol + ".csv",
+      url: "assets/data/" + this.agent.symbol + ".csv",
       format: "csv",
       showCurtain: true,
       showErrors: true,
@@ -115,7 +117,7 @@ export class CandlestickComponent {
     priceGraph.openField = 'open';
     priceGraph.closeField = 'close';
     priceGraph.balloonText = "Open:<b>[[open]]</b><br>Low:<b>[[low]]</b><br>High:<b>[[high]]</b><br>Close:<b>[[close]]</b><br>";
-    priceGraph.title = symbol;
+    priceGraph.title = this.agent.symbol;
     priceGraph.fillColors = "#66cc66";
     priceGraph.useDataSetColors = false;
     priceGraph.lineColor = '#595959';
@@ -161,8 +163,8 @@ export class CandlestickComponent {
     var periodSelector = new AmCharts.PeriodSelector();
     periodSelector.periods = [
       { period: "MM", count: 1, label: "1M" },
-      { period: "MM", count: 6, label: "6M", selected: true },
-      { period: "YYYY", count: 1, label: "1A" },
+      { period: "MM", count: 6, label: "6M" },
+      { period: "YYYY", count: 1, label: "1A", selected: true },
       { period: "MAX", label: "Max" }
     ];
 
@@ -170,7 +172,7 @@ export class CandlestickComponent {
 
     chart.panels = [pricePanel, volPanel];
     chart.addListener("rendered", this.zoomChart.bind(this));
-    chart.write('candlestick-' + this.id);
+    chart['write']('candlestick-container');
     this.zoomChart();
   }
 
