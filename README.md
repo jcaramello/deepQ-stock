@@ -18,7 +18,7 @@ Para poder ejecutar la applicacion es necesario configuar localmente:
 * La Api, usada por la aplicacion web.
 * La applicacion web
 
-### Configuracion de Redis
+### Redis
 
 Windows: Instalar Redis desde [Microsoft Open Tech](https://msopentech.com/blog/2015/03/03/redis-windows-2-8-19-released/)
 
