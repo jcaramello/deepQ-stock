@@ -7,7 +7,7 @@ en el desarrollo de agentes autónomos que combinando **Deep Neural Networks** c
 
 # Referencias
  
- * [Reinforcement Learning: An Introduction](http://people.inf.elte.hu/lorincz/Files/RL_2006/SuttonBook.pdf)
+ * [Reinforcement Learning: An Introductio - Richard S. Sutton and Andrew G. Barto](http://people.inf.elte.hu/lorincz/Files/RL_2006/SuttonBook.pdf)
  * [Bekerly UC - Curse:Deep Reinforcement Learning](http://rll.berkeley.edu/deeprlcourse/)
  * [Stanford - Curse: Convolutional Neural Networks for Visual Recognition](http://karpathy.github.io/2016/05/31/rl/)   
  * [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/)
