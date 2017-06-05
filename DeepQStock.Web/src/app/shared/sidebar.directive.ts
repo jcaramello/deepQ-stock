@@ -7,7 +7,9 @@ import { Directive, HostListener } from '@angular/core';
   selector: '.sidebar-toggler',
 })
 export class SidebarToggleDirective {
-  constructor() { }
+  constructor() {
+    document.querySelector('body').classList.toggle('sidebar-hidden');
+   }
 
   @HostListener('click', ['$event'])
   toggleOpen($event:any) {

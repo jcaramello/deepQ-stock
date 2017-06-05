@@ -1,7 +1,8 @@
 import { Component, HostListener, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { StockExchangeService } from '../services/stock.exchange.service';
+import { StockExchangeService } from '../services/stock-exchange-service';
 import { Agent } from '../models/agent';
+import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 
 /**
 * Allows to draw a candlestick chart
@@ -27,8 +28,8 @@ export class CandlestickComponent {
    * 
    * @memberof BreadcrumbsComponent
    */
-  constructor(private router: Router, private route: ActivatedRoute, private stockExchange: StockExchangeService) {
-    this.data = this.stockExchange.getPeriods();
+  constructor(private router: Router, private route: ActivatedRoute, private stockExchangeService: StockExchangeService, private slimLoadingBarService: SlimLoadingBarService) {
+    this.data = [];
   }
 
   /**
@@ -63,15 +64,15 @@ export class CandlestickComponent {
 
     var chart = this.chart = new AmCharts.AmStockChart();
     chart['theme'] = 'light';
+    chart['language'] = 'es';
     chart['pathToImages'] = "/bower_components/amcharts3/amcharts/images/";
     chart['dataDateFormat'] = "YYYY/MM/DD";
     chart['mouseWheelScrollEnabled'] = true;
-    chart.valueAxesSettings.position = 'right';
+    chart.valueAxesSettings.position = 'right';    
 
     chart.categoryAxesSettings.equalSpacing = true;
     chart.categoryAxesSettings.groupToPeriods = ["DD"];
 
-    //dataSet.dataProvider = this.data;
     var loader = {
       url: "assets/data/" + this.agent.symbol + ".csv",
       format: "csv",
@@ -80,7 +81,10 @@ export class CandlestickComponent {
       async: true,
       reverse: true,
       delimiter: ",",
-      useColumnNames: true
+      useColumnNames: true,
+      load: (opt, chart) => {
+        this.slimLoadingBarService.complete()   
+      }
     };
 
     var dataSet = new AmCharts.DataSet();

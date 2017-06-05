@@ -20,7 +20,9 @@
     "scripts": [
       "../bower_components/amcharts3/amcharts/amcharts.js",
       "../bower_components/amcharts3/amcharts/serial.js",
+      "../bower_components/amcharts3/amcharts/lang/es.js",
       "../bower_components/amstock3/amcharts/amstock.js",
+      "../bower_components/amstock3/amcharts/lang/es.js",
       "../bower_components/amstock3/amcharts/plugins/dataloader/dataloader.js",
       "../bower_components/amstock3/amcharts/themes/light.js",
       "../bower_components/lodash/dist/lodash.min.js",

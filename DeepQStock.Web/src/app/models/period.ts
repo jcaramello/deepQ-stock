@@ -4,8 +4,15 @@ export enum PeriodType{
     month
 }
 
+/**
+ * Period
+ * 
+ * @export
+ * @class Period
+ */
 export class Period{
-
+    
+    // Public Properties
     public id: number;
     public periodType: PeriodType;
     public date:Date;

@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy, EventEmitter, Input, Output } from '@angu
 import { ActivatedRoute, Router } from '@angular/router';
 import { Agent } from '../models/agent';
 import { OnDayCompletedArgs } from '../models/on-day-completed-args';
-import { AgentService } from '../services/agent.service';
+import { AgentService } from '../services/agent-service';
 import { NotificationsService } from 'angular2-notifications';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 
 @Component({
   templateUrl: 'dashboard.component.html'
@@ -27,8 +27,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   constructor(private route: ActivatedRoute,
     private agentService: AgentService,
-    private notificationService: NotificationsService,
-    private modalService: NgbModal) { }
+    private notificationService: NotificationsService,    
+    private slimLoadingBarService: SlimLoadingBarService) { }
 
   /**
    * initialize the component
@@ -38,7 +38,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.agentService.onDayCompleted.subscribe(args => this.today = args);
     this.sub = this.route.params.subscribe(params => {
-      this.agentService.getById(+params['id']).then(a => this.agent = a);
+      this.slimLoadingBarService.start();
+      this.agentService.getById(+params['id']).then(a => {
+        this.agent = a
+      });
     });
   }
 
@@ -69,13 +72,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @memberof DashboardComponent
    */
   public play(event, addEditAgent) {
-
-    this.modalService.open(addEditAgent).result.then((result) => {
-       this.notificationService.warn("Info", "Simulacion iniciada"); 
-    }, (reason) => {
-      this.notificationService.info("Info", "Simulacion iniciada");  
-    });
-
-    
+    this.notificationService.info("Info", "Simulacion iniciada");
   }
 }

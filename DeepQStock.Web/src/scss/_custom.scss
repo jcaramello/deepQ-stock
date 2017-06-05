@@ -1,17 +1,20 @@
 // Here you can add other styles
-.p-l-1, .p-x-1 {
+.p-l-1,
+.p-x-1 {
     padding-left: 1rem!important;
 }
 
-.p-r-1, .p-x-1 {
+.p-r-1,
+.p-x-1 {
     padding-right: 1rem!important;
 }
 
-html, body {
+html,
+body {
     height: 100%;
 }
 
-#candlestick-container{
+#candlestick-container {
     width: 100%;
     height: 70vh;
 }
@@ -40,4 +43,35 @@ html, body {
     color: #fff;
     text-decoration: none;
     background: 0 0;
+}
+
+.text-xs-center {
+    text-align: center !important;
+}
+
+.rich-text {
+    font-size: 4.5em;
+    letter-spacing: .05em;
+    line-height: 7.2rem;
+}
+
+.rich-text-sm {
+    font-size: 1.5rem;
+    letter-spacing: .025em;
+    line-height: 2rem;
+    font-family: 'Cinzel', cursive;
+}
+
+.title-divider-2 {
+    border-width: 2px;
+    width: 50px;
+    margin: 20px auto 50px auto;
+    border: 0;
+    border-top: 2px solid rgba(0, 0, 0, 0.1);
+    border-color: #20a8d8;
+}
+
+a, a:link, a:visited{
+    color: #20a8d8;
+    text-decoration: none;
 }

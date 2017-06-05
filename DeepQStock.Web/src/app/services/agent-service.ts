@@ -2,8 +2,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Agent } from '../models/agent';
 import { OnDayCompletedArgs } from '../models/on-day-completed-args';
-
-import { BaseService } from './base.service';
+import { BaseService } from './base-service';
 
 /**
  * Agent Service

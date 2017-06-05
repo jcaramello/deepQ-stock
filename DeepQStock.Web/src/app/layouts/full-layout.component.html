@@ -6,7 +6,7 @@
             <a class="nav-link navbar-toggler sidebar-toggler" href="#">&#9776;</a>
         </li>
         <li class="nav-item p-x-1 active">
-            <a class="nav-link" href="#">Introduccion</a>
+            <a class="nav-link" [routerLink]="['/introduction']">Introduccion</a>
         </li>
         <li class="nav-item p-x-1">
             <a class="nav-link" href="#">Compañias</a>
@@ -25,11 +25,11 @@
         <nav class="sidebar-nav">
             <ul class="nav">
                 <li class="nav-title">
-                    <button class="btn btn-block btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp; Agregar</button>
-                </li>                
+                    <button class="btn btn-block btn-primary btn-sm" (click)="add(addEditAgent)"><i class="fa fa-plus"></i>&nbsp; Agregar</button>
+                </li>
                 <li class="nav-title">
                     <i class="fa fa-line-chart"></i>&nbsp;&nbsp;&nbsp;Agentes
-                </li>                
+                </li>
                 <li class="nav-item" *ngFor="let a of agents">
                     <a class="nav-link" [routerLink]="['/dashboard', a.id]"><i class="fa fa-tag"></i> {{ a.name }}</a>
                 </li>
@@ -49,3 +49,134 @@
     <a href="https://github.com/jcaramello/deepQ-stock/" target="_blank">deepQ Stock</a> &copy; 2017.
     <span class="float-right">Powered by <a href="http://coreui.io">CoreUI</a></span>
 </footer>
+
+
+<div bsModal #addEditAgent="bs-modal" class="modal fade" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog" aria-labelledby="addEditAgent"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="fa fa-tag"></i> {{ currentStock.agent && currentStock.agent.id > 0 ? 'Editar' : 'Nuevo'}} Agente</h4>
+                <button type="button" class="close" aria-label="Close" (click)="addEditAgent.hide()">
+                    <span aria-hidden="true">&times;</span>`
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+
+                    <tabset>
+                        <tab heading="Agente">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="name">Nombre</label>
+                                    <input id="name" type="text" class="form-control" [(ngModel)]="currentStock.agent.name" required>
+                                </div>
+                                <div class="col">
+                                    <label for="symbol">Compañia</label>
+                                    <select class="form-control" id="state" [(ngModel)]="currentStock.agent.symbol">
+                                        <option *ngFor="let c of companies" ngValue="{{ c.symbol }}">
+                                            {{c.name}}
+                                        </option>
+                                     </select>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="eGreedy">ε-greedy policy: {{ currentStock.agent.eGreedy * 100 }}%</label>
+                                    <nouislider id="eGreedy" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentStock.agent.eGreedy"></nouislider>
+                                </div>
+                                <div class="col">
+                                    <label for="discountFactor">Factor de descuento: {{ currentStock.agent.discountFactor * 100 }}%</label>
+                                    <nouislider id="discountFactor" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentStock.agent.discountFactor"></nouislider>
+                                </div>
+                                <div class="col">
+                                    <label for="inOutStrategy">Estrategia de Entrada/Salida: {{ currentStock.agent.inOutStrategy * 100 }}%</label>
+                                    <nouislider id="inOutStrategy" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentStock.agent.inOutStrategy"></nouislider>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="miniBatchSize">Tamaño del mini batch</label>
+                                    <input id="miniBatchSize" type="number" class="form-control" [(ngModel)]="currentStock.agent.miniBatchSize" required>
+                                </div>
+                                <div class="col">
+                                    <label for="memoryReplaySize">Tamaño de la memoria de entrenamiento</label>
+                                    <input id="memoryReplaySize" type="number" class="form-control" [(ngModel)]="currentStock.agent.memoryReplaySize" required>
+                                </div>
+                            </div>
+
+
+                        </tab>
+                        <tab heading="Q-Network">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="hiddenLayersCount">Numero de hidden layers</label>
+                                    <input id="hiddenLayersCount" type="number" class="form-control" [(ngModel)]="currentStock.agent.qNetwork.hiddenLayersCount"
+                                        required>
+                                </div>
+                                <div class="col">
+                                    <label for="neuronCountForHiddenLayers">Numero de neuronas por capa</label>
+                                    <input id="neuronCountForHiddenLayers" type="number" class="form-control" [(ngModel)]="currentStock.agent.qNetwork.neuronCountForHiddenLayers"
+                                        required>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="activationFcForHiddenLayers">Funcion de activacion (Hidden Layers)</label>
+                                    <select class="form-control" id="activationFcForHiddenLayers" [(ngModel)]="currentStock.agent.qNetwork.activationFcForHiddenLayers">
+                                        <option ngValue="tanh">Tangente Hiperbolica</option>
+                                        <option ngValue="sigmoid">Sigmoid</option>
+                                        <option ngValue="linear">Lineal</option>
+                                     </select>
+                                </div>
+                                <div class="col">
+                                    <label for="activationFcForOuputLayer">Funcion de activacion (Ouput Layer)</label>
+                                    <select class="form-control" id="activationFcForOuputLayer" [(ngModel)]="currentStock.agent.qNetwork.activationFcForOuputLayer">
+                                        <option ngValue="tanh">Tangente Hiperbolica</option>
+                                        <option ngValue="sigmoid">Sigmoid</option>
+                                        <option ngValue="linear">Lineal</option>
+                                     </select>
+                                </div>
+                            </div>
+                        </tab>
+                        <tab heading="Mercado de valores">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="episodeLength">Longuitud de episodio (dias)</label>
+                                    <input id="episodeLength" type="number" class="form-control" [(ngModel)]="currentStock.episodeLength" required>
+                                </div>
+                                <div class="col">
+                                    <label for="numberOfPeriods">Numero de periodos por estado</label>
+                                    <input id="numberOfPeriods" type="number" class="form-control" [(ngModel)]="currentStock.numberOfPeriods" required>
+                                </div>
+                                <div class="col">
+                                    <label for="initialCapital">Caital inicial</label>
+                                    <input id="initialCapital" type="number" class="form-control" [(ngModel)]="currentStock.initialCapital" required>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="transactionCost">Costo de transaccion: {{ currentStock.transactionCost * 100 }}%</label>
+                                    <nouislider id="transactionCost" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentStock.transactionCost"></nouislider>
+                                </div>
+                                <div class="col">
+                                    <label for="simulationVelocity">Velocidad de simulacion: {{ currentStock.simulationVelocity *10 }}</label>
+                                    <nouislider id="simulationVelocity" [config]="{start:0}" [min]="0" [max]="5" [step]="0.01" [(ngModel)]="currentStock.simulationVelocity"></nouislider>
+                                </div>
+                            </div>
+                        </tab>
+                    </tabset>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="save(addEditAgent)">Guardar</button>
+                <button type="button" class="btn btn-secondary" (click)="addEditAgent.hide()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
