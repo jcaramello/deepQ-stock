@@ -5,6 +5,17 @@ el proyecto busca investigar la aplicabilidad y efectividad de estas ideas,
 en el desarrollo de agentes autónomos que combinando **Deep Neural Networks** con
 **Reinforcement Learning**, aprendan a invertir en activos financieros.
 
+# Referencias
+ 
+ * [Reinforcement Learning: An Introduction](http://people.inf.elte.hu/lorincz/Files/RL_2006/SuttonBook.pdf)
+ * [Bekerly UC - Curse:Deep Reinforcement Learning](http://rll.berkeley.edu/deeprlcourse/)
+ * [Stanford - Curse: Convolutional Neural Networks for Visual Recognition](http://karpathy.github.io/2016/05/31/rl/)   
+ * [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/)
+ * [An Investigation into the Use of Reinforcement Learning Techniques within the Algorithmic Trading Domain](http://www.doc.ic.ac.uk/teaching/distinguished-projects/2015/j.cumming.pdf)
+ * [Algorithm Trading using Q-Learning and Recurrent Reinforcement Learning](http://cs229.stanford.edu/proj2009/LvDuZhai.pdf)
+ * [Demystifying deep reinforcement learning](http://neuro.cs.ut.ee/demystifying-deep-reinforcement-learning/)
+ * [Deep Q-Learning for Stock Trading](http://hallvardnydal.github.io/2016/03/12/deep_q/)
+ 
 ## El Proyecto
 
 El proyecto consta de 2 aplicaciones, una api auto-hosteada implementada con ASP.NET 5 y Web Api 2,
@@ -59,4 +70,3 @@ La aplicacion web estara accesible en
 ```
    http://localhost:4200/
 ```
-
