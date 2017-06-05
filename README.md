@@ -31,14 +31,14 @@ Para poder ejecutar la applicacion es necesario configuar localmente:
 
 ### Redis
 
-Windows: Instalar Redis desde [Microsoft Open Tech](https://msopentech.com/blog/2015/03/03/redis-windows-2-8-19-released/)
+Instalar Redis desde [Microsoft Open Tech](https://msopentech.com/blog/2015/03/03/redis-windows-2-8-19-released/)
 
 *port*: 6379
 
 ### Servidor 
 
 La api, esta implementada con Owin, por lo cual podra auto hostearse, sin la neceisdad de instalar un servidor web.
-Para levantar el servidor web:
+Para levantar la api ejecutar el archivo dqa-server.exe que se encuentra en DeepQStock.Server/bin:
 
 ```
     cd DeepQStock.Server/bin
@@ -47,7 +47,7 @@ Para levantar el servidor web:
 
 ### Aplicacion Web
 
-Descargar e Instalar node js version 6.10+
+Para ejecutar la applicacion web sera necesario descargar e Instalar node js version 6.10+
 Una vez instalado habra que instlar los siguientes paquetes en forma global
 
 ```
@@ -55,13 +55,13 @@ Una vez instalado habra que instlar los siguientes paquetes en forma global
     npm install bower -g
 ```
 
-Una vez instalado typescript, es necesario instalar las dependencias del proyecto:
+Luego será necesario instalar las dependencias del proyecto:
 ```
     cd DeepQStock.Web
     npm install
     bower install
 ```
-Finalmente podremos levantar el servidor web usando angular cli
+Finalmente podremos levantar el servidor web usando angular-cli
 ```
     ng serve
 ```
