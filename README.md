@@ -1,5 +1,3 @@
-# DeepQ Stock
-
 ![DeepQ Stock](https://raw.githubusercontent.com/jcaramello/deepQ-stock/master/DeepQStock.Web/src/img/logo.png)
 
 Inspirado en [DeepMind](https://deepmind.com/research/dqn/),
