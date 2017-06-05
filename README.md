@@ -24,7 +24,7 @@ Y una aplicacion web implementada con Angular 4 y Typescript
 
 ## Configuracion
 
-Para poder ejecutar la applicacion en forma local,es necesario configurar:
+Para poder ejecutar la applicacion en forma local, es necesario configurar:
 
 * Redis, sera usado como base de datos por la api
 * Un Servidor donde se ejecutaran los agentes y que brindara actualizaciones en tiempo real del estado de los mismos.
