@@ -39,6 +39,7 @@ Instalar Redis desde [Microsoft Open Tech](https://msopentech.com/blog/2015/03/0
 ### Servidor 
 
 El Servidor consta de una api self-hosted, implementada con Owin y signalR.
+<br>
 Para levantar la api, ejecutar el archivo dqs-server.exe que se encuentra en DeepQStock.Server/bin:
 
 ```
