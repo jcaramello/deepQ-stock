@@ -2,8 +2,7 @@
   <img src="https://raw.githubusercontent.com/jcaramello/deepQ-stock/master/DeepQStock.Web/src/img/logo.png" alt="DeepQ Stock"/>
 </p>
 
-Inspirado en [DeepMind](https://deepmind.com/research/dqn/),
-el proyecto busca investigar la aplicabilidad y efectividad de estas ideas, 
+Inspirado en [DeepMind](https://deepmind.com/research/dqn/),el proyecto busca investigar la aplicabilidad y efectividad de **Deep Reinforcement Learning**, 
 en el desarrollo de agentes autónomos que combinando **Deep Neural Networks** con
 **Reinforcement Learning**, aprendan a invertir en activos financieros.
 
