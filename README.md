@@ -18,8 +18,8 @@ en el desarrollo de agentes autónomos que combinando **Deep Neural Networks** c
  
 ## El Proyecto
 
-El proyecto consta de 2 aplicaciones, una api auto-hosteada implementada con ASP.NET 5 y Web Api 2,
-Y una aplicacion web implementada con Angular 4, Typescript, Bootrstrap 4 y SignalR
+El proyecto consta de 2 aplicaciones, una api sefl-hostead implementada con ASP.NET 5 y SignalR,
+Y una aplicacion web implementada con Angular 4, Typescript
 
 ## Configuracion
 
