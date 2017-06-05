@@ -34,7 +34,7 @@
     "angular2-notifications": "^0.7.4",
     "core-js": "2.4.1",
     "moment": "2.17.1",
-    "ng2-bootstrap": "^1.4.0",
+    "ng2-bootstrap": "^1.6.3",
     "ng2-charts": "1.5.0",
     "ng2-nouislider": "^1.6.1",
     "ng2-slim-loading-bar": "^4.0.0",

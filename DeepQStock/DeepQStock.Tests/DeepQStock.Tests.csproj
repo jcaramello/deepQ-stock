@@ -85,13 +85,13 @@
     <Compile Include="StorageTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DeepQStock.csproj">
       <Project>{e6fd0e15-0ae4-46bd-8746-913eb3c5e2f3}</Project>
       <Name>DeepQStock</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -4,18 +4,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { AppComponent } from './app.component';
-import { DropdownModule } from 'ng2-bootstrap/dropdown';
+import { BsDropdownModule  } from 'ng2-bootstrap/dropdown';
 import { TabsModule } from 'ng2-bootstrap/tabs';
 import { NAV_DROPDOWN_DIRECTIVES } from './shared/nav-dropdown.directive';
-import { FormsModule  } from '@angular/forms'
+import { FormsModule } from '@angular/forms'
 import { SIDEBAR_TOGGLE_DIRECTIVES } from './shared/sidebar.directive';
 import { AsideToggleDirective } from './shared/aside.directive';
 import { BreadcrumbsComponent } from './shared/breadcrumb.component';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { StockExchangeService } from './services/stock-exchange-service';
 import { AgentService } from './services/agent-service';
-import {SlimLoadingBarModule} from 'ng2-slim-loading-bar';
-import { ModalModule  } from 'ng2-bootstrap';
+import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
+import { ModalModule } from 'ng2-bootstrap';
 import { NouisliderModule } from 'ng2-nouislider';
 
 
@@ -27,20 +27,20 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
 
 @NgModule({
   imports: [
-    BrowserModule,  
+    BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    DropdownModule.forRoot(),    
+    BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
     SimpleNotificationsModule.forRoot(),
     SlimLoadingBarModule.forRoot(),
-    ModalModule.forRoot(),   
+    ModalModule.forRoot(),
     NouisliderModule,
     FormsModule
   ],
   declarations: [
     AppComponent,
-    FullLayoutComponent,      
+    FullLayoutComponent,
     NAV_DROPDOWN_DIRECTIVES,
     BreadcrumbsComponent,
     SIDEBAR_TOGGLE_DIRECTIVES,
@@ -53,4 +53,4 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

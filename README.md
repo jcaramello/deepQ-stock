@@ -30,8 +30,8 @@ La api, esta implementada con Owin, por lo cual podra auto hostearse, sin la nec
 Para levantar el servidor web:
 
 ```
-    cd DeepQStock.Server/bin/Debug
-    DeepQStock.Server
+    cd DeepQStock.Server/bin
+    dqs-server
 ```
 
 ### Aplicacion Web
@@ -41,15 +41,22 @@ Una vez instalado habra que instlar los siguientes paquetes en forma global
 
 ```
     npm install typescript -g    
+    npm install bower -g
 ```
 
 Una vez instalado typescript, es necesario instalar las dependencias del proyecto:
 ```
     cd DeepQStock.Web
     npm install
+    bower install
 ```
 Finalmente podremos levantar el servidor web usando angular cli
 ```
     ng serve
+```
+La aplicacion web estara accesible en 
+
+```
+   http://localhost:4200/
 ```
 

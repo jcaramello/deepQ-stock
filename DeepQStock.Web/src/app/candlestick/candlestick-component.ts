@@ -183,7 +183,7 @@ export class CandlestickComponent {
   // this method is called when chart is first inited as we listen for "rendered" event
   private zoomChart() {
     // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
-
-    this.pricePanel.zoomToIndexes(this.data.length - 3, this.data.length - 1);
+    var zoomToIndexes: any = this.pricePanel.zoomToIndexes;
+    zoomToIndexes(this.data.length - 3, this.data.length - 1);
   }
 }
