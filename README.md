@@ -48,7 +48,8 @@ Para levantar la api, ejecutar el archivo dqs-server.exe que se encuentra en Dee
 
 ### Aplicacion Web
 
-Para ejecutar la applicacion web sera necesario descargar e Instalar node js - v6.10+
+Para ejecutar la applicacion web sera necesario descargar e Instalar node js, version 6.10+
+<br>
 Una vez instalado habra que instalar los siguientes paquetes en forma global
 
 ```
