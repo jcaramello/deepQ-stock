@@ -2,14 +2,14 @@
   <img src="https://raw.githubusercontent.com/jcaramello/deepQ-stock/master/DeepQStock.Web/src/img/logo.png" alt="DeepQ Stock"/>
 </p>
 
-Inspirado en [DeepMind](https://deepmind.com/research/dqn/),el proyecto busca investigar la aplicabilidad y efectividad de **Deep Reinforcement Learning**, 
+Inspirado en [DeepMind](https://deepmind.com/research/dqn/), el proyecto busca investigar la aplicabilidad y efectividad de **Deep Reinforcement Learning**, 
 en el desarrollo de agentes autónomos que combinando **Deep Neural Networks** con
 **Reinforcement Learning**, aprendan a invertir en activos financieros.
 
 # Referencias
  
  * [Reinforcement Learning: An Introduction - Richard S. Sutton and Andrew G. Barto](http://people.inf.elte.hu/lorincz/Files/RL_2006/SuttonBook.pdf)
- * [Bekerly UC - Curse:Deep Reinforcement Learning](http://rll.berkeley.edu/deeprlcourse/)
+ * [Bekerly UC - Curse: Deep Reinforcement Learning](http://rll.berkeley.edu/deeprlcourse/)
  * [Stanford - Curse: Convolutional Neural Networks for Visual Recognition](http://karpathy.github.io/2016/05/31/rl/)   
  * [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/)
  * [An Investigation into the Use of Reinforcement Learning Techniques within the Algorithmic Trading Domain](http://www.doc.ic.ac.uk/teaching/distinguished-projects/2015/j.cumming.pdf)
@@ -19,16 +19,16 @@ en el desarrollo de agentes autónomos que combinando **Deep Neural Networks** c
  
 ## El Proyecto
 
-El proyecto consta de 2 aplicaciones, una api sefl-hostead implementada con ASP.NET 5 y SignalR,
-Y una aplicacion web implementada con Angular 4, Typescript
+El proyecto consta de 2 aplicaciones, una api sefl-hostead implementada con ASP.NET 5, SignalR y Encog3
+Y una aplicacion web implementada con Angular 4 y Typescript
 
 ## Configuracion
 
-Para poder ejecutar la applicacion es necesario configuar localmente:
+Para poder ejecutar la applicacion en forma local,es necesario configurar:
 
 * Redis, sera usado como base de datos por la api
-* La Api, usada por la aplicacion web.
-* La applicacion web
+* Un Servidor donde se ejecutaran los agentes y que brindara actualizaciones en tiempo real del estado de los mismos.
+* Una aplicacion web, donde se podran visualizar el aprendizaje alcanzado por los agentes creados asi como tambien diferentes estadisticas.
 
 ### Redis
 
@@ -38,8 +38,8 @@ Instalar Redis desde [Microsoft Open Tech](https://msopentech.com/blog/2015/03/0
 
 ### Servidor 
 
-La api, esta implementada con Owin, por lo cual podra auto hostearse, sin la neceisdad de instalar un servidor web.
-Para levantar la api ejecutar el archivo dqa-server.exe que se encuentra en DeepQStock.Server/bin:
+El Servidor consta de una api self-hosted, implementada con Owin y signalR.
+Para levantar la api, ejecutar el archivo dqs-server.exe que se encuentra en DeepQStock.Server/bin:
 
 ```
     cd DeepQStock.Server/bin
@@ -48,8 +48,8 @@ Para levantar la api ejecutar el archivo dqa-server.exe que se encuentra en Deep
 
 ### Aplicacion Web
 
-Para ejecutar la applicacion web sera necesario descargar e Instalar node js version 6.10+
-Una vez instalado habra que instlar los siguientes paquetes en forma global
+Para ejecutar la applicacion web sera necesario descargar e Instalar node js - v6.10+
+Una vez instalado habra que instalar los siguientes paquetes en forma global
 
 ```
     npm install typescript -g    
