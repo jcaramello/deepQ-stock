@@ -1,4 +1,4 @@
-![DeepQ Stock](https://raw.githubusercontent.com/jcaramello/deepQ-stock/master/DeepQStock.Web/src/img/logo.png)
+                ![DeepQ Stock](https://raw.githubusercontent.com/jcaramello/deepQ-stock/master/DeepQStock.Web/src/img/logo.png)
 
 Inspirado en [DeepMind](https://deepmind.com/research/dqn/),
 el proyecto busca investigar la aplicabilidad y efectividad de estas ideas, 
