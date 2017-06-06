@@ -1,9 +1,13 @@
-﻿using DeepQStock.Server.Resolvers;
+﻿using DeepQStock.Server.Models;
+using DeepQStock.Server.Resolvers;
+using DeepQStock.Storage;
 using Microsoft.AspNet.SignalR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Owin.Cors;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
+using ServiceStack.Redis;
 using System.Linq;
 using System.Web.Http;
 
@@ -36,6 +40,11 @@ namespace DeepQStock.Server
             app.UseWebApi(config);
             app.UseCors(CorsOptions.AllowAll);
             app.MapSignalR();
+        }
+
+        public void ConfigureService(IServiceCollection services)
+        {
+            services.AddSingleton<IRedisClientsManager, BasicRedisClientManager>(provider => new BasicRedisClientManager("localhost:6379"));            
         }
     }
 }

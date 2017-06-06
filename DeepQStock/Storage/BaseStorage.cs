@@ -32,13 +32,13 @@ namespace DeepQStock.Storage
 
         #endregion
 
-        #region << Proptected Methods >>
+        #region << Public Methods >>
 
         /// <summary>
         /// Executes the specified action.
         /// </summary>
         /// <param name="action">The action.</param>
-        protected TResult Execute<TResult>(Func<IRedisClient, IRedisTypedClient<T>, TResult> action)
+        public TResult Execute<TResult>(Func<IRedisClient, IRedisTypedClient<T>, TResult> action)
         {
             using (IRedisClient redis = RedisManager.GetClient())
             {
@@ -51,7 +51,7 @@ namespace DeepQStock.Storage
         /// Executes the specified action.
         /// </summary>
         /// <param name="action">The action.</param>
-        protected void Execute(Action<IRedisClient, IRedisTypedClient<T>> action)
+        public void Execute(Action<IRedisClient, IRedisTypedClient<T>> action)
         {
             using (IRedisClient redis = RedisManager.GetClient())
             {
