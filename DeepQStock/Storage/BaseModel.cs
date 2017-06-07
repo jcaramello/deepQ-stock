@@ -4,16 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeepQStock.Server.Models
+namespace DeepQStock.Storage
 {
-    public class AgentModel
+    public class BaseModel
     {
         public long Id { get; set; }
-
-        public string Name { get; set; }
-
-        public string Symbol { get; set; }
-
-
     }
 }

@@ -13,8 +13,7 @@ import { BaseService } from './base-service';
 @Injectable()
 export class AgentService extends BaseService {
 
-    // public events
-    public onCreatedAgent: EventEmitter<Agent>;
+    // public events    
     public onDayCompleted: EventEmitter<OnDayCompletedArgs>;
 
     /**
@@ -24,15 +23,16 @@ export class AgentService extends BaseService {
      */
     constructor() {
         super('agentHub');
-
-        this.onCreatedAgent = new EventEmitter<Agent>();
+        
         this.onDayCompleted = new EventEmitter<OnDayCompletedArgs>();
+
+        this.init();
     }
 
     /**
      * Get all agents
      */
-    public getAll() {
+    public getAll(): Promise<Agent[]> {
         return this.execute('getAll');
     }
 
@@ -40,15 +40,23 @@ export class AgentService extends BaseService {
      * Get an agent by id 
      * @param id
      */
-    public getById(id: number) {
+    public getById(id: number): Promise<Agent> {
         return this.execute('getById', id)
+    }
+
+    /**
+     * Save an agent
+     * @param agent 
+     */
+    public save(agent: Agent){
+        return this.execute('save', agent);
     }
 
     /**
      * Start the simulation of a particular agent      
      * @memberof AgentService
      */
-    public start(id: number) {
+    public start(id: number): void {
         this.execute('start', id);
     }
 

@@ -1,4 +1,5 @@
-﻿using DeepQStock.Utils;
+﻿using DeepQStock.Storage;
+using DeepQStock.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,14 +19,9 @@ namespace DeepQStock.Domain
     ///   - And finally the thrid layer is a matrix of month's periods
     /// 
     /// </summary>
-    public class State
+    public class State : BaseModel
     {
-        #region << Public Properties >>
-
-        /// <summary>
-        /// Gets or sets the identifier.
-        /// </summary>
-        public long Id { get; set; }
+        #region << Public Properties >>     
 
         /// <summary>
         /// Gets or sets the size.

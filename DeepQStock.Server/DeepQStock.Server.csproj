@@ -136,8 +136,10 @@
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Hubs\AgentHub.cs" />
     <Compile Include="Hubs\StockExchangeHub.cs" />
-    <Compile Include="Models\AgentModel.cs" />
-    <Compile Include="Models\StockExchangeModel.cs" />
+    <Compile Include="Middleware\GlobalExecptionMiddleare.cs" />
+    <Compile Include="Models\Agent.cs" />
+    <Compile Include="Models\QNetwork.cs" />
+    <Compile Include="Models\StockExchange.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resolvers\SignalRContractResolver.cs" />

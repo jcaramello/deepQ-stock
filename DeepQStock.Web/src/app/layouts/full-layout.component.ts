@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { AgentService } from '../services/agent-service';
 import { StockExchangeService } from '../services/stock-exchange-service';
 import { Agent } from '../models/agent';
@@ -19,7 +19,7 @@ export class FullLayoutComponent implements OnInit {
   public disabled: boolean = false;
   public status: { isopen: boolean } = { isopen: false };
   public currentStock: StockExchange = new StockExchange();
-  
+
   /**
    * Companies  
    * @memberof FullLayoutComponent
@@ -44,7 +44,8 @@ export class FullLayoutComponent implements OnInit {
   constructor(private agentService: AgentService,
     private stockExchangeService: StockExchangeService,
     private slimLoadingBarService: SlimLoadingBarService,
-    private notificationService: NotificationsService) { }
+    private notificationService: NotificationsService,
+    private zone: NgZone) { }
 
   /**
    * Toogle left panel
@@ -70,17 +71,15 @@ export class FullLayoutComponent implements OnInit {
 
   }
 
-
   /**
-   * Initialize the component
-   * 
-   * 
+   * Initialize the component   
    * @memberof FullLayoutComponent
    */
   ngOnInit(): void {
 
     this.slimLoadingBarService.start();
     this.agentService.getAll().then(a => this.agents = a).then(() => this.slimLoadingBarService.complete());
+    this.stockExchangeService.onCreatedAgent.subscribe(a => this.zone.run(() => this.agents.push(a)));
   }
 
   /**

@@ -1,4 +1,6 @@
-﻿using DeepQStock.Server.Models;
+﻿using DeepQStock.Server.Hubs;
+using DeepQStock.Server.Middleware;
+using DeepQStock.Server.Models;
 using DeepQStock.Server.Resolvers;
 using DeepQStock.Storage;
 using Microsoft.AspNet.SignalR;
@@ -37,6 +39,10 @@ namespace DeepQStock.Server
             var serializer = JsonSerializer.Create(settings);
             GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);
 
+
+            ConfigureService(null);
+
+            app.Use<GlobalExceptionMiddleware>();    
             app.UseWebApi(config);
             app.UseCors(CorsOptions.AllowAll);
             app.MapSignalR();
@@ -44,7 +50,14 @@ namespace DeepQStock.Server
 
         public void ConfigureService(IServiceCollection services)
         {
-            services.AddSingleton<IRedisClientsManager, BasicRedisClientManager>(provider => new BasicRedisClientManager("localhost:6379"));            
+            var redisClientManager = new BasicRedisClientManager("localhost:6379");
+            var qNetworkStorage = new BaseStorage<QNetwork>(redisClientManager);
+            var agentStorage = new BaseStorage<Agent>(redisClientManager);
+            var stockExchangeStorage = new BaseStorage<StockExchange>(redisClientManager);
+
+            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => new AgentHub(agentStorage));
+            GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => new StockExchangeHub(agentStorage, qNetworkStorage, stockExchangeStorage));
+
         }
     }
 }

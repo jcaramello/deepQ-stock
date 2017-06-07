@@ -15,9 +15,7 @@ export class Agent {
     public eGreedy: number;
     public inOutStrategy: number;
     public miniBatchSize: number;
-    public discountFactor: number;
-    public hiddenLayersCount: number;
-    public neuronCountForLayer: number;
+    public discountFactor: number;    
     public memoryReplaySize: number;
     public qNetwork: QNetwork
 
@@ -31,9 +29,7 @@ export class Agent {
         this.eGreedy = 0.05;
         this.inOutStrategy = 0.33;
         this.miniBatchSize = 50;
-        this.discountFactor = 0.8;
-        this.hiddenLayersCount = 4;
-        this.neuronCountForLayer = this.hiddenLayersCount * 4;
+        this.discountFactor = 0.8;       
         this.memoryReplaySize = 500;
         this.qNetwork = new QNetwork();
     }

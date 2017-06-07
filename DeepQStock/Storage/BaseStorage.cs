@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DeepQStock.Storage
 {
-    public class BaseStorage<T> where T : class
+    public class BaseStorage<T> : IStorage<T> where T : BaseModel
     {
 
         #region << Protected Properties >>  
@@ -58,6 +58,56 @@ namespace DeepQStock.Storage
                 var periods = redis.As<T>();
                 action.Invoke(redis, periods);
             };
+        }
+
+        #endregion
+
+        #region << IStorage Members >>
+
+        /// <summary>
+        /// Get all instance of agents
+        /// </summary>
+        /// <returns></returns>
+        public virtual IEnumerable<T> GetAll()
+        {
+            return Execute((client, items) => items.GetAll());
+        }
+
+        /// <summary>
+        /// Get all instance of agents
+        /// </summary>
+        /// <returns></returns>
+        public virtual T GetById(long id)
+        {
+            return Execute((client, items) => items.GetById(id));
+        }
+
+        /// <summary>
+        /// Create a new instance of an agent
+        /// </summary>
+        /// <param name="name"></param>
+        public virtual void Save(T model)
+        {
+            Execute((client, items) =>
+            {
+                if (model.Id == 0)
+                {
+                    model.Id = items.GetNextSequence();
+                }
+
+                items.Store(model);
+            });
+
+        }
+
+
+        /// <summary>
+        /// Deletes an item of type T from the storage.
+        /// </summary>
+        /// <param name="model">The item.</param>
+        public virtual void Delete(T model)
+        {
+            Execute((client, items) => items.DeleteById(model.Id));
         }
 
         #endregion

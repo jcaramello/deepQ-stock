@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Enums;
+using DeepQStock.Storage;
 using LINQtoCSV;
 using Newtonsoft.Json;
 using System;
@@ -9,14 +10,9 @@ using System.Threading.Tasks;
 
 namespace DeepQStock.Domain
 {
-    public class Period
+    public class Period : BaseModel
     {
-        #region << Public Properties >> 
-        
-        /// <summary>
-        /// Id
-        /// </summary>        
-        public long Id { get; set; }
+        #region << Public Properties >>            
 
         /// <summary>
         /// Period Type

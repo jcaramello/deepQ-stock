@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DeepQStock.Storage
 {
-    public class StateStorage : BaseStorage<State>, IStorage<State>
+    public class StateStorage : BaseStorage<State>
     {
         #region << Constructor >>
 
@@ -22,22 +22,13 @@ namespace DeepQStock.Storage
 
         #endregion
 
-        #region << IStorage Members >>
-
-        /// <summary>
-        /// Deletes an item of type T from the storage.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        public void Delete(State item)
-        {
-            Execute((client, states) => states.DeleteById(item.Id));
-        }
+        #region << IStorage Members >>       
 
         /// <summary>
         /// Gets all item of type T from the storage.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<State> GetAll()
+        public override IEnumerable<State> GetAll()
         {
             IEnumerable<State> all = null;
 
@@ -58,7 +49,7 @@ namespace DeepQStock.Storage
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns></returns>
-        public State GetById(long id)
+        public override State GetById(long id)
         {
             State state = null;
             Execute((client, states) => 
@@ -80,7 +71,7 @@ namespace DeepQStock.Storage
         /// Saves an item of type T to the storage.
         /// </summary>
         /// <param name="item">The item.</param>        
-        public void Save(State item)
+        public override void Save(State item)
         {
             Execute((client, states) =>
             {
