@@ -1,13 +1,15 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace DeepQStock
-{
+namespace DeepQStock.Agents
+{   
     public interface IAgent
     {
+        /// <summary>
+        /// Base Parameters
+        /// </summary>
+        BaseAgentParameters Parameters { get; }
+
         /// <summary>
         /// Decides the next action to execute
         /// </summary>

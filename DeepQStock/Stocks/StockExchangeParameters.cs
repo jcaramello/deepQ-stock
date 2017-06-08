@@ -1,16 +1,19 @@
 ﻿using DeepQStock.Enums;
 using DeepQStock.Indicators;
+using DeepQStock.Storage;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace DeepQStock.Stocks
 {
-    public class StockExchangeParameters
+    public class StockExchangeParameters : BaseModel
     {
-        #region << Public Properties >>      
+        #region << Public Properties >>             
 
         /// <summary>
         /// Gets or sets the period types.
         /// </summary>
+        [JsonIgnore]
         public PeriodType[] PeriodTypes { get; set; }
 
         /// <summary>
@@ -26,16 +29,19 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>
+        [JsonIgnore]
         public IList<ITechnicalIndicator> DailyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the weekly indicators.
         /// </summary>
+        [JsonIgnore]
         public IList<ITechnicalIndicator> WeeklyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the monthly indicators.
         /// </summary>
+        [JsonIgnore]
         public IList<ITechnicalIndicator> MonthlyIndicators { get; set; }
 
         /// <summary>
@@ -51,12 +57,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Get or Set the agent initial capital
         /// </summary>
-        public double InitialCapital { get; set; }
-
-        /// Gets or sets the in and out strategy that the agent will be use for buy and sell actions.
-        /// It should be a value between 0 and 1 that represent the percentage that the agent buy o sell in each transaction.
-        /// </summary>
-        public double InOutStrategy { get; set; }
+        public double InitialCapital { get; set; }      
 
         #endregion
 
@@ -66,13 +67,12 @@ namespace DeepQStock.Stocks
         /// Initializes a new instance of the <see cref="StockExchangeParameters"/> class.
         /// </summary>
         public StockExchangeParameters()
-        {
+        {            
             PeriodTypes = new PeriodType[] { PeriodType.Day, PeriodType.Week, PeriodType.Month };
             EpisodeLength = 7;
             NumberOfPeriods = 14;
             InitialCapital = 100000;
-            TransactionCost = 0.01;
-            InOutStrategy = 0.25;
+            TransactionCost = 0.01;            
             SimulationVelocity = 0;
             DailyIndicators = new List<ITechnicalIndicator>()
             {

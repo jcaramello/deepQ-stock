@@ -1,24 +1,31 @@
-﻿using DeepQStock.Server.Models;
+﻿using DeepQStock.Agents;
 using DeepQStock.Storage;
 using Microsoft.AspNet.SignalR;
-using ServiceStack.Redis;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DeepQStock.Stocks;
+using DeepQStock.Utils;
+using Hangfire;
 
 namespace DeepQStock.Server.Hubs
 {
     public class AgentHub : Hub
     {
-
         #region << Private Properties >>       
 
         /// <summary>
         /// Agent Storage
         /// </summary>
-        public BaseStorage<Agent> AgentStorage { get; set; }
+        public BaseStorage<DeepRLAgentParameters> AgentStorage { get; set; }
+
+        /// <summary>
+        /// QNetwork Storage
+        /// </summary>
+        public BaseStorage<QNetworkParameters> QNetworkStorage { get; set; }
+
+        /// <summary>
+        /// Stock Exchange Storage
+        /// </summary>
+        public BaseStorage<StockExchangeParameters> StockExchangeStorage { get; set; }
 
         #endregion
 
@@ -27,9 +34,11 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public AgentHub(BaseStorage<Agent> agentStorage)
+        public AgentHub(BaseStorage<DeepRLAgentParameters> agentStorage, BaseStorage<QNetworkParameters> qnetworkStorage, BaseStorage<StockExchangeParameters> stockExchangeStorage)
         {
             AgentStorage = agentStorage;
+            QNetworkStorage = qnetworkStorage;
+            StockExchangeStorage = stockExchangeStorage;
         }
 
         #endregion
@@ -38,7 +47,7 @@ namespace DeepQStock.Server.Hubs
         /// Get all instance of agents
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Agent> GetAll()
+        public IEnumerable<DeepRLAgentParameters> GetAll()
         {
             return AgentStorage.GetAll();          
         }
@@ -47,19 +56,53 @@ namespace DeepQStock.Server.Hubs
         /// Get all instance of agents
         /// </summary>
         /// <returns></returns>
-        public Agent GetById(long id)
+        public DeepRLAgentParameters GetById(long id)
         {
             return AgentStorage.GetById(id);
+        }       
+
+        /// <summary>
+        /// Save an agent
+        /// </summary>
+        /// <param name="agent"></param>
+        /// <returns></returns>
+        public long Save(DeepRLAgentParameters agent)
+        {
+            var qNetwork = agent.QNetworkParameters;
+            QNetworkStorage.Save(qNetwork);
+            agent.QNetworkParametersId = qNetwork.Id;
+            agent.QNetworkParameters = null;
+                        
+            AgentStorage.Save(agent);
+
+            Clients.All.onCreatedAgent(agent);
+
+            return agent.Id;
         }
 
         /// <summary>
-        /// Create a new instance of an agent
+        /// Start the simulation of the agent agentId
         /// </summary>
-        /// <param name="name"></param>
-        public void Save(Agent agent)
-        {        
-            AgentStorage.Save(agent);            
-            Clients.All.onCreatedAgent(agent);
+        /// <param name="agentId"></param>
+        public void Start(int agentId)
+        {            
+            var agentParameters = AgentStorage.GetById(agentId);
+            agentParameters.QNetworkParameters = QNetworkStorage.GetById(agentParameters.QNetworkParametersId);
+
+            var deepRlAgent = new DeepRLAgent(p => p = agentParameters);            
+
+            var stockParameters = StockExchangeStorage.GetById(agentParameters.StockExchangeParametersId);
+            var filePath = string.Format("{0}/{1}.csv", Settings.CsvDataDirectory, agentParameters.Symbol);
+            var csvDataProvider =new CsvDataProvider(filePath, stockParameters.EpisodeLength);
+
+            var stock = new StockExchange(deepRlAgent, csvDataProvider, RewardCalculator.WinningsOverLoosings, p => p = stockParameters);
+
+            stock.OnDayComplete += (e, a) =>
+            {
+                Clients.All.onDayComplete(a);
+            };
+
+            BackgroundJob.Enqueue(() => stock.Start());          
         }
     }
 }

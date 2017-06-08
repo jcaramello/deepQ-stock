@@ -19,6 +19,7 @@ export class FullLayoutComponent implements OnInit {
   public disabled: boolean = false;
   public status: { isopen: boolean } = { isopen: false };
   public currentStock: StockExchange = new StockExchange();
+  public currentAgent: Agent = new Agent();
 
   /**
    * Companies  
@@ -79,7 +80,7 @@ export class FullLayoutComponent implements OnInit {
 
     this.slimLoadingBarService.start();
     this.agentService.getAll().then(a => this.agents = a).then(() => this.slimLoadingBarService.complete());
-    this.stockExchangeService.onCreatedAgent.subscribe(a => this.zone.run(() => this.agents.push(a)));
+    this.agentService.onCreatedAgent.subscribe(a => this.zone.run(() => this.agents.push(a)));
   }
 
   /**
@@ -87,6 +88,7 @@ export class FullLayoutComponent implements OnInit {
    */
   add(modal) {
     this.currentStock = new StockExchange();
+    this.currentAgent = new Agent();
     modal.show();
   }
 
@@ -97,7 +99,10 @@ export class FullLayoutComponent implements OnInit {
   save(modal) {
     this.slimLoadingBarService.start();
     this.stockExchangeService.save(this.currentStock)
-      .then(() => this.agentService.getAll().then(a => this.agents = a))
+      .then(id => {
+        this.currentAgent.stockId = id;
+        this.agentService.save(this.currentAgent);
+      })
       .then(() => {
         modal.hide();
         this.slimLoadingBarService.complete();

@@ -6,7 +6,7 @@ using DeepQStock.Utils;
 using Encog.Engine.Network.Activation;
 using DeepQStock.Domain;
 
-namespace DeepQStock.DeppRLAgent
+namespace DeepQStock.Agents
 {
     /// <summary>
     /// Implement an angent combining reinforcement learning and deep learning
@@ -20,7 +20,7 @@ namespace DeepQStock.DeppRLAgent
         /// <summary>
         /// Gets or sets the agent's parameters.
         /// </summary>
-        private DeepRLAgentParameters Parameters { get; set; }
+        private DeepRLAgentParameters _parameters;
 
         /// <summary>
         /// Gets or sets the current state st
@@ -63,6 +63,18 @@ namespace DeepQStock.DeppRLAgent
 
         #endregion
 
+        #region << Public Properties >>
+
+        /// <summary>
+        /// Base params
+        /// </summary>
+        public BaseAgentParameters Parameters
+        {
+            get { return this._parameters; }
+        }
+
+        #endregion
+
         #region << Constructor >>
 
         /// <summary>
@@ -71,10 +83,10 @@ namespace DeepQStock.DeppRLAgent
         /// <param name="initializer">The initializer.</param>
         public DeepRLAgent(Action<DeepRLAgentParameters> initializer = null)
         {
-            Parameters = new DeepRLAgentParameters();
-            initializer?.Invoke(Parameters);
+            _parameters = new DeepRLAgentParameters();
+            initializer?.Invoke(_parameters);
             RandomGenerator = new Random();
-            MemoryReplay = new CircularQueue<Experience>(Parameters.MemoryReplaySize);
+            MemoryReplay = new CircularQueue<Experience>(_parameters.MemoryReplaySize);
         }
 
         #endregion
@@ -116,7 +128,7 @@ namespace DeepQStock.DeppRLAgent
         public void Save(string path)
         {
             Q.Save(path);
-        }      
+        }
 
         #endregion
 
@@ -131,7 +143,7 @@ namespace DeepQStock.DeppRLAgent
         {
             var probability = RandomGenerator.NextDouble();
 
-            if (probability <= Parameters.eGreedyProbability)
+            if (probability <= _parameters.eGreedyProbability)
             {
                 CurrentAction = (ActionType)RandomGenerator.Next(3);
             }
@@ -170,7 +182,7 @@ namespace DeepQStock.DeppRLAgent
         /// <returns></returns>
         private IList<Experience> GenerateMiniBatch()
         {
-            if (MemoryReplay.Count <= Parameters.MiniBatchSize)
+            if (MemoryReplay.Count <= _parameters.MiniBatchSize)
             {
                 return MemoryReplay.ToList();
             }
@@ -188,7 +200,7 @@ namespace DeepQStock.DeppRLAgent
         private IList<ActionType> GetActions()
         {
             var actions = new List<ActionType>() { ActionType.Wait };
-            var avaliableCapital = CurrentState.Today.CurrentCapital * Parameters.InOutStrategy;
+            var avaliableCapital = CurrentState.Today.CurrentCapital * _parameters.InOutStrategy;
 
             if (avaliableCapital >= CurrentState.Today.Close)
             {
@@ -216,9 +228,9 @@ namespace DeepQStock.DeppRLAgent
                 var targetValues = new double[3];
                 var estimatedValues = Q[experience.From];
 
-                targetValues[0] = experience.Reward + (Parameters.DiscountFactor * estimatedValues[ActionType.Buy]);
-                targetValues[1] = experience.Reward + (Parameters.DiscountFactor * estimatedValues[ActionType.Sell]);
-                targetValues[2] = experience.Reward + (Parameters.DiscountFactor * estimatedValues[ActionType.Wait]);
+                targetValues[0] = experience.Reward + (_parameters.DiscountFactor * estimatedValues[ActionType.Buy]);
+                targetValues[1] = experience.Reward + (_parameters.DiscountFactor * estimatedValues[ActionType.Sell]);
+                targetValues[2] = experience.Reward + (_parameters.DiscountFactor * estimatedValues[ActionType.Wait]);
 
                 trainingData.Add(new Tuple<State, double[]>(experience.From, targetValues));
             }
@@ -236,7 +248,7 @@ namespace DeepQStock.DeppRLAgent
         {
             if (!string.IsNullOrEmpty(NetworkPath))
             {
-                Q = new QNetwork(NetworkPath);                
+                Q = new QNetwork(NetworkPath);
             }
             else
             {
@@ -244,16 +256,16 @@ namespace DeepQStock.DeppRLAgent
 
                 Q = new QNetwork(p =>
                 {
-                    p.TrainingError = Parameters.TrainingError > 0 ? Parameters.TrainingError : p.TrainingError;
-                    p.MaxIterationPerTrainging = Parameters.MaxIterationPerTrainging > 0 ? Parameters.MaxIterationPerTrainging : p.MaxIterationPerTrainging;
+                    p.TrainingError = _parameters.QNetworkParameters.TrainingError;
+                    p.MaxIterationPerTrainging = _parameters.QNetworkParameters.MaxIterationPerTrainging;
 
                     // Input Layer
                     p.Layers.Add(new LayerParameters(null, true, inputLength));
 
                     // Hidden Layers
-                    for (int i = 0; i < Parameters.HiddenLayersCount; i++)
+                    for (int i = 0; i < _parameters.QNetworkParameters.HiddenLayersCount; i++)
                     {
-                        p.Layers.Add(new LayerParameters(new ActivationSigmoid(), true, Parameters.NeuronCountForHiddenLayers));
+                        p.Layers.Add(new LayerParameters(new ActivationSigmoid(), true, _parameters.QNetworkParameters.NeuronCountForHiddenLayers));
                     }
 
                     // Output Layer

@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Storage;
 using Encog.ML.Data;
 using Encog.ML.Data.Basic;
 using Encog.ML.Train;
@@ -11,12 +12,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace DeepQStock.DeppRLAgent
+namespace DeepQStock.Agents
 {
     /// <summary>
     /// Implement a Q state-action function using an internal neural network
     /// </summary>
-    public class QNetwork
+    public class QNetwork 
     {
 
         #region << Private Properties >>

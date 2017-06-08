@@ -56,7 +56,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title"><i class="fa fa-tag"></i> {{ currentStock.agent && currentStock.agent.id > 0 ? 'Editar' : 'Nuevo'}} Agente</h4>
+                <h4 class="modal-title"><i class="fa fa-tag"></i> {{ currentAgent && currentAgent.id > 0 ? 'Editar' : 'Nuevo'}} Agente</h4>
                 <button type="button" class="close" aria-label="Close" (click)="addEditAgent.hide()">
                     <span aria-hidden="true">&times;</span>`
                 </button>
@@ -69,11 +69,11 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="name">Nombre</label>
-                                    <input id="name" type="text" class="form-control has-danger" [(ngModel)]="currentStock.agent.name" required>
+                                    <input id="name" type="text" class="form-control has-danger" [(ngModel)]="currentAgent.name" required>
                                 </div>
                                 <div class="col">
                                     <label for="symbol">Compañia</label>
-                                    <select class="form-control" id="state" [(ngModel)]="currentStock.agent.symbol">
+                                    <select class="form-control" id="state" [(ngModel)]="currentAgent.symbol">
                                         <option *ngFor="let c of companies" ngValue="{{ c.symbol }}">
                                             {{c.name}}
                                         </option>
@@ -83,27 +83,27 @@
                             <br>
                             <div class="row">
                                 <div class="col">
-                                    <label for="eGreedy">ε-greedy policy: {{ currentStock.agent.eGreedy * 100 }}%</label>
-                                    <nouislider id="eGreedy" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentStock.agent.eGreedy"></nouislider>
+                                    <label for="eGreedy">ε-greedy policy: {{ currentAgent.eGreedyProbability * 100 }}%</label>
+                                    <nouislider id="eGreedy" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentAgent.eGreedyProbability"></nouislider>
                                 </div>
                                 <div class="col">
-                                    <label for="discountFactor">Factor de descuento: {{ currentStock.agent.discountFactor * 100 }}%</label>
-                                    <nouislider id="discountFactor" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentStock.agent.discountFactor"></nouislider>
+                                    <label for="discountFactor">Factor de descuento: {{ currentAgent.discountFactor * 100 }}%</label>
+                                    <nouislider id="discountFactor" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentAgent.discountFactor"></nouislider>
                                 </div>
                                 <div class="col">
-                                    <label for="inOutStrategy">Estrategia de Entrada/Salida: {{ currentStock.agent.inOutStrategy * 100 }}%</label>
-                                    <nouislider id="inOutStrategy" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentStock.agent.inOutStrategy"></nouislider>
+                                    <label for="inOutStrategy">Estrategia de Entrada/Salida: {{ currentAgent.inOutStrategy * 100 }}%</label>
+                                    <nouislider id="inOutStrategy" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentAgent.inOutStrategy"></nouislider>
                                 </div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col">
                                     <label for="miniBatchSize">Tamaño del mini batch</label>
-                                    <input id="miniBatchSize" type="number" class="form-control" [(ngModel)]="currentStock.agent.miniBatchSize" required>
+                                    <input id="miniBatchSize" type="number" class="form-control" [(ngModel)]="currentAgent.miniBatchSize" required>
                                 </div>
                                 <div class="col">
                                     <label for="memoryReplaySize">Tamaño de la memoria de entrenamiento</label>
-                                    <input id="memoryReplaySize" type="number" class="form-control" [(ngModel)]="currentStock.agent.memoryReplaySize" required>
+                                    <input id="memoryReplaySize" type="number" class="form-control" [(ngModel)]="currentAgent.memoryReplaySize" required>
                                 </div>
                             </div>
 
@@ -113,12 +113,12 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="hiddenLayersCount">Numero de hidden layers</label>
-                                    <input id="hiddenLayersCount" type="number" class="form-control" [(ngModel)]="currentStock.agent.qNetwork.hiddenLayersCount"
+                                    <input id="hiddenLayersCount" type="number" class="form-control" [(ngModel)]="currentAgent.qNetwork.hiddenLayersCount"
                                         required>
                                 </div>
                                 <div class="col">
                                     <label for="neuronCountForHiddenLayers">Numero de neuronas por capa</label>
-                                    <input id="neuronCountForHiddenLayers" type="number" class="form-control" [(ngModel)]="currentStock.agent.qNetwork.neuronCountForHiddenLayers"
+                                    <input id="neuronCountForHiddenLayers" type="number" class="form-control" [(ngModel)]="currentAgent.qNetwork.neuronCountForHiddenLayers"
                                         required>
                                 </div>
                             </div>
@@ -126,7 +126,7 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="activationFcForHiddenLayers">Funcion de activacion (Hidden Layers)</label>
-                                    <select class="form-control" id="activationFcForHiddenLayers" [(ngModel)]="currentStock.agent.qNetwork.activationFcForHiddenLayers">
+                                    <select class="form-control" id="activationFcForHiddenLayers" [(ngModel)]="currentAgent.qNetwork.activationFcForHiddenLayers">
                                         <option ngValue="tanh">Tangente Hiperbolica</option>
                                         <option ngValue="sigmoid">Sigmoid</option>
                                         <option ngValue="linear">Lineal</option>
@@ -134,7 +134,7 @@
                                 </div>
                                 <div class="col">
                                     <label for="activationFcForOuputLayer">Funcion de activacion (Ouput Layer)</label>
-                                    <select class="form-control" id="activationFcForOuputLayer" [(ngModel)]="currentStock.agent.qNetwork.activationFcForOuputLayer">
+                                    <select class="form-control" id="activationFcForOuputLayer" [(ngModel)]="currentAgent.qNetwork.activationFcForOuputLayer">
                                         <option ngValue="tanh">Tangente Hiperbolica</option>
                                         <option ngValue="sigmoid">Sigmoid</option>
                                         <option ngValue="linear">Lineal</option>
@@ -160,11 +160,11 @@
                             <br>
                             <div class="row">
                                 <div class="col">
-                                    <label for="transactionCost">Costo de transaccion: {{ currentStock.transactionCost * 100 }}%</label>
+                                    <label for="transactionCost">Costo de transaccion: {{ currentAgent.transactionCost * 100 }}%</label>
                                     <nouislider id="transactionCost" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentStock.transactionCost"></nouislider>
                                 </div>
                                 <div class="col">
-                                    <label for="simulationVelocity">Velocidad de simulacion: {{ currentStock.simulationVelocity *10 }}</label>
+                                    <label for="simulationVelocity">Velocidad de simulacion: {{ currentAgent.simulationVelocity *10 }}</label>
                                     <nouislider id="simulationVelocity" [config]="{start:0}" [min]="0" [max]="5" [step]="0.01" [(ngModel)]="currentStock.simulationVelocity"></nouislider>
                                 </div>
                             </div>

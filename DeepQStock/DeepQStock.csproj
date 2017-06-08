@@ -69,8 +69,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeepRLAgent\DeepRLAgentEvents.cs" />
-    <Compile Include="DeepRLAgent\QNetworkParameters.cs" />
+    <Compile Include="Agents\BaseAgentParameters.cs" />
+    <Compile Include="Agents\DeepRLAgentEvents.cs" />
+    <Compile Include="Agents\QNetworkParameters.cs" />
     <Compile Include="Enums\StockExchangeStatus.cs" />
     <Compile Include="Stocks\StockExchangeEvents.cs" />
     <Compile Include="Stocks\RewardCalculator.cs" />
@@ -79,13 +80,13 @@
     <Compile Include="Storage\BaseStorage.cs" />
     <Compile Include="Storage\IStorage.cs" />
     <Compile Include="Storage\PeriodStorage.cs" />
-    <Compile Include="DeepRLAgent\DeepRLAgent.cs" />
-    <Compile Include="DeepRLAgent\DeepRLAgentParameters.cs" />
+    <Compile Include="Agents\DeepRLAgent.cs" />
+    <Compile Include="Agents\DeepRLAgentParameters.cs" />
     <Compile Include="Stocks\StockExchangeParameters.cs" />
     <Compile Include="Enums\ActionType.cs" />
     <Compile Include="Enums\PeriodType.cs" />
     <Compile Include="Domain\Experience.cs" />
-    <Compile Include="IAgent.cs" />
+    <Compile Include="Agents\IAgent.cs" />
     <Compile Include="IDataProvider.cs" />
     <Compile Include="Indicators\AverageTrueRange.cs" />
     <Compile Include="Indicators\BollingerBandsPercentB.cs" />
@@ -97,7 +98,7 @@
     <Compile Include="Indicators\ITechnicalIndicator.cs" />
     <Compile Include="Domain\Period.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DeepRLAgent\QNetwork.cs" />
+    <Compile Include="Agents\QNetwork.cs" />
     <Compile Include="Domain\State.cs" />
     <Compile Include="Stocks\StockExchange.cs" />
     <Compile Include="Storage\StateStorage.cs" />

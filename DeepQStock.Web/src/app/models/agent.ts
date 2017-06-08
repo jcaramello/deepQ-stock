@@ -18,6 +18,8 @@ export class Agent {
     public discountFactor: number;    
     public memoryReplaySize: number;
     public qNetwork: QNetwork
+    public qNetworkId: number;
+    public stockId:number;
 
     /**
      * Creates an instance of Agent.

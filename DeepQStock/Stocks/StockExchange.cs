@@ -7,6 +7,7 @@ using DeepQStock.Domain;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Linq;
+using DeepQStock.Agents;
 
 namespace DeepQStock.Stocks
 {
@@ -169,7 +170,7 @@ namespace DeepQStock.Stocks
                 {
                     CurrentState = state;
                     action = Agent.Decide(state, reward);
-                    reward = Execute(action, Parameters.InOutStrategy);
+                    reward = Execute(action, Agent.Parameters.InOutStrategy);
                     DaysSimulated++;
                     
                     if (currentYear == null || currentYear != CurrentPeriod.Date.Year)

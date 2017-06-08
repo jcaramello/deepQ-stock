@@ -1,13 +1,13 @@
-﻿using DeepQStock.Server.Hubs;
+﻿using DeepQStock.Agents;
+using DeepQStock.Server.Hubs;
 using DeepQStock.Server.Middleware;
-using DeepQStock.Server.Models;
 using DeepQStock.Server.Resolvers;
+using DeepQStock.Stocks;
 using DeepQStock.Storage;
+using Hangfire;
 using Microsoft.AspNet.SignalR;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Owin.Cors;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Owin;
 using ServiceStack.Redis;
 using System.Linq;
@@ -33,30 +33,38 @@ namespace DeepQStock.Server
 
             var appXmlType = config.Formatters.XmlFormatter.SupportedMediaTypes.FirstOrDefault(t => t.MediaType == "application/xml");
             config.Formatters.XmlFormatter.SupportedMediaTypes.Remove(appXmlType);
-
-            var settings = new JsonSerializerSettings();
-            settings.ContractResolver = new SignalRContractResolver();
-            var serializer = JsonSerializer.Create(settings);
-            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);
-
-
-            ConfigureService(null);
-
+         
             app.Use<GlobalExceptionMiddleware>();    
             app.UseWebApi(config);
             app.UseCors(CorsOptions.AllowAll);
             app.MapSignalR();
+
+            GlobalConfiguration.Configuration.UseRedisStorage(Settings.RedisConnectionString);
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
+
+            ConfigureService();
+
         }
 
-        public void ConfigureService(IServiceCollection services)
+        /// <summary>
+        /// Configure Services
+        /// </summary>
+        /// <param name="services"></param>
+        public void ConfigureService()
         {
-            var redisClientManager = new BasicRedisClientManager("localhost:6379");
-            var qNetworkStorage = new BaseStorage<QNetwork>(redisClientManager);
-            var agentStorage = new BaseStorage<Agent>(redisClientManager);
-            var stockExchangeStorage = new BaseStorage<StockExchange>(redisClientManager);
+            var redisClientManager = new BasicRedisClientManager(Settings.RedisConnectionString);
+            var qNetworkStorage = new BaseStorage<QNetworkParameters>(redisClientManager);
+            var agentStorage = new BaseStorage<DeepRLAgentParameters>(redisClientManager);
+            var stockExchangeStorage = new BaseStorage<StockExchangeParameters>(redisClientManager);
 
-            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => new AgentHub(agentStorage));
-            GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => new StockExchangeHub(agentStorage, qNetworkStorage, stockExchangeStorage));
+            var settings = new JsonSerializerSettings();
+            settings.ContractResolver = new SignalRContractResolver();
+            var serializer = JsonSerializer.Create(settings);
+
+            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);
+            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => new AgentHub(agentStorage, qNetworkStorage, stockExchangeStorage));
+            GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => new StockExchangeHub(stockExchangeStorage));
 
         }
     }

@@ -71,7 +71,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 
    * @memberof DashboardComponent
    */
-  public play(event, addEditAgent) {
+  public play(event, agentId: number) {
     this.notificationService.info("Info", "Simulacion iniciada");
+    this.agentService.start(agentId);
   }
 }

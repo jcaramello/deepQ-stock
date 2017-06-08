@@ -15,6 +15,7 @@ export class AgentService extends BaseService {
 
     // public events    
     public onDayCompleted: EventEmitter<OnDayCompletedArgs>;
+    public onCreatedAgent: EventEmitter<Agent>;
 
     /**
      * Creates an instance of AgentService.
@@ -23,8 +24,12 @@ export class AgentService extends BaseService {
      */
     constructor() {
         super('agentHub');
-        
+
         this.onDayCompleted = new EventEmitter<OnDayCompletedArgs>();
+        this.onCreatedAgent = new EventEmitter<Agent>();
+
+        this.proxy.on('onCreatedAgent', a => this.onCreatedAgent.emit(a));
+        this.proxy.on('onDayComplete', a => this.onDayCompleted.emit(a));
 
         this.init();
     }
@@ -48,7 +53,7 @@ export class AgentService extends BaseService {
      * Save an agent
      * @param agent 
      */
-    public save(agent: Agent){
+    public save(agent: Agent) {
         return this.execute('save', agent);
     }
 
@@ -58,13 +63,5 @@ export class AgentService extends BaseService {
      */
     public start(id: number): void {
         this.execute('start', id);
-    }
-
-    /**
-     * 
-     * @param args Trigger when the agent complete the simulation of a day
-     */
-    public dayCompleted(args: OnDayCompletedArgs) {
-        this.onDayCompleted.emit(args);
     }
 }

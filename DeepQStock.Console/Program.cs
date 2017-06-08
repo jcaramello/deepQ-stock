@@ -1,4 +1,4 @@
-﻿using DeepQStock.DeppRLAgent;
+﻿using DeepQStock.Agents;
 using DeepQStock.Stocks;
 using DeepQStock.Storage;
 using DeepQStock.Utils;
@@ -42,8 +42,8 @@ namespace DeepQStock.Console
                     p.eGreedyProbability = options.eGreedyProbability > 0 ? options.eGreedyProbability : p.eGreedyProbability;
                     p.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : p.MiniBatchSize;
                     p.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : p.MemoryReplaySize;
-                    p.MaxIterationPerTrainging = options.MaxIterationPerTrainging > 0 ? options.MaxIterationPerTrainging : p.MaxIterationPerTrainging;
-                    p.TrainingError = options.TrainingError > 0 ? options.TrainingError : p.TrainingError;
+                    p.QNetworkParameters.MaxIterationPerTrainging = options.MaxIterationPerTrainging > 0 ? options.MaxIterationPerTrainging : p.QNetworkParameters.MaxIterationPerTrainging;
+                    p.QNetworkParameters.TrainingError = options.TrainingError > 0 ? options.TrainingError : p.QNetworkParameters.TrainingError;
                 });
 
                 var stock = new StockExchange(agent, null, RewardCalculator.WinningsOverLoosings, p =>

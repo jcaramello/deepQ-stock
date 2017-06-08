@@ -1,14 +1,15 @@
-﻿using Encog.Engine.Network.Activation;
+﻿using DeepQStock.Storage;
+using Encog.Engine.Network.Activation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeepQStock.DeppRLAgent
+namespace DeepQStock.Agents
 {
 
-    public class LayerParameters
+    public class LayerParameters : BaseModel
     {
         #region << Constructor >>
 
@@ -22,7 +23,7 @@ namespace DeepQStock.DeppRLAgent
         {
             ActivationFunction = activationFunction;
             Bias = bias;
-            NueronCount = neuronCount;            
+            NueronCount = neuronCount;
         }
 
         #endregion
@@ -48,7 +49,7 @@ namespace DeepQStock.DeppRLAgent
     }
 
 
-    public class QNetworkParameters
+    public class QNetworkParameters : BaseModel
     {
 
         #region << Constructor >>
@@ -58,6 +59,8 @@ namespace DeepQStock.DeppRLAgent
             Layers = new List<LayerParameters>();
             TrainingError = 0.00000001;
             MaxIterationPerTrainging = 20;
+            HiddenLayersCount = 4;
+            NeuronCountForHiddenLayers = HiddenLayersCount * 4;
         }
 
         #endregion
@@ -66,19 +69,9 @@ namespace DeepQStock.DeppRLAgent
         #region << Public Properties >>
 
         /// <summary>
-        /// Gets or sets the learning rate.
-        /// </summary>
-        public double LearningRate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the learning momemtum.
-        /// </summary>
-        public double LearningMomemtum { get; set; }
-
-        /// <summary>
         /// Gets or sets the layers.
         /// </summary>
-        public IList<LayerParameters> Layers{ get; set; }
+        public IList<LayerParameters> Layers { get; set; }
 
         /// <summary>
         /// Gets or sets the training error.
@@ -89,6 +82,16 @@ namespace DeepQStock.DeppRLAgent
         /// Gets or sets the maximum iteration per trainging.
         /// </summary>
         public int MaxIterationPerTrainging { get; set; }
+
+        /// <summary>
+        /// Get or Set the number of hidden layers
+        /// </summary>
+        public int HiddenLayersCount { get; set; }
+
+        /// <summary>
+        /// Get or Set the number of neurons per layer
+        /// </summary>
+        public int NeuronCountForHiddenLayers { get; set; }
 
         #endregion
     }
