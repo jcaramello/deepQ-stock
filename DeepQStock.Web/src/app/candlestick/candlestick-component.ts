@@ -48,7 +48,7 @@ export class CandlestickComponent {
    * Trigger when inputs changes
    */
   ngOnChanges(changes: SimpleChanges): void {
-    this.agent = changes['agent'].currentValue;
+    this.agent = changes['agent'] && changes['agent'].currentValue;
     this.init();
   }
 

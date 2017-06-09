@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace DeepQStock.Server.Utils
 {
-    public class ContainerJobActivator : JobActivator
+    public class DependencyResolverJobActivator : JobActivator
     {
         private IDependencyResolver _container;
 
-        public ContainerJobActivator(IDependencyResolver container)
+        public DependencyResolverJobActivator(IDependencyResolver container)
         {
             _container = container;
         }

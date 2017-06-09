@@ -2,13 +2,14 @@
 using DeepQStock.Indicators;
 using DeepQStock.Storage;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace DeepQStock.Stocks
 {
     public class StockExchangeParameters : BaseModel
     {
-        #region << Public Properties >>             
+        #region << Public Properties >>                                    
 
         /// <summary>
         /// csv data file path
@@ -35,6 +36,12 @@ namespace DeepQStock.Stocks
         /// Gets or sets the nro of period.
         /// </summary>
         public int NumberOfPeriods { get; set; }
+
+        /// <summary>
+        /// Gets or sets the reward calculator.
+        /// </summary>
+        [JsonIgnore]
+        public Func<StockExchange, double> RewardCalculator { get; set; }
 
         /// <summary>
         /// Gets or sets the indicators.
@@ -84,6 +91,7 @@ namespace DeepQStock.Stocks
             InitialCapital = 100000;
             TransactionCost = 0.01;            
             SimulationVelocity = 0;
+            RewardCalculator = RewardCalculators.WinningsOverLoosings;
             DailyIndicators = new List<ITechnicalIndicator>()
             {
                 new SimpleMovingAverage(8),

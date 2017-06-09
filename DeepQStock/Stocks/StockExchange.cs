@@ -159,7 +159,7 @@ namespace DeepQStock.Stocks
             {
                 return Parameters.MonthlyIndicators;
             }
-        }        
+        }
 
         /// <summary>
         /// Gets or sets the status.
@@ -179,13 +179,6 @@ namespace DeepQStock.Stocks
         /// </summary>
         public IRedisClientsManager Manager { get; set; }
 
-        /// <summary>
-        /// Gets the client.
-        /// </summary>
-        public IRedisClient Client
-        {
-            get{ return Manager.GetClient(); }
-        }
 
         // Storages
         public BaseStorage<StockExchangeParameters> StockExchangeStorage { get; set; }
@@ -204,21 +197,22 @@ namespace DeepQStock.Stocks
             Manager = manager;
             StockExchangeStorage = new BaseStorage<StockExchangeParameters>(manager);
             AgentStorage = new BaseStorage<DeepRLAgentParameters>(manager);
-            QNetworkStorage = new BaseStorage<QNetworkParameters>(manager);            
+            QNetworkStorage = new BaseStorage<QNetworkParameters>(manager);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StockExchange"/> class.
+        /// Initializes a new instance of the <see cref="StockExchange" /> class.
         /// </summary>
-        /// <param name="initializer">The initializer.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <param name="agent">The agent.</param>
+        /// <param name="provider">The provider.</param>
         /// <exception cref="System.Exception">You must pass a csv file path for load the simulated data</exception>
-        public StockExchange(IAgent agent, IDataProvider provider, Func<StockExchange, double> rewardCalculator, Action<StockExchangeParameters> initializer = null)
+        public StockExchange(StockExchangeParameters parameters, IAgent agent, IDataProvider provider)
         {
             Agent = agent;
             DataProvider = provider;
-            Parameters = new StockExchangeParameters();
-            initializer?.Invoke(Parameters);
-            RewardCalculator = rewardCalculator;
+            Parameters = parameters ?? new StockExchangeParameters();
+            RewardCalculator = parameters.RewardCalculator;
         }
 
         #endregion
@@ -300,8 +294,8 @@ namespace DeepQStock.Stocks
             var agentParameters = AgentStorage.GetById(agentId);
             agentParameters.QNetworkParameters = QNetworkStorage.GetById(agentParameters.QNetworkParametersId);
 
-            Agent = new DeepRLAgent(p => p = agentParameters);
-            RewardCalculator = Stocks.RewardCalculator.WinningsOverLoosings;
+            Agent = new DeepRLAgent(agentParameters);
+            RewardCalculator = Stocks.RewardCalculators.WinningsOverLoosings;
             Parameters = StockExchangeStorage.GetById(agentParameters.StockExchangeParametersId);
             DataProvider = new CsvDataProvider(Parameters.CsvDataFilePath, Parameters.EpisodeLength);
         }
@@ -462,7 +456,10 @@ namespace DeepQStock.Stocks
                 Period = CurrentPeriod
             };
 
-            Client.PublishMessage(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(args));
+            using (var redisClient = Manager.GetClient())
+            {
+                redisClient.PublishMessage(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(args));
+            }
         }
 
         #endregion

@@ -39,23 +39,24 @@ namespace DeepQStock.Console
                 var pubSubServer = manager.CreatePubSubServer(RedisPubSubChannels.OnDayComplete);
                 var sub = manager.GetClient().CreateSubscription();
 
-                var agent = new DeepRLAgent(p =>
-                {
-                    p.DiscountFactor = options.DiscountFactor > 0 ? options.DiscountFactor : p.DiscountFactor;
-                    p.eGreedyProbability = options.eGreedyProbability > 0 ? options.eGreedyProbability : p.eGreedyProbability;
-                    p.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : p.MiniBatchSize;
-                    p.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : p.MemoryReplaySize;
-                    p.QNetworkParameters.MaxIterationPerTrainging = options.MaxIterationPerTrainging > 0 ? options.MaxIterationPerTrainging : p.QNetworkParameters.MaxIterationPerTrainging;
-                    p.QNetworkParameters.TrainingError = options.TrainingError > 0 ? options.TrainingError : p.QNetworkParameters.TrainingError;
-                });
+                var agentParameters = new DeepRLAgentParameters();
+                agentParameters.DiscountFactor = options.DiscountFactor > 0 ? options.DiscountFactor : agentParameters.DiscountFactor;
+                agentParameters.eGreedyProbability = options.eGreedyProbability > 0 ? options.eGreedyProbability : agentParameters.eGreedyProbability;
+                agentParameters.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : agentParameters.MiniBatchSize;
+                agentParameters.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : agentParameters.MemoryReplaySize;
+                agentParameters.QNetworkParameters.MaxIterationPerTrainging = options.MaxIterationPerTrainging > 0 ? options.MaxIterationPerTrainging : agentParameters.QNetworkParameters.MaxIterationPerTrainging;
+                agentParameters.QNetworkParameters.TrainingError = options.TrainingError > 0 ? options.TrainingError : agentParameters.QNetworkParameters.TrainingError;
 
-                var stock = new StockExchange(agent, null, RewardCalculator.WinningsOverLoosings, p =>
-                {
-                    p.EpisodeLength = episodeLength;
-                    p.InitialCapital = initialCapital;
-                    p.SimulationVelocity = options.Velocity > 0 ? (int)(options.Velocity * 1000.0) : p.SimulationVelocity;
-                    p.TransactionCost = options.TransactionCost > 0 ? options.TransactionCost : p.TransactionCost;
-                });
+                var agent = new DeepRLAgent(agentParameters); ;
+
+                var stockParameters = new StockExchangeParameters();
+                stockParameters.EpisodeLength = episodeLength;
+                stockParameters.InitialCapital = initialCapital;
+                stockParameters.SimulationVelocity = options.Velocity > 0 ? (int)(options.Velocity * 1000.0) : stockParameters.SimulationVelocity;
+                stockParameters.TransactionCost = options.TransactionCost > 0 ? options.TransactionCost : stockParameters.TransactionCost;
+                stockParameters.RewardCalculator = RewardCalculators.WinningsOverLoosings;
+
+                var stock = new StockExchange(stockParameters, agent, null);                
 
                 sub.OnMessage += (channel, msg) =>
                 {
@@ -107,14 +108,13 @@ namespace DeepQStock.Console
                         stock.DataProvider.Seek(startDate: endTraining);
                         agent.Save(@"./");
 
-                        agent = new DeepRLAgent(p =>
-                        {
-                            p.DiscountFactor = options.DiscountFactor > 0 ? options.DiscountFactor : p.DiscountFactor;
-                            p.eGreedyProbability = options.eGreedyProbability > 0 ? options.eGreedyProbability : p.eGreedyProbability;
-                            p.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : p.MiniBatchSize;
-                            p.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : p.MemoryReplaySize;
-                        });
 
+                        agentParameters.DiscountFactor = options.DiscountFactor > 0 ? options.DiscountFactor : agentParameters.DiscountFactor;
+                        agentParameters.eGreedyProbability = options.eGreedyProbability > 0 ? options.eGreedyProbability : agentParameters.eGreedyProbability;
+                        agentParameters.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : agentParameters.MiniBatchSize;
+                        agentParameters.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : agentParameters.MemoryReplaySize;
+
+                        agent = new DeepRLAgent(agentParameters);                                            
 
                         agent.NetworkPath = "./";
                         stock.Agent = agent;

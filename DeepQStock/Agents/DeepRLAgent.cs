@@ -81,10 +81,9 @@ namespace DeepQStock.Agents
         /// Initializes a new instance of the <see cref="DeepRLAgent"/> class.
         /// </summary>
         /// <param name="initializer">The initializer.</param>
-        public DeepRLAgent(Action<DeepRLAgentParameters> initializer = null)
+        public DeepRLAgent(DeepRLAgentParameters parameters = null)
         {
-            _parameters = new DeepRLAgentParameters();
-            initializer?.Invoke(_parameters);
+            _parameters = new DeepRLAgentParameters();            
             RandomGenerator = new Random();
             MemoryReplay = new CircularQueue<Experience>(_parameters.MemoryReplaySize);
         }

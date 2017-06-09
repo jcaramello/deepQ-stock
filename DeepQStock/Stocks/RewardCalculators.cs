@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DeepQStock.Stocks
 {
-    public static class RewardCalculator
+    public static class RewardCalculators
     {
         /// <summary>
         /// Private properties

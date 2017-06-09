@@ -74,7 +74,7 @@
     <Compile Include="Agents\QNetworkParameters.cs" />
     <Compile Include="Enums\StockExchangeStatus.cs" />
     <Compile Include="Stocks\StockExchangeEvents.cs" />
-    <Compile Include="Stocks\RewardCalculator.cs" />
+    <Compile Include="Stocks\RewardCalculators.cs" />
     <Compile Include="Storage\BaseModel.cs" />
     <Compile Include="Utils\CsvDataProvider.cs" />
     <Compile Include="Storage\BaseStorage.cs" />

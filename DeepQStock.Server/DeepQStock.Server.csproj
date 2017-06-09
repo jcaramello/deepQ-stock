@@ -156,10 +156,11 @@
     <Compile Include="Hubs\StockExchangeHub.cs" />
     <Compile Include="Middleware\GlobalExecptionMiddleare.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resolvers\SignalRContractResolver.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />    
     <Compile Include="Settings.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utils\DependencyResolverJobActivator.cs" />
+    <Compile Include="Utils\SignalRContractResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

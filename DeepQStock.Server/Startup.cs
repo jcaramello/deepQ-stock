@@ -2,6 +2,7 @@
 using DeepQStock.Server.Hubs;
 using DeepQStock.Server.Middleware;
 using DeepQStock.Server.Resolvers;
+using DeepQStock.Server.Utils;
 using DeepQStock.Stocks;
 using DeepQStock.Storage;
 using DeepQStock.Utils;
@@ -45,6 +46,8 @@ namespace DeepQStock.Server
             app.MapSignalR(hubConfiguration);
 
             GlobalConfiguration.Configuration.UseRedisStorage(Settings.RedisConnectionString);
+            GlobalConfiguration.Configuration.UseActivator(new DependencyResolverJobActivator(GlobalHost.DependencyResolver));
+
             app.UseHangfireDashboard();
             app.UseHangfireServer();
 
@@ -58,25 +61,21 @@ namespace DeepQStock.Server
         /// <param name="services"></param>
         public void ConfigureService()
         {
-            var redisClientManager = new BasicRedisClientManager(Settings.RedisConnectionString);
-            var redisClient = redisClientManager.GetClient();
-
-            var qNetworkStorage = new BaseStorage<QNetworkParameters>(redisClientManager);
-            var agentStorage = new BaseStorage<DeepRLAgentParameters>(redisClientManager);
-            var stockExchangeStorage = new BaseStorage<StockExchangeParameters>(redisClientManager);
+            var redisManager = new BasicRedisClientManager(Settings.RedisConnectionString);            
+            var qNetworkStorage = new BaseStorage<QNetworkParameters>(redisManager);
+            var agentStorage = new BaseStorage<DeepRLAgentParameters>(redisManager);
+            var stockExchangeStorage = new BaseStorage<StockExchangeParameters>(redisManager);
 
             var settings = new JsonSerializerSettings();
             settings.ContractResolver = new SignalRContractResolver();
-            var serializer = JsonSerializer.Create(settings);
-            
-            var pubSubServer = redisClientManager.CreatePubSubServer(RedisPubSubChannels.OnDayComplete);
-            pubSubServer.Start();                        
+            var serializer = JsonSerializer.Create(settings);                       
 
-            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);            
-            
+            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);       
+
             //Register Hubs
-            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => new AgentHub(redisClient, agentStorage, qNetworkStorage, stockExchangeStorage));
-            GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => new StockExchangeHub(stockExchangeStorage));            
+            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => new AgentHub(redisManager, agentStorage, qNetworkStorage, stockExchangeStorage));
+            GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => new StockExchangeHub(stockExchangeStorage));
+            GlobalHost.DependencyResolver.Register(typeof(StockExchange), () => new StockExchange(redisManager));
 
         }
     }
