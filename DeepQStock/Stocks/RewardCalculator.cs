@@ -9,9 +9,10 @@ namespace DeepQStock.Stocks
 {
     public static class RewardCalculator
     {
-
+        /// <summary>
+        /// Private properties
+        /// </summary>
         private static CircularQueue<double> Winnings = new CircularQueue<double>(14);
-
         private static CircularQueue<double> Loosings = new CircularQueue<double>(14);        
 
         /// <summary>

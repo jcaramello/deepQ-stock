@@ -20,6 +20,10 @@ namespace DeepQStock.Agents
         /// </summary>
         public double InOutStrategy { get; set; }
 
+        /// <summary>
+        /// Agent name
+        /// </summary>
+        public string Name { get; set; }
 
     }
 }

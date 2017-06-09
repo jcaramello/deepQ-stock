@@ -35,6 +35,7 @@ namespace DeepQStock.Console
                 var initialCapital = 100000;                
                 var dayNumber = 0;
                 int totalTrainingDays = 0;
+                var eventAggregator = new EventAggregator();
 
                 var agent = new DeepRLAgent(p =>
                 {
@@ -46,7 +47,7 @@ namespace DeepQStock.Console
                     p.QNetworkParameters.TrainingError = options.TrainingError > 0 ? options.TrainingError : p.QNetworkParameters.TrainingError;
                 });
 
-                var stock = new StockExchange(agent, null, RewardCalculator.WinningsOverLoosings, p =>
+                var stock = new StockExchange(agent, null, eventAggregator,  RewardCalculator.WinningsOverLoosings, p =>
                 {
                     p.EpisodeLength = episodeLength;
                     p.InitialCapital = initialCapital;
@@ -54,12 +55,12 @@ namespace DeepQStock.Console
                     p.TransactionCost = options.TransactionCost > 0 ? options.TransactionCost : p.TransactionCost;
                 });
 
-                stock.OnDayComplete += (e, a) =>
+                eventAggregator.Register<OnDayComplete>((e, a) =>
                 {                    
                     dayNumber = a.DayNumber - totalTrainingDays;
                     initialValue = initialValue == 0.0 ? a.Period.Open : initialValue;
                     DrawSummarySection(companyName, status, dayNumber, initialCapital, a);
-                };                
+                });                
 
                 agent.OnTrainingEpochComplete += DrawStatusBar;
 
@@ -206,7 +207,7 @@ namespace DeepQStock.Console
         /// <param name="totalYears"></param>
         /// <param name="initialCapital"></param>
         /// <param name="a"></param>
-        static void DrawSummarySection(string companyName, string status, int dayNumber, int initialCapital, OnDayCompleteArgs a)
+        static void DrawSummarySection(string companyName, string status, int dayNumber, int initialCapital, OnDayComplete a)
         {
 
             WriteLine(MainSectionLine, " Simbolo {0} - {1}", companyName, status);

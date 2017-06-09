@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using System.Linq;
 using DeepQStock.Agents;
+using DeepQStock.Storage;
 
 namespace DeepQStock.Stocks
 {
@@ -18,6 +19,13 @@ namespace DeepQStock.Stocks
     /// </summary>
     public class StockExchange
     {
+
+        #region << Events >>
+
+        //public event EventHandler<OnDayCompleteArgs> OnDayComplete;
+
+        #endregion
+
         #region << Private Properties >>
 
         /// <summary>
@@ -61,135 +69,6 @@ namespace DeepQStock.Stocks
             get
             {
                 return CurrentState != null ? CurrentState.DayLayer.Peek() : null;
-            }
-        }
-
-        /// <summary>
-        /// List of stock exchange  daily indicators used in each state
-        /// </summary>
-        [JsonIgnore]
-        public IList<ITechnicalIndicator> DailyIndicators
-        {
-            get
-            {
-                return Parameters.DailyIndicators;
-            }
-        }
-
-        /// <summary>
-        /// List of stock exchange  weekly indicators used in each state
-        /// </summary>
-        [JsonIgnore]
-        public IList<ITechnicalIndicator> WeeklyIndicators
-        {
-            get
-            {
-                return Parameters.WeeklyIndicators;
-            }
-        }
-
-        /// <summary>
-        /// List of stock exchange monthly indicators used in each state
-        /// </summary>
-        [JsonIgnore]
-        public IList<ITechnicalIndicator> MonthlyIndicators
-        {
-            get
-            {
-                return Parameters.MonthlyIndicators;
-            }
-        }
-
-        /// <summary>
-        /// Occurs when [on episode complete].
-        /// </summary>
-        public event EventHandler<OnDayCompleteArgs> OnDayComplete;
-
-        /// <summary>
-        /// Gets or sets the status.
-        /// </summary>
-        public StockExchangeStatus Status { get; set; }
-
-        /// <summary>
-        /// Gets or sets the reward calculator.
-        /// </summary>
-        /// <value>
-        /// The reward calculator.
-        /// </value>
-        public Func<StockExchange, double> RewardCalculator { get; set; }
-
-        #endregion
-
-        #region << Constructor >>
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StockExchange"/> class.
-        /// </summary>
-        /// <param name="initializer">The initializer.</param>
-        /// <exception cref="System.Exception">You must pass a csv file path for load the simulated data</exception>
-        public StockExchange(IAgent agent, IDataProvider provider, Func<StockExchange, double> rewardCalculator, Action<StockExchangeParameters> initializer = null)
-        {
-            Agent = agent;
-            DataProvider = provider;
-            Parameters = new StockExchangeParameters();
-            initializer?.Invoke(Parameters);
-            RewardCalculator = rewardCalculator;
-        }
-
-        #endregion
-
-        #region << Public Methods >>       
-
-        /// <summary>
-        /// Start the simulation
-        /// </summary>
-        public void Start()
-        {
-            if (Agent == null)
-                return;
-
-            Status = StockExchangeStatus.Running;
-
-
-            IEnumerable<State> episode = null;
-            var action = ActionType.Wait;
-            double reward = 0.0;
-            int? currentYear = null;
-
-            while (Status == StockExchangeStatus.Running)
-            {
-                episode = NextEpisode();
-
-                if (episode == null || episode.Count() == 0)
-                {
-                    Status = StockExchangeStatus.Stopped;
-                    break;
-                }                
-
-                foreach (var state in episode)
-                {
-                    CurrentState = state;
-                    action = Agent.Decide(state, reward);
-                    reward = Execute(action, Agent.Parameters.InOutStrategy);
-                    DaysSimulated++;
-                    
-                    if (currentYear == null || currentYear != CurrentPeriod.Date.Year)
-                    {
-                        currentYear = CurrentPeriod.Date.Year;
-                        TotalOfYears++;
-                    }
-
-                    TriggerOnDayCompletedEvent(action, reward);
-
-                    if (Parameters.SimulationVelocity > 0)
-                    {
-                        Thread.Sleep(Parameters.SimulationVelocity);
-                    }
-                }
-
-                Agent.OnEpisodeComplete();
-
-                EpisodeSimulated++;
             }
         }
 
@@ -245,10 +124,176 @@ namespace DeepQStock.Stocks
         /// </summary>
         public int TotalOfYears { get; set; }
 
+        /// <summary>
+        /// List of stock exchange  daily indicators used in each state
+        /// </summary>
+        [JsonIgnore]
+        public IList<ITechnicalIndicator> DailyIndicators
+        {
+            get
+            {
+                return Parameters.DailyIndicators;
+            }
+        }
+
+        /// <summary>
+        /// List of stock exchange  weekly indicators used in each state
+        /// </summary>
+        [JsonIgnore]
+        public IList<ITechnicalIndicator> WeeklyIndicators
+        {
+            get
+            {
+                return Parameters.WeeklyIndicators;
+            }
+        }
+
+        /// <summary>
+        /// List of stock exchange monthly indicators used in each state
+        /// </summary>
+        [JsonIgnore]
+        public IList<ITechnicalIndicator> MonthlyIndicators
+        {
+            get
+            {
+                return Parameters.MonthlyIndicators;
+            }
+        }
+
+        /// <summary>
+        /// Event Aggregator
+        /// </summary>
+        public IEventAggregator EventAggregator { get; set; }
+
+        /// <summary>
+        /// Gets or sets the status.
+        /// </summary>
+        public StockExchangeStatus Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets the reward calculator.
+        /// </summary>
+        /// <value>
+        /// The reward calculator.
+        /// </value>
+        public Func<StockExchange, double> RewardCalculator { get; set; }
+
+        // Storages
+        public BaseStorage<StockExchangeParameters> StockExchangeStorage { get; set; }
+        public BaseStorage<DeepRLAgentParameters> AgentStorage { get; set; }
+        public BaseStorage<QNetworkParameters> QNetworkStorage { get; set; }
+
+        #endregion
+
+        #region << Constructor >>
+
+        /// <summary>
+        /// We Need this constructor for hangfire
+        /// </summary>
+        public StockExchange(IEventAggregator eventAggregator)
+        {
+            EventAggregator = eventAggregator;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StockExchange"/> class.
+        /// </summary>
+        /// <param name="initializer">The initializer.</param>
+        /// <exception cref="System.Exception">You must pass a csv file path for load the simulated data</exception>
+        public StockExchange(IAgent agent, IDataProvider provider, IEventAggregator eventAggregator, Func<StockExchange, double> rewardCalculator, Action<StockExchangeParameters> initializer = null)
+        {
+            Agent = agent;
+            EventAggregator = EventAggregator;
+            DataProvider = provider;
+            Parameters = new StockExchangeParameters();
+            initializer?.Invoke(Parameters);
+            RewardCalculator = rewardCalculator;
+        }
+
+        #endregion
+
+        #region << Public Methods >>       
+
+        /// <summary>
+        /// We need this overload for throw the execution from hangfire job server
+        /// </summary>
+        /// <param name="agentId"></param>
+        public void Start(long agentId)
+        {
+            Initialize(agentId);
+            Start();
+        }
+
+        /// <summary>
+        /// Start the simulation
+        /// </summary>
+        public void Start()
+        {
+            if (Agent == null)
+                return;
+
+            Status = StockExchangeStatus.Running;
+
+            IEnumerable<State> episode = null;
+            var action = ActionType.Wait;
+            double reward = 0.0;
+            int? currentYear = null;
+
+            while (Status == StockExchangeStatus.Running)
+            {
+                episode = NextEpisode();
+
+                if (episode == null || episode.Count() == 0)
+                {
+                    Status = StockExchangeStatus.Stopped;
+                    break;
+                }
+
+                foreach (var state in episode)
+                {
+                    CurrentState = state;
+                    action = Agent.Decide(state, reward);
+                    reward = Execute(action, Agent.Parameters.InOutStrategy);
+                    DaysSimulated++;
+
+                    if (currentYear == null || currentYear != CurrentPeriod.Date.Year)
+                    {
+                        currentYear = CurrentPeriod.Date.Year;
+                        TotalOfYears++;
+                    }
+
+                    TriggerOnDayCompletedEvent(action, reward);
+
+                    if (Parameters.SimulationVelocity > 0)
+                    {
+                        Thread.Sleep(Parameters.SimulationVelocity);
+                    }
+                }
+
+                Agent.OnEpisodeComplete();
+
+                EpisodeSimulated++;
+            }
+        }
 
         #endregion
 
         #region << Private Methods >>
+
+        /// <summary>
+        /// Initialize the agent and the stock exchange
+        /// </summary>
+        /// <param name="agentId"></param>
+        private void Initialize(long agentId)
+        {
+            var agentParameters = AgentStorage.GetById(agentId);
+            agentParameters.QNetworkParameters = QNetworkStorage.GetById(agentParameters.QNetworkParametersId);
+
+            Agent = new DeepRLAgent(p => p = agentParameters);
+            RewardCalculator = Stocks.RewardCalculator.WinningsOverLoosings;
+            Parameters = StockExchangeStorage.GetById(agentParameters.StockExchangeParametersId);
+            DataProvider = new CsvDataProvider(Parameters.CsvDataFilePath, Parameters.EpisodeLength);
+        }
 
         /// <summary>
         /// Executes the specified action.
@@ -392,7 +437,7 @@ namespace DeepQStock.Stocks
         /// <param name="reward">The reward.</param>
         private void TriggerOnDayCompletedEvent(ActionType action, double reward)
         {
-            var args = new OnDayCompleteArgs()
+            var args = new OnDayComplete()
             {
                 DayNumber = DaysSimulated,
                 Date = CurrentPeriod.Date,
@@ -401,11 +446,11 @@ namespace DeepQStock.Stocks
                 AccumulatedProfit = Profits,
                 AnnualProfits = AnnualProfits,
                 AnnualRent = AnnualRent,
-                TotalOfYears  = TotalOfYears,
+                TotalOfYears = TotalOfYears,
                 Period = CurrentPeriod
             };
 
-            OnDayComplete?.Invoke(this, args);
+            EventAggregator.Trigger(this, args);
         }
 
         #endregion

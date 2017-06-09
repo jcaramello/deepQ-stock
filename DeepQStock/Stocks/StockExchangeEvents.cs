@@ -7,9 +7,9 @@ namespace DeepQStock.Stocks
     public class OnEpisodeCompleteArgs : EventArgs
     {
         public double Reward { get; set; }
-    }
+    }   
 
-    public class OnDayCompleteArgs : EventArgs
+    public class OnDayComplete : EventArgs
     {
         /// <summary>
         /// Gets or sets the day number.
@@ -24,7 +24,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the selected action.
         /// </summary>
-        public ActionType  SelectedAction{ get; set; }
+        public ActionType SelectedAction { get; set; }
 
         /// <summary>
         /// Gets or sets the reward.
@@ -54,6 +54,6 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the actual position.
         /// </summary>
-        public Period Period{ get; set; }
+        public Period Period { get; set; }
     }
 }

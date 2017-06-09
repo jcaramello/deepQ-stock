@@ -9,7 +9,7 @@ namespace DeepQStock.Agents
     public class DeepRLAgentParameters : BaseAgentParameters
     {
         #region << Public Properties >>       
-
+   
         /// <summary>
         /// Gets or sets the exploration frequency.
         /// </summary>        

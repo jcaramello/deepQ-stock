@@ -49,7 +49,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public IEnumerable<DeepRLAgentParameters> GetAll()
         {
-            return AgentStorage.GetAll();          
+            return AgentStorage.GetAll();
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace DeepQStock.Server.Hubs
         public DeepRLAgentParameters GetById(long id)
         {
             return AgentStorage.GetById(id);
-        }       
+        }
 
         /// <summary>
         /// Save an agent
@@ -72,7 +72,7 @@ namespace DeepQStock.Server.Hubs
             QNetworkStorage.Save(qNetwork);
             agent.QNetworkParametersId = qNetwork.Id;
             agent.QNetworkParameters = null;
-                        
+
             AgentStorage.Save(agent);
 
             Clients.All.onCreatedAgent(agent);
@@ -85,24 +85,8 @@ namespace DeepQStock.Server.Hubs
         /// </summary>
         /// <param name="agentId"></param>
         public void Start(int agentId)
-        {            
-            var agentParameters = AgentStorage.GetById(agentId);
-            agentParameters.QNetworkParameters = QNetworkStorage.GetById(agentParameters.QNetworkParametersId);
-
-            var deepRlAgent = new DeepRLAgent(p => p = agentParameters);            
-
-            var stockParameters = StockExchangeStorage.GetById(agentParameters.StockExchangeParametersId);
-            var filePath = string.Format("{0}/{1}.csv", Settings.CsvDataDirectory, agentParameters.Symbol);
-            var csvDataProvider =new CsvDataProvider(filePath, stockParameters.EpisodeLength);
-
-            var stock = new StockExchange(deepRlAgent, csvDataProvider, RewardCalculator.WinningsOverLoosings, p => p = stockParameters);
-
-            stock.OnDayComplete += (e, a) =>
-            {
-                Clients.All.onDayComplete(a);
-            };
-
-            BackgroundJob.Enqueue(() => stock.Start());          
+        {
+            BackgroundJob.Enqueue<StockExchange>(s => s.Start(agentId));
         }
     }
 }

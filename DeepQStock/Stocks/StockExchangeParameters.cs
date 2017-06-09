@@ -11,6 +11,16 @@ namespace DeepQStock.Stocks
         #region << Public Properties >>             
 
         /// <summary>
+        /// csv data file path
+        /// </summary>
+        public string CsvDataFilePath { get; set; }
+
+        /// <summary>
+        /// Company Symbol
+        /// </summary>
+        public string Symbol { get; set; }
+
+        /// <summary>
         /// Gets or sets the period types.
         /// </summary>
         [JsonIgnore]

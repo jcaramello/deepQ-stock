@@ -100,7 +100,7 @@ export class FullLayoutComponent implements OnInit {
     this.slimLoadingBarService.start();
     this.stockExchangeService.save(this.currentStock)
       .then(id => {
-        this.currentAgent.stockId = id;
+        this.currentAgent.stockExchangeParametersId = id;
         this.agentService.save(this.currentAgent);
       })
       .then(() => {

@@ -37,6 +37,7 @@ namespace DeepQStock.Server.Hubs
         public long Save(StockExchangeParameters stock)
         {            
             StockExchangeStorage.Save(stock);
+            stock.CsvDataFilePath = string.Format("{0}/{1}.csv", Settings.CsvDataDirectory, stock.Symbol);
             return stock.Id;
         }
 

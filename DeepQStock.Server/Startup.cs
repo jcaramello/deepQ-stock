@@ -4,6 +4,7 @@ using DeepQStock.Server.Middleware;
 using DeepQStock.Server.Resolvers;
 using DeepQStock.Stocks;
 using DeepQStock.Storage;
+using DeepQStock.Utils;
 using Hangfire;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Cors;
@@ -37,7 +38,11 @@ namespace DeepQStock.Server
             app.Use<GlobalExceptionMiddleware>();    
             app.UseWebApi(config);
             app.UseCors(CorsOptions.AllowAll);
-            app.MapSignalR();
+
+            var hubConfiguration = new HubConfiguration();
+            hubConfiguration.EnableDetailedErrors = true;
+
+            app.MapSignalR(hubConfiguration);
 
             GlobalConfiguration.Configuration.UseRedisStorage(Settings.RedisConnectionString);
             app.UseHangfireDashboard();
@@ -62,9 +67,13 @@ namespace DeepQStock.Server
             settings.ContractResolver = new SignalRContractResolver();
             var serializer = JsonSerializer.Create(settings);
 
+            var eventAggregator = new EventAggregator();
+
             GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);
+            GlobalHost.DependencyResolver.Register(typeof(IEventAggregator), () => eventAggregator));
+
             GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => new AgentHub(agentStorage, qNetworkStorage, stockExchangeStorage));
-            GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => new StockExchangeHub(stockExchangeStorage));
+            GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => new StockExchangeHub(stockExchangeStorage));            
 
         }
     }
