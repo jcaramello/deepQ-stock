@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using DeepQStock.Stocks;
 using DeepQStock.Utils;
 using Hangfire;
+using ServiceStack.Redis;
+using Newtonsoft.Json;
 
 namespace DeepQStock.Server.Hubs
 {
@@ -27,7 +29,20 @@ namespace DeepQStock.Server.Hubs
         /// </summary>
         public BaseStorage<StockExchangeParameters> StockExchangeStorage { get; set; }
 
+        /// <summary>
+        /// Gets or sets the client.
+        /// </summary>
+        public IRedisClient Client { get; set; }
 
+        /// <summary>
+        /// Gets or sets the agent listeners.
+        /// </summary>
+        /// <value>
+        /// The agent listeners.
+        /// </value>
+        public IDictionary<string, string> AgentListeners{ get; set; }
+
+        private static string GroupNameTemplate = "ListenersForAgent-{0}";
 
         #endregion
 
@@ -36,11 +51,14 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public AgentHub(BaseStorage<DeepRLAgentParameters> agentStorage, BaseStorage<QNetworkParameters> qnetworkStorage, BaseStorage<StockExchangeParameters> stockExchangeStorage)
+        public AgentHub(IRedisClient client, BaseStorage<DeepRLAgentParameters> agentStorage, BaseStorage<QNetworkParameters> qnetworkStorage, BaseStorage<StockExchangeParameters> stockExchangeStorage)
         {
+            Client = client;
             AgentStorage = agentStorage;
             QNetworkStorage = qnetworkStorage;
             StockExchangeStorage = stockExchangeStorage;
+            AgentListeners = new Dictionary<string, string>();
+            SubscribeToOnDayComplete();                      
         }
 
         #endregion
@@ -59,8 +77,28 @@ namespace DeepQStock.Server.Hubs
         /// </summary>
         /// <returns></returns>
         public DeepRLAgentParameters GetById(long id)
-        {
+        {            
             return AgentStorage.GetById(id);
+        }
+
+        /// <summary>
+        /// Subscribes the specified agent identifier.
+        /// </summary>
+        /// <param name="agentId">The agent identifier.</param>
+        public void Subscribe(long id)
+        {
+            var groupName = string.Format(GroupNameTemplate, id);
+
+            // if the client its already listen for an agent, we need to remove it. For now they can only listen one agent at time
+            if (AgentListeners.ContainsKey(Context.ConnectionId))
+            {
+                var oldGroup = AgentListeners[Context.ConnectionId];
+                AgentListeners.Remove(Context.ConnectionId);
+                Groups.Remove(Context.ConnectionId, oldGroup);
+            }
+
+            AgentListeners.Add(Context.ConnectionId, groupName);
+            Groups.Add(Context.ConnectionId, groupName);
         }
 
         /// <summary>
@@ -85,10 +123,33 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Start the simulation of the agent agentId
         /// </summary>
-        /// <param name="agentId"></param>
-        public void Start(int agentId)
+        /// <param name="id"></param>
+        public void Start(int id)
         {
-            BackgroundJob.Enqueue<StockExchange>(s => s.Start(agentId));
+            BackgroundJob.Enqueue<StockExchange>(s => s.Start(id));
+            Subscribe(id);
         }
+
+
+        #region << Private Methods >> 
+
+        private void SubscribeToOnDayComplete()
+        {
+            using (var sub = Client.CreateSubscription())
+            {                
+                sub.OnMessage += (channel, message) =>
+                {
+                    var args = JsonConvert.DeserializeObject<OnDayComplete>(message);
+                    if (channel == RedisPubSubChannels.OnDayComplete)
+                    {
+                        var groupName = string.Format(GroupNameTemplate, args.AgentId);
+                        Clients.Group(groupName).onDayComplete(args);
+                    }
+                };
+            }
+        }
+                               
+
+        #endregion
     }
 }

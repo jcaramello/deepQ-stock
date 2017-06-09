@@ -16,6 +16,9 @@ export class CandlestickComponent {
   @Input()
   public agent;
 
+   @Input()
+  public stock;
+
   private chart: AmCharts.AmStockChart;
   private pricePanel: AmCharts.StockPanel;
   private volPanel: AmCharts.StockPanel;
@@ -74,7 +77,7 @@ export class CandlestickComponent {
     chart.categoryAxesSettings.groupToPeriods = ["DD"];
 
     var loader = {
-      url: "assets/data/" + this.agent.symbol + ".csv",
+      url: "assets/data/" + this.stock.symbol + ".csv",
       format: "csv",
       showCurtain: true,
       showErrors: true,

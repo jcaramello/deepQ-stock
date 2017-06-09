@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Agent } from '../models/agent';
+import { StockExchange } from '../models/stock-exchange';
 import { OnDayCompletedArgs } from '../models/on-day-completed-args';
 import { AgentService } from '../services/agent-service';
+import { StockExchangeService } from '../services/stock-exchange-service';
 import { NotificationsService } from 'angular2-notifications';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 
@@ -16,6 +18,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // Public fields
   public agent: Agent = new Agent();
+  public stock: StockExchange = new StockExchange();
   public today = new OnDayCompletedArgs();
   public markers: { decision: string, date: Date }[] = [];
 
@@ -27,6 +30,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   constructor(private route: ActivatedRoute,
     private agentService: AgentService,
+    private stockExchangeService: StockExchangeService,
     private notificationService: NotificationsService,    
     private slimLoadingBarService: SlimLoadingBarService) { }
 
@@ -36,12 +40,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @memberof DashboardComponent
    */
   ngOnInit() {
-    this.agentService.onDayCompleted.subscribe(args => this.today = args);
+    this.agentService.onDayCompleted.subscribe(this.onDayCompleted.bind(this));
     this.sub = this.route.params.subscribe(params => {
       this.slimLoadingBarService.start();
-      this.agentService.getById(+params['id']).then(a => {
-        this.agent = a
-      });
+      this.agentService
+          .getById(+params['id'])
+          .then(a => this.agent = a)
+          .then(a => this.stockExchangeService.getById(this.agent.stockExchangeParametersId))
+          .then(s => this.stock = s);
     });
   }
 

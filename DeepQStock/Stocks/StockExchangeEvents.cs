@@ -12,6 +12,11 @@ namespace DeepQStock.Stocks
     public class OnDayComplete : EventArgs
     {
         /// <summary>
+        /// Gets or sets the agent identifier.
+        /// </summary>
+        public long AgentId { get; set; }
+
+        /// <summary>
         /// Gets or sets the day number.
         /// </summary>        
         public int DayNumber { get; set; }

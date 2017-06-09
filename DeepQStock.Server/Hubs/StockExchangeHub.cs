@@ -41,6 +41,16 @@ namespace DeepQStock.Server.Hubs
             return stock.Id;
         }
 
+        /// <summary>
+        /// Gets an stock exchange by identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        public StockExchangeParameters GetById(long id)
+        {
+            return StockExchangeStorage.GetById(id);
+        }
+
         #endregion
     }
 }

@@ -75,7 +75,7 @@ namespace DeepQStock.Server
             GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);            
             
             //Register Hubs
-            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => new AgentHub(agentStorage, qNetworkStorage, stockExchangeStorage));
+            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => new AgentHub(redisClient, agentStorage, qNetworkStorage, stockExchangeStorage));
             GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => new StockExchangeHub(stockExchangeStorage));            
 
         }

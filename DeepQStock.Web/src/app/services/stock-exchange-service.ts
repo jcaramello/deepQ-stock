@@ -28,4 +28,11 @@ export class StockExchangeService extends BaseService {
         return this.execute('save', stock);
     }
 
+    /**
+     * Get an stock exchange by id
+     * @param id 
+     */
+    public getById(id: number){
+        return this.execute('getById', id);
+    }
 }

@@ -450,6 +450,7 @@ namespace DeepQStock.Stocks
         {
             var args = new OnDayComplete()
             {
+                AgentId = Agent.Parameters.Id,
                 DayNumber = DaysSimulated,
                 Date = CurrentPeriod.Date,
                 SelectedAction = action,
