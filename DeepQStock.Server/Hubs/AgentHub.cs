@@ -27,6 +27,8 @@ namespace DeepQStock.Server.Hubs
         /// </summary>
         public BaseStorage<StockExchangeParameters> StockExchangeStorage { get; set; }
 
+
+
         #endregion
 
         #region << Constructor >> 
