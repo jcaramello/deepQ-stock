@@ -73,7 +73,6 @@
     <Compile Include="Agents\DeepRLAgentEvents.cs" />
     <Compile Include="Agents\QNetworkParameters.cs" />
     <Compile Include="Enums\StockExchangeStatus.cs" />
-    <Compile Include="IEventAggregator.cs" />
     <Compile Include="Stocks\StockExchangeEvents.cs" />
     <Compile Include="Stocks\RewardCalculator.cs" />
     <Compile Include="Storage\BaseModel.cs" />
@@ -104,10 +103,10 @@
     <Compile Include="Stocks\StockExchange.cs" />
     <Compile Include="Storage\StateStorage.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
-    <Compile Include="Utils\EventAggregator.cs" />
     <Compile Include="Utils\IndicatorUtils.cs" />
     <Compile Include="Utils\LinqExtensions.cs" />
     <Compile Include="Utils\CircularQueue.cs" />
+    <Compile Include="Utils\RedisPubSubChannels.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

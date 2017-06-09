@@ -4,7 +4,7 @@ using System;
 
 namespace DeepQStock.Stocks
 {
-    public class OnEpisodeCompleteArgs : EventArgs
+    public class OnEpisodeComplete : EventArgs
     {
         public double Reward { get; set; }
     }   

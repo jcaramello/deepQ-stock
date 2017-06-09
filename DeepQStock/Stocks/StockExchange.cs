@@ -9,6 +9,7 @@ using System.Threading;
 using System.Linq;
 using DeepQStock.Agents;
 using DeepQStock.Storage;
+using ServiceStack.Redis;
 
 namespace DeepQStock.Stocks
 {
@@ -158,12 +159,7 @@ namespace DeepQStock.Stocks
             {
                 return Parameters.MonthlyIndicators;
             }
-        }
-
-        /// <summary>
-        /// Event Aggregator
-        /// </summary>
-        public IEventAggregator EventAggregator { get; set; }
+        }        
 
         /// <summary>
         /// Gets or sets the status.
@@ -178,6 +174,19 @@ namespace DeepQStock.Stocks
         /// </value>
         public Func<StockExchange, double> RewardCalculator { get; set; }
 
+        /// <summary>
+        /// Gets or sets the manager.
+        /// </summary>
+        public IRedisClientsManager Manager { get; set; }
+
+        /// <summary>
+        /// Gets the client.
+        /// </summary>
+        public IRedisClient Client
+        {
+            get{ return Manager.GetClient(); }
+        }
+
         // Storages
         public BaseStorage<StockExchangeParameters> StockExchangeStorage { get; set; }
         public BaseStorage<DeepRLAgentParameters> AgentStorage { get; set; }
@@ -190,9 +199,12 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// We Need this constructor for hangfire
         /// </summary>
-        public StockExchange(IEventAggregator eventAggregator)
+        public StockExchange(IRedisClientsManager manager)
         {
-            EventAggregator = eventAggregator;
+            Manager = manager;
+            StockExchangeStorage = new BaseStorage<StockExchangeParameters>(manager);
+            AgentStorage = new BaseStorage<DeepRLAgentParameters>(manager);
+            QNetworkStorage = new BaseStorage<QNetworkParameters>(manager);            
         }
 
         /// <summary>
@@ -200,10 +212,9 @@ namespace DeepQStock.Stocks
         /// </summary>
         /// <param name="initializer">The initializer.</param>
         /// <exception cref="System.Exception">You must pass a csv file path for load the simulated data</exception>
-        public StockExchange(IAgent agent, IDataProvider provider, IEventAggregator eventAggregator, Func<StockExchange, double> rewardCalculator, Action<StockExchangeParameters> initializer = null)
+        public StockExchange(IAgent agent, IDataProvider provider, Func<StockExchange, double> rewardCalculator, Action<StockExchangeParameters> initializer = null)
         {
             Agent = agent;
-            EventAggregator = EventAggregator;
             DataProvider = provider;
             Parameters = new StockExchangeParameters();
             initializer?.Invoke(Parameters);
@@ -450,7 +461,7 @@ namespace DeepQStock.Stocks
                 Period = CurrentPeriod
             };
 
-            EventAggregator.Trigger(this, args);
+            Client.PublishMessage(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(args));
         }
 
         #endregion

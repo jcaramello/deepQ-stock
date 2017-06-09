@@ -59,6 +59,8 @@ namespace DeepQStock.Server
         public void ConfigureService()
         {
             var redisClientManager = new BasicRedisClientManager(Settings.RedisConnectionString);
+            var redisClient = redisClientManager.GetClient();
+
             var qNetworkStorage = new BaseStorage<QNetworkParameters>(redisClientManager);
             var agentStorage = new BaseStorage<DeepRLAgentParameters>(redisClientManager);
             var stockExchangeStorage = new BaseStorage<StockExchangeParameters>(redisClientManager);
@@ -66,11 +68,11 @@ namespace DeepQStock.Server
             var settings = new JsonSerializerSettings();
             settings.ContractResolver = new SignalRContractResolver();
             var serializer = JsonSerializer.Create(settings);
+            
+            var pubSubServer = redisClientManager.CreatePubSubServer(RedisPubSubChannels.OnDayComplete);
+            pubSubServer.Start();                        
 
-            var eventAggregator = new EventAggregator();
-
-            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);
-            GlobalHost.DependencyResolver.Register(typeof(IEventAggregator), () => eventAggregator));
+            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);            
             
             //Register Hubs
             GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => new AgentHub(agentStorage, qNetworkStorage, stockExchangeStorage));

@@ -2,6 +2,7 @@
 using DeepQStock.Stocks;
 using DeepQStock.Storage;
 using DeepQStock.Utils;
+using Newtonsoft.Json;
 using ServiceStack.Redis;
 using System;
 using System.Linq;
@@ -35,7 +36,8 @@ namespace DeepQStock.Console
                 var initialCapital = 100000;                
                 var dayNumber = 0;
                 int totalTrainingDays = 0;
-                var eventAggregator = new EventAggregator();
+                var pubSubServer = manager.CreatePubSubServer(RedisPubSubChannels.OnDayComplete);
+                var sub = manager.GetClient().CreateSubscription();
 
                 var agent = new DeepRLAgent(p =>
                 {
@@ -47,7 +49,7 @@ namespace DeepQStock.Console
                     p.QNetworkParameters.TrainingError = options.TrainingError > 0 ? options.TrainingError : p.QNetworkParameters.TrainingError;
                 });
 
-                var stock = new StockExchange(agent, null, eventAggregator,  RewardCalculator.WinningsOverLoosings, p =>
+                var stock = new StockExchange(agent, null, RewardCalculator.WinningsOverLoosings, p =>
                 {
                     p.EpisodeLength = episodeLength;
                     p.InitialCapital = initialCapital;
@@ -55,12 +57,13 @@ namespace DeepQStock.Console
                     p.TransactionCost = options.TransactionCost > 0 ? options.TransactionCost : p.TransactionCost;
                 });
 
-                eventAggregator.Register<OnDayComplete>((e, a) =>
-                {                    
+                sub.OnMessage += (channel, msg) =>
+                {
+                    var a = JsonConvert.DeserializeObject<OnDayComplete>(msg);
                     dayNumber = a.DayNumber - totalTrainingDays;
                     initialValue = initialValue == 0.0 ? a.Period.Open : initialValue;
                     DrawSummarySection(companyName, status, dayNumber, initialCapital, a);
-                });                
+                };                
 
                 agent.OnTrainingEpochComplete += DrawStatusBar;
 
