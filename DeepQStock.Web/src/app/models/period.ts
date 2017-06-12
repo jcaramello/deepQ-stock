@@ -5,7 +5,7 @@ import { PeriodType } from './enums';
  * @export
  * @class Period
  */
-export class Period {
+export class Period {    
 
     // Public Properties
     public id: number;
@@ -19,4 +19,9 @@ export class Period {
     public currentCapital: number;
     public actualPosition: number;
     public indicators: { [id: string]: number[]; }
+
+    constructor(){
+        this.date = new Date();        
+        this.indicators = {};
+    }
 }

@@ -22,10 +22,10 @@
                                         <strong>Año:</strong> {{today.period.totalOfYears}}
                                 </div>
                                 <div class="col">
-                                        <strong>Fecha:</strong> {{today.period.date.toString("dd/MM/YYYY")}}
+                                        <!--<strong>Fecha:</strong> {{today.period.date && today.period.date.toLocaleDateString()}}-->
                                 </div>
                                 <div class="col">
-                                        <strong>Accion:</strong> {{today.period.selecetedAction == 0 ? 'Buy' : (today.period.selecetedAction == 1 ? 'Sell' : 'Wat')}}
+                                        <strong>Accion:</strong> {{today.period.selecetedAction == 0 ? 'Comprar' : (today.period.selecetedAction == 1 ? 'Vender' : 'Esperar')}}
                                 </div>
                                 <div class="col">
                                         <strong>Recompenza:</strong> {{today.period.reward}}

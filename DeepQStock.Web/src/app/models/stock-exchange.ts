@@ -28,6 +28,6 @@ export class StockExchange {
         this.numberOfPeriods = 14;
         this.initialCapital = 100000;
         this.transactionCost = 0.01;
-        this.simulationVelocity = 5000;        
+        this.simulationVelocity = 1000;        
     }
 }

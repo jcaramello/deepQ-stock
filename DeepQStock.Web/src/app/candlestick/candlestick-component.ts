@@ -2,6 +2,8 @@ import { Component, HostListener, EventEmitter, Input, Output, SimpleChanges } f
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { StockExchangeService } from '../services/stock-exchange-service';
 import { Agent } from '../models/agent';
+import { OnDayCompletedArgs } from '../models/on-day-completed-args';
+import { StockExchange } from '../models/stock-exchange';
 import { Period } from '../models/period';
 import { ActionType } from '../models/enums';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
@@ -16,13 +18,13 @@ import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 export class CandlestickComponent {
 
   @Input()
-  public agent;
+  public agent: Agent;
 
   @Input()
-  public stock;
+  public stock : StockExchange;
 
   @Input()
-  public day;
+  public day: OnDayCompletedArgs;
 
   private stockEvents = [];
 
@@ -63,9 +65,9 @@ export class CandlestickComponent {
     if (day) {
       var event = {
         date: new Date(day.period.date),
-        type: day.selectedAction == ActionType.Buy ? "arrowUp" : "arrowDown",
+        type: day.selectedAction == ActionType.Buy ? "triangleUp" : "triangleDown",
         graph: this.priceGraph,
-        backgroundColor: day.selectedAction == ActionType.Buy ? "#00CC00" : "#CC0000",
+        backgroundColor: day.selectedAction == ActionType.Buy ? "#20a8d8" : "#FF7400",
         description: ""
       };
 
@@ -151,7 +153,7 @@ export class CandlestickComponent {
     priceGraph.openField = 'open';
     priceGraph.closeField = 'close';
     priceGraph.balloonText = "Open:<b>[[open]]</b><br>Low:<b>[[low]]</b><br>High:<b>[[high]]</b><br>Close:<b>[[close]]</b><br>";
-    priceGraph.title = this.agent.symbol;
+    priceGraph.title = this.stock.symbol;
     priceGraph.fillColors = "#66cc66";
     priceGraph.useDataSetColors = false;
     priceGraph.lineColor = '#595959';
@@ -197,17 +199,18 @@ export class CandlestickComponent {
     this.chart.chartCursorSettings.zoomable = true;
 
     var periodSelector = new AmCharts.PeriodSelector();
+    periodSelector.inputFieldsEnabled = false;
+    periodSelector.selectFromStart = true;
     periodSelector.periods = [
-      { period: "MM", count: 3, label: "3M", selected: true },
-      { period: "MM", count: 6, label: "6M" },
-      { period: "YYYY", count: 1, label: "1A" },
+      { period: "YYYY", count: 1, label: "1A", selected: true },
+      { period: "YYYY", count: 3, label: "3A" },
+      { period: "YYYY", count: 5, label: "5A" },
       { period: "MAX", label: "Max" }
     ];
 
     this.chart.periodSelector = periodSelector;
 
     this.chart.panels = [pricePanel, volPanel];
-    this.chart.addListener('rendered', this.zoomChart.bind(this));
 
     this.chart['write']('candlestick-container');
 
@@ -223,7 +226,7 @@ export class CandlestickComponent {
       var start = this.data[0].date;
       var end = this.data[100].date;
 
-      this.pricePanel.zoomToDates(new Date(start), new Date(end))
+      this.pricePanel.zoomToIndexes(<any>0, <any>100);
     }
   }
 }

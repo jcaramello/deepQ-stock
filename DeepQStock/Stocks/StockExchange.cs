@@ -69,7 +69,7 @@ namespace DeepQStock.Stocks
         {
             get
             {
-                return CurrentState != null ? CurrentState.DayLayer.Peek() : null;
+                return CurrentState != null ? CurrentState.Today: null;
             }
         }
 
@@ -207,8 +207,9 @@ namespace DeepQStock.Stocks
         /// <param name="agent">The agent.</param>
         /// <param name="provider">The provider.</param>
         /// <exception cref="System.Exception">You must pass a csv file path for load the simulated data</exception>
-        public StockExchange(StockExchangeParameters parameters, IAgent agent, IDataProvider provider)
+        public StockExchange(StockExchangeParameters parameters, IRedisClientsManager manager, IAgent agent, IDataProvider provider)
         {
+            Manager = manager;
             Agent = agent;
             DataProvider = provider;
             Parameters = parameters ?? new StockExchangeParameters();

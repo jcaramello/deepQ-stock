@@ -26,6 +26,6 @@ export class OnDayCompletedArgs {
      * @memberof OnDayCompletedArgs
      */
     constructor() {
-        this.period = new Period();
+        this.period = new Period();        
     }
 }

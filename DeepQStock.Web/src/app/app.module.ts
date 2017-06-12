@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { CommonModule, LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { BsDropdownModule  } from 'ng2-bootstrap/dropdown';
@@ -30,6 +30,7 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    CommonModule,
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
     SimpleNotificationsModule.forRoot(),

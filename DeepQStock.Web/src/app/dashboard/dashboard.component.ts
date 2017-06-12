@@ -67,7 +67,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @param args 
    */
   public onDayCompleted(args: OnDayCompletedArgs) {    
-    this.zone.run(() => this.today = args);
+    if(args){
+      args.date = new Date(args.date);
+      this.zone.run(() => this.today = args);
+    }    
   }
 
   /**

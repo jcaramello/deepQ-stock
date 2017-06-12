@@ -44,7 +44,7 @@ namespace DeepQStock.Domain
         {
             get
             {
-                return DayLayer.Peek();
+                return DayLayer.Reverse().First();
             }
         }
 

@@ -70,11 +70,14 @@ namespace DeepQStock.Server
             settings.ContractResolver = new SignalRContractResolver();
             var serializer = JsonSerializer.Create(settings);                       
 
-            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);       
+            GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);
+
+            var agentHub = new AgentHub(redisManager, agentStorage, qNetworkStorage, stockExchangeStorage);
+            var stockExchangeHub = new StockExchangeHub(stockExchangeStorage);
 
             //Register Hubs
-            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => new AgentHub(redisManager, agentStorage, qNetworkStorage, stockExchangeStorage));
-            GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => new StockExchangeHub(stockExchangeStorage));
+            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => agentHub);
+            GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => stockExchangeHub);
             GlobalHost.DependencyResolver.Register(typeof(StockExchange), () => new StockExchange(redisManager));
 
         }

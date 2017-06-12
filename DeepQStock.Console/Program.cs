@@ -36,8 +36,7 @@ namespace DeepQStock.Console
                 var initialCapital = 100000;                
                 var dayNumber = 0;
                 int totalTrainingDays = 0;
-                var pubSubServer = manager.CreatePubSubServer(RedisPubSubChannels.OnDayComplete);
-                var sub = manager.GetClient().CreateSubscription();
+                var pubSubServer = manager.CreatePubSubServer(RedisPubSubChannels.OnDayComplete);                                
 
                 var agentParameters = new DeepRLAgentParameters();
                 agentParameters.DiscountFactor = options.DiscountFactor > 0 ? options.DiscountFactor : agentParameters.DiscountFactor;
@@ -56,15 +55,17 @@ namespace DeepQStock.Console
                 stockParameters.TransactionCost = options.TransactionCost > 0 ? options.TransactionCost : stockParameters.TransactionCost;
                 stockParameters.RewardCalculator = RewardCalculators.WinningsOverLoosings;
 
-                var stock = new StockExchange(stockParameters, agent, null);                
+                var stock = new StockExchange(stockParameters, manager, agent, null);
 
-                sub.OnMessage += (channel, msg) =>
+                pubSubServer.OnMessage += (channel, msg) =>
                 {
                     var a = JsonConvert.DeserializeObject<OnDayComplete>(msg);
                     dayNumber = a.DayNumber - totalTrainingDays;
                     initialValue = initialValue == 0.0 ? a.Period.Open : initialValue;
                     DrawSummarySection(companyName, status, dayNumber, initialCapital, a);
-                };                
+                };
+
+                pubSubServer.Start();
 
                 agent.OnTrainingEpochComplete += DrawStatusBar;
 
