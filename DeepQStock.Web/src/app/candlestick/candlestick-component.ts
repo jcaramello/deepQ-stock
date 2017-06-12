@@ -2,10 +2,12 @@ import { Component, HostListener, EventEmitter, Input, Output, SimpleChanges } f
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { StockExchangeService } from '../services/stock-exchange-service';
 import { Agent } from '../models/agent';
+import { Period } from '../models/period';
+import { ActionType } from '../models/enums';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 
 /**
-* Allows to draw a candlestick chart
+* Allows to draw a candlestick this.chart
 */
 @Component({
   selector: 'candlestick',
@@ -16,13 +18,20 @@ export class CandlestickComponent {
   @Input()
   public agent;
 
-   @Input()
+  @Input()
   public stock;
 
+  @Input()
+  public day;
+
+  private stockEvents = [];
+
   private chart: AmCharts.AmStockChart;
+  private priceGraph: AmCharts.StockGraph;
   private pricePanel: AmCharts.StockPanel;
   private volPanel: AmCharts.StockPanel;
   private data: any[];
+  private initialized: boolean;
 
   /**
    * Creates an instance of BreadcrumbsComponent.
@@ -49,13 +58,32 @@ export class CandlestickComponent {
    */
   ngOnChanges(changes: SimpleChanges): void {
     this.agent = changes['agent'] && changes['agent'].currentValue;
-    this.init();
+    var day = changes['day'] && changes['day'].currentValue;
+
+    if (day) {
+      var event = {
+        date: new Date(day.period.date),
+        type: day.selectedAction == ActionType.Buy ? "arrowUp" : "arrowDown",
+        graph: this.priceGraph,
+        backgroundColor: day.selectedAction == ActionType.Buy ? "#00CC00" : "#CC0000",
+        description: ""
+      };
+
+      this.stockEvents.push(event);
+      this.chart && this.chart.validateData();
+    }
+
+    if (this.agent && this.agent.id && !this.initialized) {
+      this.init();
+      this.initialized = true;
+    }
+
   }
 
 
 
   /**
-   * Initialize the charts
+   * Initialize the this.charts
    * 
    * @private
    * 
@@ -63,18 +91,16 @@ export class CandlestickComponent {
    */
   private init() {
 
-    if (!this.agent || !this.agent.id) return;
-
-    var chart = this.chart = new AmCharts.AmStockChart();
-    chart['theme'] = 'light';
-    chart['language'] = 'es';
-    chart['pathToImages'] = "/bower_components/amcharts3/amcharts/images/";
-    chart['dataDateFormat'] = "YYYY/MM/DD";
-    chart['mouseWheelScrollEnabled'] = true;
-    chart.valueAxesSettings.position = 'right';    
-
-    chart.categoryAxesSettings.equalSpacing = true;
-    chart.categoryAxesSettings.groupToPeriods = ["DD"];
+    this.chart = new AmCharts.AmStockChart();
+    this.chart['theme'] = 'light';
+    this.chart['language'] = 'es';
+    this.chart['pathToImages'] = "/bower_components/amCharts3/amCharts/images/";
+    this.chart['dataDateFormat'] = "YYYY/MM/DD";
+    this.chart['mouseWheelScrollEnabled'] = true;
+    this.chart.valueAxesSettings.position = 'right';
+    this.chart.glueToTheEnd = false;
+    this.chart.categoryAxesSettings.equalSpacing = true;
+    this.chart.categoryAxesSettings.groupToPeriods = ["DD"];
 
     var loader = {
       url: "assets/data/" + this.stock.symbol + ".csv",
@@ -86,7 +112,8 @@ export class CandlestickComponent {
       delimiter: ",",
       useColumnNames: true,
       load: (opt, chart) => {
-        this.slimLoadingBarService.complete()   
+        this.slimLoadingBarService.complete();
+
       }
     };
 
@@ -101,7 +128,6 @@ export class CandlestickComponent {
       { fromField: "low", toField: "low" }
     ];
     dataSet.categoryField = "date";
-    chart.dataSets = [dataSet];
 
     var pricePanel = this.pricePanel = new AmCharts.StockPanel();
     pricePanel.mouseWheelZoomEnabled = false;
@@ -110,13 +136,14 @@ export class CandlestickComponent {
     pricePanel.percentHeight = 80;
     pricePanel.categoryAxis.parseDates = true;
 
+    this.chart.dataSets = [dataSet];
     var legend = new AmCharts.StockLegend();
     pricePanel.stockLegend = legend;
 
     var panelsSettings = new AmCharts.PanelsSettings();
-    chart.panelsSettings = panelsSettings;
+    this.chart.panelsSettings = panelsSettings;
 
-    var priceGraph = new AmCharts.StockGraph();
+    var priceGraph = this.priceGraph = new AmCharts.StockGraph();
     priceGraph.valueField = "close";
     priceGraph.type = "candlestick";
     priceGraph.lowField = 'low';
@@ -133,6 +160,8 @@ export class CandlestickComponent {
     priceGraph.negativeLineColor = "#595959";
     pricePanel.addStockGraph(priceGraph);
 
+    dataSet.stockEvents = this.stockEvents;
+
     var volGraph = new AmCharts.StockGraph();
     volGraph.valueField = "volume";
     volGraph.type = "column";
@@ -142,7 +171,7 @@ export class CandlestickComponent {
     volGraph.fillAlphas = 1
     volGraph.compareField = 'volume';
     volGraph.fillColors = "#ffec63";
-    volGraph.lineColor = '#ffe216';
+    volGraph.lineColor = '#ffe216'
 
     var volPanel = this.volPanel = new AmCharts.StockPanel();
     volPanel.mouseWheelZoomEnabled = true;
@@ -160,33 +189,41 @@ export class CandlestickComponent {
     sbsettings.updateOnReleaseOnly = false;
     sbsettings['usePeriod'] = 'DD'
     sbsettings.graphType = 'line';
-    chart.chartScrollbarSettings = sbsettings;
+    this.chart.chartScrollbarSettings = sbsettings;
 
-    chart.chartCursorSettings.bulletsEnabled = true;
-    chart.chartCursorSettings.valueBalloonsEnabled = true;
-    chart.chartCursorSettings.cursorColor = "#8c8c8c"
-    chart.chartCursorSettings.zoomable = true;
+    this.chart.chartCursorSettings.bulletsEnabled = true;
+    this.chart.chartCursorSettings.valueBalloonsEnabled = true;
+    this.chart.chartCursorSettings.cursorColor = "#8c8c8c"
+    this.chart.chartCursorSettings.zoomable = true;
 
     var periodSelector = new AmCharts.PeriodSelector();
     periodSelector.periods = [
-      { period: "MM", count: 1, label: "1M" },
+      { period: "MM", count: 3, label: "3M", selected: true },
       { period: "MM", count: 6, label: "6M" },
-      { period: "YYYY", count: 1, label: "1A", selected: true },
+      { period: "YYYY", count: 1, label: "1A" },
       { period: "MAX", label: "Max" }
     ];
 
-    chart.periodSelector = periodSelector;
+    this.chart.periodSelector = periodSelector;
 
-    chart.panels = [pricePanel, volPanel];
-    chart.addListener("rendered", this.zoomChart.bind(this));
-    chart['write']('candlestick-container');
-    this.zoomChart();
+    this.chart.panels = [pricePanel, volPanel];
+    this.chart.addListener('rendered', this.zoomChart.bind(this));
+
+    this.chart['write']('candlestick-container');
+
   }
 
-  // this method is called when chart is first inited as we listen for "rendered" event
-  private zoomChart() {
+  // this method is called when this.chart is first inited as we listen for "rendered" event
+  private zoomChart(event) {
     // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
-    var zoomToIndexes: any = this.pricePanel.zoomToIndexes;
-    zoomToIndexes(this.data.length - 3, this.data.length - 1);
+    // var zoomToIndexes: any = this.pricePanel.zoomToIndexes;
+    // zoomToIndexes(new Date(2007, 1, 1), new Date(2007, 6, 1));
+    this.data = this.chart.dataSets[0].dataProvider;
+    if (this.data && this.data.length > 0) {
+      var start = this.data[0].date;
+      var end = this.data[100].date;
+
+      this.pricePanel.zoomToDates(new Date(start), new Date(end))
+    }
   }
 }

@@ -83,7 +83,7 @@ namespace DeepQStock.Agents
         /// <param name="initializer">The initializer.</param>
         public DeepRLAgent(DeepRLAgentParameters parameters = null)
         {
-            _parameters = new DeepRLAgentParameters();            
+            _parameters = parameters ?? new DeepRLAgentParameters();            
             RandomGenerator = new Random();
             MemoryReplay = new CircularQueue<Experience>(_parameters.MemoryReplaySize);
         }

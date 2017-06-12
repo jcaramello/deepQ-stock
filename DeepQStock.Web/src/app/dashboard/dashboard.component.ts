@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, EventEmitter, Input, Output } from '@angular/core';
+import { Component, OnInit, OnDestroy, EventEmitter, Input, Output, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Agent } from '../models/agent';
 import { StockExchange } from '../models/stock-exchange';
@@ -7,6 +7,7 @@ import { AgentService } from '../services/agent-service';
 import { StockExchangeService } from '../services/stock-exchange-service';
 import { NotificationsService } from 'angular2-notifications';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
+import { ActionType } from '../models/enums';
 
 @Component({
   templateUrl: 'dashboard.component.html'
@@ -20,7 +21,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public agent: Agent = new Agent();
   public stock: StockExchange = new StockExchange();
   public today = new OnDayCompletedArgs();
-  public markers: { decision: string, date: Date }[] = [];
+  public daysCompleted: OnDayCompletedArgs[] = [];
+  public days: any[] = [];
 
   /**
    * Creates an instance of DashboardComponent.
@@ -31,8 +33,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute,
     private agentService: AgentService,
     private stockExchangeService: StockExchangeService,
-    private notificationService: NotificationsService,    
-    private slimLoadingBarService: SlimLoadingBarService) { }
+    private notificationService: NotificationsService,
+    private slimLoadingBarService: SlimLoadingBarService,
+    private zone: NgZone) { }
 
   /**
    * initialize the component
@@ -44,10 +47,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.sub = this.route.params.subscribe(params => {
       this.slimLoadingBarService.start();
       this.agentService
-          .getById(+params['id'])
-          .then(a => this.agent = a)
-          .then(a => this.stockExchangeService.getById(this.agent.stockExchangeParametersId))
-          .then(s => this.stock = s);
+        .getById(+params['id'])
+        .then(a => this.agent = a)
+        .then(a => this.stockExchangeService.getById(this.agent.stockExchangeParametersId))
+        .then(s => this.stock = s);
     });
   }
 
@@ -63,12 +66,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Execute when a simulation day is completed
    * @param args 
    */
-  public onDayCompleted(args: OnDayCompletedArgs) {
-    this.today = args;
-    this.markers.push({
-      decision: args.selectedAction,
-      date: args.date
-    });
+  public onDayCompleted(args: OnDayCompletedArgs) {    
+    this.zone.run(() => this.today = args);
   }
 
   /**

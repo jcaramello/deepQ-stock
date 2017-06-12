@@ -19,13 +19,13 @@
                                         <strong>Dia:</strong> {{today.period.dayNumber}}
                                 </div>
                                 <div class="col">
-                                        <strong>Año:</strong> {{today.period.Date}}
+                                        <strong>Año:</strong> {{today.period.totalOfYears}}
                                 </div>
                                 <div class="col">
-                                        <strong>Fecha:</strong> {{today.period.Date}}
+                                        <strong>Fecha:</strong> {{today.period.date.toString("dd/MM/YYYY")}}
                                 </div>
                                 <div class="col">
-                                        <strong>Accion:</strong> {{today.period.selecetedAction}}
+                                        <strong>Accion:</strong> {{today.period.selecetedAction == 0 ? 'Buy' : (today.period.selecetedAction == 1 ? 'Sell' : 'Wat')}}
                                 </div>
                                 <div class="col">
                                         <strong>Recompenza:</strong> {{today.period.reward}}
@@ -48,7 +48,7 @@
                         <div class="callout callout-default">
                                 <span class="text-muted">Capital Actual</span>
                                 <br>
-                                <strong class="h4">{{agent.actualCapital || 0.00}}</strong>
+                                <strong class="h4">{{agent.currentCapital || 0.00}}</strong>
                                 <span class="h4 text-muted text-xs-right" style="margin-left:10px;">
                                                 <i class="fa fa-money"></i>
                                         </span>
@@ -70,7 +70,7 @@
                         <div class="callout callout-warning">
                                 <span class="text-muted">Ganancia Acumulada</span>
                                 <br>
-                                <strong class="h4">{{today.period.accumulatedProfits || 0.00}}</strong>
+                                <strong class="h4">{{today.accumulatedProfits || 0.00}}</strong>
                                 <span class="h4 text-muted text-xs-right" style="margin-left:10px;">
                                                 <i class="fa fa-calculator"></i>
                                         </span>
@@ -82,7 +82,7 @@
                         <div class="callout callout-info">
                                 <span class="text-muted">Renta anual</span>
                                 <br>
-                                <strong class="h4">{{today.period.annualRent || 0.00}}</strong>
+                                <strong class="h4">{{today.annualRent || 0.00}}</strong>
                                 <span class="h4 text-muted text-xs-right" style="margin-left:10px;">
                                                 <i class="fa fa-percent"></i>
                                         </span>
@@ -92,7 +92,7 @@
 
         <div class="row">
                 <div class="col">
-                        <candlestick [agent]="agent" [stock]="stock"></candlestick>
+                        <candlestick [agent]="agent" [stock]="stock" [day]="today"></candlestick>
                 </div>
         </div>
 </div>
