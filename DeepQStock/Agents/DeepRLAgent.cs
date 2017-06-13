@@ -83,7 +83,7 @@ namespace DeepQStock.Agents
         /// <param name="initializer">The initializer.</param>
         public DeepRLAgent(DeepRLAgentParameters parameters = null)
         {
-            _parameters = parameters ?? new DeepRLAgentParameters();            
+            _parameters = parameters ?? new DeepRLAgentParameters();
             RandomGenerator = new Random();
             MemoryReplay = new CircularQueue<Experience>(_parameters.MemoryReplaySize);
         }
@@ -141,14 +141,15 @@ namespace DeepQStock.Agents
         private ActionType PolicyPi()
         {
             var probability = RandomGenerator.NextDouble();
+            var validActions = GetActions();
 
             if (probability <= _parameters.eGreedyProbability)
             {
-                CurrentAction = (ActionType)RandomGenerator.Next(3);
+                var randomIndex = RandomGenerator.Next(validActions.Count);
+                CurrentAction = validActions[randomIndex];
             }
             else
             {
-                var validActions = GetActions();
                 CurrentAction = Q[CurrentState].Where(i => validActions.Contains(i.Key)).MaxBy(i => i.Value).Key;
             }
 
@@ -206,7 +207,7 @@ namespace DeepQStock.Agents
                 actions.Add(ActionType.Buy);
             }
 
-            if (CurrentState.Today.ActualPosicion > 0)
+            if (CurrentState.Today.ActualPosition > 0)
             {
                 actions.Add(ActionType.Sell);
             }

@@ -8,6 +8,7 @@ using Hangfire;
 using ServiceStack.Redis;
 using Newtonsoft.Json;
 using System.Linq;
+using DeepQStock.Enums;
 
 namespace DeepQStock.Server.Hubs
 {
@@ -149,10 +150,24 @@ namespace DeepQStock.Server.Hubs
         /// Start the simulation of the agent agentId
         /// </summary>
         /// <param name="id"></param>
-        public void Start(int id)
+        public string Start(int id)
         {
-            BackgroundJob.Enqueue<StockExchange>(s => s.Start(id));
+            var jobId = BackgroundJob.Enqueue<StockExchange>(s => s.Start(id));
+            StockExchange.Jobs.TryAdd(jobId, StockExchangeStatus.Running);
+
             Subscribe(id);
+
+            return jobId;
+        }
+
+        public void Pause(string jobId)
+        {
+            StockExchange.Jobs[jobId] = StockExchangeStatus.Paused;
+        }
+
+        public void Continue(string jobId)
+        {
+            StockExchange.Jobs[jobId] = StockExchangeStatus.Running;
         }
     }
 }

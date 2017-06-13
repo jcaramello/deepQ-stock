@@ -41,7 +41,7 @@ namespace DeepQStock.Tests
             return new Period()
             {
                 Date = DateTime.Today,
-                ActualPosicion = 100,
+                ActualPosition = 100,
                 Close = 10,
                 CurrentCapital = 10000,
                 High = 12,

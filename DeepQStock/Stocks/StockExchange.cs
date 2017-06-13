@@ -10,6 +10,7 @@ using System.Linq;
 using DeepQStock.Agents;
 using DeepQStock.Storage;
 using ServiceStack.Redis;
+using System.Collections.Concurrent;
 
 namespace DeepQStock.Stocks
 {
@@ -20,6 +21,11 @@ namespace DeepQStock.Stocks
     /// </summary>
     public class StockExchange
     {
+        #region << Static members >>
+        
+        public static ConcurrentDictionary<string, StockExchangeStatus> Jobs = new ConcurrentDictionary<string, StockExchangeStatus>();
+        
+        #endregion
 
         #region << Events >>
 
@@ -69,7 +75,7 @@ namespace DeepQStock.Stocks
         {
             get
             {
-                return CurrentState != null ? CurrentState.Today: null;
+                return CurrentState != null ? CurrentState.Today : null;
             }
         }
 
@@ -107,7 +113,7 @@ namespace DeepQStock.Stocks
         /// </summary>
         public double NetCapital
         {
-            get { return CurrentPeriod.CurrentCapital + (CurrentPeriod.ActualPosicion * CurrentPeriod.Close); }
+            get { return CurrentPeriod.CurrentCapital + (CurrentPeriod.ActualPosition * CurrentPeriod.Close); }
         }
 
         /// <summary>
@@ -310,7 +316,7 @@ namespace DeepQStock.Stocks
         {
             var actionPrice = CurrentPeriod.Close;
             var capital = CurrentPeriod.CurrentCapital;
-            var position = CurrentPeriod.ActualPosicion;
+            var position = CurrentPeriod.ActualPosition;
 
             if (action == ActionType.Buy && capital > 0)
             {
@@ -322,7 +328,7 @@ namespace DeepQStock.Stocks
                     if (TransactionCost <= capital)
                     {
                         var operationCost = actionPrice * actionsToQuantity;
-                        CurrentPeriod.ActualPosicion += actionsToQuantity;
+                        CurrentPeriod.ActualPosition += actionsToQuantity;
                         CurrentPeriod.CurrentCapital -= operationCost + TransactionCost;
                     }
                 }
@@ -336,11 +342,9 @@ namespace DeepQStock.Stocks
                 }
 
                 TransactionCost = actionsToSell * actionPrice * Parameters.TransactionCost;
-                if (TransactionCost <= capital)
-                {
-                    CurrentPeriod.ActualPosicion -= actionsToSell;
-                    CurrentPeriod.CurrentCapital += (actionsToSell * actionPrice) - TransactionCost;
-                }
+                CurrentPeriod.ActualPosition -= actionsToSell;
+                CurrentPeriod.CurrentCapital += (actionsToSell * actionPrice) - TransactionCost;
+
             }
 
             if (position > 0)
@@ -348,7 +352,8 @@ namespace DeepQStock.Stocks
                 Earnings = position * (CurrentPeriod.Close - CurrentPeriod.Open);
             }
 
-            return RewardCalculator(this);
+            var reward = RewardCalculator(this);
+            return reward;
         }
 
         /// <summary>
@@ -363,7 +368,7 @@ namespace DeepQStock.Stocks
             {
                 if (CurrentPeriod != null)
                 {
-                    upcomingDay.ActualPosicion = CurrentPeriod.ActualPosicion;
+                    upcomingDay.ActualPosition = CurrentPeriod.ActualPosition;
                     upcomingDay.CurrentCapital = CurrentPeriod.CurrentCapital;
                 }
                 else

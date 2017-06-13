@@ -27,7 +27,8 @@
       "../bower_components/amstock3/amcharts/themes/light.js",
       "../bower_components/lodash/dist/lodash.min.js",
       "../bower_components/jquery/dist/jquery.min.js",
-      "../bower_components/signalr/jquery.signalR.min.js"      
+      "../bower_components/signalr/jquery.signalR.min.js",
+      "../bower_components/moment/moment.js"            
     ],
     "environmentSource": "environments/environment.ts",
     "environments": {
