@@ -64,4 +64,20 @@ export class AgentService extends BaseService {
     public start(id: number): void {
         this.execute('start', id);
     }
+
+    /**
+     * Stop the simulation of a particular agent      
+     * @memberof AgentService
+     */
+    public stop(id: number): void {
+        this.execute('stop', id);
+    }
+
+    /**
+     * Reset the learning of an agent
+     * @memberof AgentService
+     */
+    public reset(id: number): void {
+        this.execute('reset', id);
+    }
 }

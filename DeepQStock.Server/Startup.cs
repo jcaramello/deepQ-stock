@@ -78,7 +78,7 @@ namespace DeepQStock.Server
             //Register Hubs
             GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => agentHub);
             GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => stockExchangeHub);
-            GlobalHost.DependencyResolver.Register(typeof(StockExchange), () => new StockExchange(redisManager));
+            GlobalHost.DependencyResolver.Register(typeof(StockExchange), () => new StockExchange(redisManager));            
 
         }
     }

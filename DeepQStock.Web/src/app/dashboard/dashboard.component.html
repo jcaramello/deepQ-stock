@@ -8,10 +8,9 @@
                                                 <h5>{{ '#' + agent.id + ' ' + agent.name}}</h5>
                                         </div>
                                         <div class="btn-group" role="group" aria-label="Basic example">
-                                                <button type="button" class="btn btn-sm btn-secondary" (click)="play($event)"><i class="fa fa-play"></i></button>
-                                                <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-pause"></i></button>
-                                                <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-stop"></i></button>
-                                                <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-eject"></i></button>
+                                                <button type="button" class="btn btn-sm btn-secondary" (click)="play($event)"><i class="fa fa-play"></i></button>                                        
+                                                <button type="button" class="btn btn-sm btn-secondary" (click)="stop($event)"><i class="fa fa-stop"></i></button>
+                                                <button type="button" class="btn btn-sm btn-secondary" (click)="reset($event)"><i class="fa fa-eject"></i></button>
                                         </div>
 
                                 </div>

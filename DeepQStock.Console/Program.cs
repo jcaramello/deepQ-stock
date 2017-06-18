@@ -2,6 +2,7 @@
 using DeepQStock.Stocks;
 using DeepQStock.Storage;
 using DeepQStock.Utils;
+using Hangfire;
 using Newtonsoft.Json;
 using ServiceStack.Redis;
 using System;
@@ -91,7 +92,7 @@ namespace DeepQStock.Console
                     System.Console.SetCursorPosition(0, 0);
                     DrawHeaderSection();
 
-                    var stockTask = Task.Run(() => stock.Start());
+                    var stockTask = Task.Run(() => stock.Run(new JobCancellationToken(false)));
                     stockTask.Wait();
 
                     if (options.TrainingPhase > 0)
@@ -120,7 +121,7 @@ namespace DeepQStock.Console
                         agent.NetworkPath = "./";
                         stock.Agent = agent;
 
-                        stockTask = Task.Run(() => stock.Start());
+                        stockTask = Task.Run(() => stock.Run(new JobCancellationToken(false)));
                         stockTask.Wait();
                     }
 

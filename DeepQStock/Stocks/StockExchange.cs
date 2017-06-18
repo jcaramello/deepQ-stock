@@ -11,6 +11,7 @@ using DeepQStock.Agents;
 using DeepQStock.Storage;
 using ServiceStack.Redis;
 using System.Collections.Concurrent;
+using Hangfire;
 
 namespace DeepQStock.Stocks
 {
@@ -21,12 +22,6 @@ namespace DeepQStock.Stocks
     /// </summary>
     public class StockExchange
     {
-        #region << Static members >>
-        
-        public static ConcurrentDictionary<string, StockExchangeStatus> Jobs = new ConcurrentDictionary<string, StockExchangeStatus>();
-        
-        #endregion
-
         #region << Events >>
 
         //public event EventHandler<OnDayCompleteArgs> OnDayComplete;
@@ -43,6 +38,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets the agent.
         /// </summary>        
+        [JsonIgnore]
         public IAgent Agent { get; set; }
 
         /// <summary>
@@ -82,6 +78,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets the annual profits.
         /// </summary>
+        [JsonIgnore]
         public double AnnualProfits
         {
             get { return Profits / TotalOfYears; }
@@ -90,6 +87,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets the annual rent.
         /// </summary>
+        [JsonIgnore]
         public double AnnualRent
         {
             get { return AnnualProfits / Parameters.InitialCapital; }
@@ -100,6 +98,7 @@ namespace DeepQStock.Stocks
         /// Gets the profits.
         /// </summary>
         /// <returns></returns>
+        [JsonIgnore]
         public double Profits
         {
             get
@@ -111,6 +110,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Net Capital
         /// </summary>
+        [JsonIgnore]
         public double NetCapital
         {
             get { return CurrentPeriod.CurrentCapital + (CurrentPeriod.ActualPosition * CurrentPeriod.Close); }
@@ -168,11 +168,6 @@ namespace DeepQStock.Stocks
         }
 
         /// <summary>
-        /// Gets or sets the status.
-        /// </summary>
-        public StockExchangeStatus Status { get; set; }
-
-        /// <summary>
         /// Gets or sets the reward calculator.
         /// </summary>
         /// <value>
@@ -224,42 +219,41 @@ namespace DeepQStock.Stocks
 
         #endregion
 
-        #region << Public Methods >>       
+        #region << Public Methods >>     
 
-        /// <summary>
-        /// We need this overload for throw the execution from hangfire job server
-        /// </summary>
-        /// <param name="agentId"></param>
-        public void Start(long agentId)
+        public void Run(IJobCancellationToken token, long? agentId = null)
         {
             Initialize(agentId);
-            Start();
-        }
+
+            if (Agent == null)
+                return;
+
+            try
+            {
+                Simulate(token);
+            }
+            catch (Exception)
+            {
+                Shutdown();
+                throw;
+            }
+        }         
 
         /// <summary>
         /// Start the simulation
         /// </summary>
-        public void Start()
-        {
-            if (Agent == null)
-                return;
-
-            Status = StockExchangeStatus.Running;
-
+        protected void Simulate(IJobCancellationToken token)
+        {            
             IEnumerable<State> episode = null;
             var action = ActionType.Wait;
             double reward = 0.0;
             int? currentYear = null;
+            episode = NextEpisode();
 
-            while (Status == StockExchangeStatus.Running)
+            do
             {
-                episode = NextEpisode();
 
-                if (episode == null || episode.Count() == 0)
-                {
-                    Status = StockExchangeStatus.Stopped;
-                    break;
-                }
+                token.ThrowIfCancellationRequested();
 
                 foreach (var state in episode)
                 {
@@ -274,7 +268,7 @@ namespace DeepQStock.Stocks
                         TotalOfYears++;
                     }
 
-                    TriggerOnDayCompletedEvent(action, reward);
+                    DayCompleted(action, reward);
 
                     if (Parameters.SimulationVelocity > 0)
                     {
@@ -283,29 +277,44 @@ namespace DeepQStock.Stocks
                 }
 
                 Agent.OnEpisodeComplete();
-
                 EpisodeSimulated++;
+                episode = NextEpisode();
+
+            } while (episode != null);
+        }
+
+
+        /// <summary>
+        /// Initialize the agent and the stock exchange
+        /// </summary>
+        /// <param name="agentId"></param>
+        protected void Initialize(long? agentId)
+        {
+            if (agentId.HasValue)
+            {
+                var agentParameters = AgentStorage.GetById(agentId.Value);
+                agentParameters.QNetworkParameters = QNetworkStorage.GetById(agentParameters.QNetworkParametersId);
+
+                Agent = new DeepRLAgent(agentParameters);
+                RewardCalculator = Stocks.RewardCalculators.WinningsOverLoosings;
+                Parameters = StockExchangeStorage.GetById(agentParameters.StockExchangeParametersId);
+                DataProvider = new CsvDataProvider(Parameters.CsvDataFilePath, Parameters.EpisodeLength);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Shutdown()
+        {
+            var i = 9;
         }
 
         #endregion
 
         #region << Private Methods >>
 
-        /// <summary>
-        /// Initialize the agent and the stock exchange
-        /// </summary>
-        /// <param name="agentId"></param>
-        private void Initialize(long agentId)
-        {
-            var agentParameters = AgentStorage.GetById(agentId);
-            agentParameters.QNetworkParameters = QNetworkStorage.GetById(agentParameters.QNetworkParametersId);
 
-            Agent = new DeepRLAgent(agentParameters);
-            RewardCalculator = Stocks.RewardCalculators.WinningsOverLoosings;
-            Parameters = StockExchangeStorage.GetById(agentParameters.StockExchangeParametersId);
-            DataProvider = new CsvDataProvider(Parameters.CsvDataFilePath, Parameters.EpisodeLength);
-        }
 
         /// <summary>
         /// Executes the specified action.
@@ -446,7 +455,7 @@ namespace DeepQStock.Stocks
         /// </summary>
         /// <param name="action">The action.</param>
         /// <param name="reward">The reward.</param>
-        private void TriggerOnDayCompletedEvent(ActionType action, double reward)
+        private void DayCompleted(ActionType action, double reward)
         {
             var args = new OnDayComplete()
             {
