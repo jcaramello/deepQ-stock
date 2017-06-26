@@ -14,7 +14,7 @@ export class OnDayCompletedArgs {
     public date: Date;
     public selectedAction: ActionType;
     public reward: number;
-    public accumulatedProfits: number;
+    public accumulatedProfit: number;
     public annualProfits: number;
     public annualRent: number;
     public totalOfYears: number;

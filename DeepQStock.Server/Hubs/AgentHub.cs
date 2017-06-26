@@ -7,11 +7,15 @@ using DeepQStock.Utils;
 using Hangfire;
 using Newtonsoft.Json;
 using System.Linq;
+using DeepQStock.Enums;
+using System.Collections.Concurrent;
 
 namespace DeepQStock.Server.Hubs
 {
     public class AgentHub : Hub
     {
+        public static ConcurrentDictionary<long, string> ActiveAgents = new ConcurrentDictionary<long, string>();
+
         #region << Private Properties >>       
 
         /// <summary>
@@ -69,7 +73,7 @@ namespace DeepQStock.Server.Hubs
         /// <param name="args">The arguments.</param>
         public void OnDayComplete(OnDayComplete args)
         {
-            Clients.Group(string.Format(GroupNameTemplate, args.AgentId)).onDayComplete(args);
+            Clients.Group(string.Format(GroupNameTemplate, args.AgentId))?.onDayComplete(args);
         }
 
         /// <summary>
@@ -125,10 +129,39 @@ namespace DeepQStock.Server.Hubs
         /// Start the simulation of the agent agentId
         /// </summary>
         /// <param name="id"></param>
-        public void Start(int id)
+        public string Start(long id)
         {
-            BackgroundJob.Enqueue<StockExchange>(s => s.Start(id));
+            var jobId = BackgroundJob.Enqueue<StockExchange>(s => s.Run(JobCancellationToken.Null, id));
+            
+            ActiveAgents.TryAdd(id, jobId);
             Subscribe(id);
+
+            return jobId;
         }
+
+        /// <summary>
+        /// Start the simulation of the agent agentId
+        /// </summary>
+        /// <param name="id"></param>
+        public void Stop(long id)
+        {
+            string jobId = null;
+            ActiveAgents.TryRemove(id, out jobId);
+
+            if (!string.IsNullOrEmpty(jobId))
+            {
+                BackgroundJob.Delete(jobId);                
+            }            
+        }
+
+        /// <summary>
+        /// Start the simulation of the agent agentId
+        /// </summary>
+        /// <param name="id"></param>
+        public void Reset(int id)
+        {
+           
+        }
+
     }
 }

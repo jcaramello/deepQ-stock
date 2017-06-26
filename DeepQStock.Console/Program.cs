@@ -2,6 +2,7 @@
 using DeepQStock.Stocks;
 using DeepQStock.Storage;
 using DeepQStock.Utils;
+using Hangfire;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
@@ -89,7 +90,7 @@ namespace DeepQStock.Console
                     System.Console.SetCursorPosition(0, 0);
                     DrawHeaderSection();
 
-                    var stockTask = Task.Run(() => stock.Start());
+                    var stockTask = Task.Run(() => stock.Run(new JobCancellationToken(false)));
                     stockTask.Wait();
 
                     if (options.TrainingPhase > 0)
@@ -118,7 +119,7 @@ namespace DeepQStock.Console
                         agent.NetworkPath = "./";
                         stock.Agent = agent;
 
-                        stockTask = Task.Run(() => stock.Start());
+                        stockTask = Task.Run(() => stock.Run(new JobCancellationToken(false)));
                         stockTask.Wait();
                     }
 
@@ -236,8 +237,9 @@ namespace DeepQStock.Console
             DrawLine(agentSummary + 1);
             WriteLine(agentSummary + 2, " Estado del Agente - Año {0} - Dia {1}", a.TotalOfYears, dayNumber);
             WriteLine(agentSummary + 3);
-            WriteLine(agentSummary + 4, " Accion: {0}\t Recompenza: {1:N9}\t", a.SelectedAction, a.Reward);
-            WriteLine(agentSummary + 5, " Capital Actual: {0:C}\t Cantidad de Acciones: {1}\t Ganancia Acumulada: {2:C}\t\t Renta Anual: {3:P2}", a.Period.CurrentCapital, a.Period.ActualPosicion, a.AccumulatedProfit, a.AnnualRent);
+            WriteLine(agentSummary + 4, " Accion: {0}\t Recompenza: {1:N9}\t", a.SelectedAction, a.Reward);            
+            WriteLine(agentSummary + 5, " Capital Actual: {0:C}\t Cantidad de Acciones: {1}\t Ganancia Acumulada: {2:C}\t\t Renta Anual: {3:P2}", a.Period.CurrentCapital, a.Period.ActualPosition, a.AccumulatedProfit, a.AnnualRent);
+            
         }
 
         /// <summary>

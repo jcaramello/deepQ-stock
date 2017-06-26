@@ -56,8 +56,8 @@ namespace DeepQStock.Stocks
                 Loosings.Enqueue(netEarnings);
             }
 
-            var totalWinnings = Winnings.Sum();
-            var totalLoosings = Math.Abs(Loosings.Sum());
+            var totalWinnings = Winnings.ToList().Sum();
+            var totalLoosings = Math.Abs(Loosings.ToList().Sum());
 
             if (totalLoosings > 0)
             {

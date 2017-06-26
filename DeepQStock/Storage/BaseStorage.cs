@@ -16,7 +16,7 @@ namespace DeepQStock.Storage
         /// <summary>
         /// Gets or sets the redis manager.
         /// </summary>
-        private IDatabase Database { get; set; }
+        private IDatabase Database { get; set; }        
 
         #endregion
 
@@ -28,7 +28,7 @@ namespace DeepQStock.Storage
         /// <param name="redis">The redis.</param>
         public BaseStorage(IConnectionMultiplexer redis)
         {
-            Database = redis.GetDatabase();
+            Database = redis.GetDatabase();            
         }
 
         #endregion
@@ -83,7 +83,10 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         public virtual IEnumerable<T> GetAll()
         {
-            return Database.SetMembers(GetKey()).Select(v => JsonConvert.DeserializeObject<T>(v));
+            //var keys = 
+            //var s = Database.StringGetRange(GetKey(), 0, -1).Select(v => JsonConvert.DeserializeObject<T>(v));
+            //return s;
+            return null;
         }
 
         /// <summary>

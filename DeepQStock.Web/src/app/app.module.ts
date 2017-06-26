@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CommonModule, LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { BsDropdownModule  } from 'ng2-bootstrap/dropdown';
@@ -16,7 +16,7 @@ import { StockExchangeService } from './services/stock-exchange-service';
 import { AgentService } from './services/agent-service';
 import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
 import { ModalModule } from 'ng2-bootstrap';
-import { NouisliderModule } from 'ng2-nouislider';
+import { MdSliderModule } from '@angular/material';
 
 
 // Routing Module
@@ -30,13 +30,12 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    CommonModule,
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
     SimpleNotificationsModule.forRoot(),
     SlimLoadingBarModule.forRoot(),
     ModalModule.forRoot(),
-    NouisliderModule,
+    MdSliderModule,
     FormsModule
   ],
   declarations: [

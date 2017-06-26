@@ -63,7 +63,7 @@ namespace DeepQStock.Domain
         /// <summary>
         /// Gets or sets the actual posicion.
         /// </summary>
-        public int ActualPosicion { get; set; }
+        public int ActualPosition { get; set; }
 
         /// <summary>
         /// Gets or sets the indicators.
@@ -107,7 +107,7 @@ namespace DeepQStock.Domain
             var period = new List<double>
             {
                 CurrentCapital,
-                ActualPosicion,
+                ActualPosition,
                 Open,
                 Close,                
                 High,
@@ -143,7 +143,7 @@ namespace DeepQStock.Domain
         {
             return new Period()
             {
-                ActualPosicion = ActualPosicion,
+                ActualPosition = ActualPosition,
                 CurrentCapital = CurrentCapital,
                 Date = Date,
                 Open = Open,

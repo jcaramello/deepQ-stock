@@ -5,7 +5,7 @@ import { Agent } from '../models/agent';
 import { StockExchange } from '../models/stock-exchange';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 import { NotificationsService } from 'angular2-notifications';
-import { NouisliderModule } from 'ng2-nouislider';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -98,6 +98,7 @@ export class FullLayoutComponent implements OnInit {
    */
   save(modal) {
     this.slimLoadingBarService.start();
+    this.currentStock.simulationVelocity
     this.stockExchangeService.save(this.currentStock)
       .then(id => {
         this.currentAgent.stockExchangeParametersId = id;

@@ -7,6 +7,7 @@ import { StockExchange } from '../models/stock-exchange';
 import { Period } from '../models/period';
 import { ActionType } from '../models/enums';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
+import * as moment from 'moment';
 
 /**
 * Allows to draw a candlestick this.chart
@@ -21,7 +22,7 @@ export class CandlestickComponent {
   public agent: Agent;
 
   @Input()
-  public stock : StockExchange;
+  public stock: StockExchange;
 
   @Input()
   public day: OnDayCompletedArgs;
@@ -34,6 +35,10 @@ export class CandlestickComponent {
   private volPanel: AmCharts.StockPanel;
   private data: any[];
   private initialized: boolean;
+  private firstDate: moment.Moment;
+  private endDate: moment.Moment;
+  private renderComplete;
+  private numberOfScroll = 0;
 
   /**
    * Creates an instance of BreadcrumbsComponent.
@@ -44,6 +49,7 @@ export class CandlestickComponent {
    */
   constructor(private router: Router, private route: ActivatedRoute, private stockExchangeService: StockExchangeService, private slimLoadingBarService: SlimLoadingBarService) {
     this.data = [];
+
   }
 
   /**
@@ -60,24 +66,38 @@ export class CandlestickComponent {
    */
   ngOnChanges(changes: SimpleChanges): void {
     this.agent = changes['agent'] && changes['agent'].currentValue;
-    var day = changes['day'] && changes['day'].currentValue;
-
-    if (day) {
-      var event = {
-        date: new Date(day.period.date),
-        type: day.selectedAction == ActionType.Buy ? "triangleUp" : "triangleDown",
-        graph: this.priceGraph,
-        backgroundColor: day.selectedAction == ActionType.Buy ? "#20a8d8" : "#FF7400",
-        description: ""
-      };
-
-      this.stockEvents.push(event);
-      this.chart && this.chart.validateData();
-    }
+    var day = <OnDayCompletedArgs>(changes['day'] && changes['day'].currentValue);
+    var newEvent = false;
 
     if (this.agent && this.agent.id && !this.initialized) {
       this.init();
       this.initialized = true;
+    } else if (this.renderComplete) {
+
+      if (day && day.selectedAction != ActionType.Wait) {
+        var event = {
+          date: new Date(day.period.date),
+         // type: day.selectedAction == ActionType.Buy ? "arrowUp" : "arrowDown",
+          type: "sign",
+          graph: this.priceGraph,
+          text: day.selectedAction == ActionType.Buy ? "B" : "S", 
+          backgroundColor: day.selectedAction == ActionType.Buy ? "#20a8d8" : "#FFBF00",
+          description: ""
+        };
+
+        this.stockEvents.push(event);
+        newEvent = true;
+      }
+
+      if (day.dayNumber > 25) {
+
+        this.firstDate = moment(day.date).add(-90, 'days');
+        this.endDate = moment(day.date).add(90, 'days');
+
+        this.chart.zoom(this.firstDate.toDate(), this.endDate.toDate());
+      }
+
+      newEvent && this.chart.validateData();
     }
 
   }
@@ -99,9 +119,9 @@ export class CandlestickComponent {
     this.chart['pathToImages'] = "/bower_components/amCharts3/amCharts/images/";
     this.chart['dataDateFormat'] = "YYYY/MM/DD";
     this.chart['mouseWheelScrollEnabled'] = true;
-    this.chart.valueAxesSettings.position = 'right';
     this.chart.glueToTheEnd = false;
     this.chart.categoryAxesSettings.equalSpacing = true;
+    this.chart.valueAxesSettings.position = "right";
     this.chart.categoryAxesSettings.groupToPeriods = ["DD"];
 
     var loader = {
@@ -115,7 +135,6 @@ export class CandlestickComponent {
       useColumnNames: true,
       load: (opt, chart) => {
         this.slimLoadingBarService.complete();
-
       }
     };
 
@@ -197,36 +216,45 @@ export class CandlestickComponent {
     this.chart.chartCursorSettings.valueBalloonsEnabled = true;
     this.chart.chartCursorSettings.cursorColor = "#8c8c8c"
     this.chart.chartCursorSettings.zoomable = true;
+    this.chart.chartCursorSettings['valueZoomable'] = true;
 
     var periodSelector = new AmCharts.PeriodSelector();
     periodSelector.inputFieldsEnabled = false;
     periodSelector.selectFromStart = true;
     periodSelector.periods = [
-      { period: "YYYY", count: 1, label: "1A", selected: true },
+      { period: "DD", count: 180, label: "6M", selected: true },
+      { period: "YYYY", count: 1, label: "1A" },
       { period: "YYYY", count: 3, label: "3A" },
       { period: "YYYY", count: 5, label: "5A" },
       { period: "MAX", label: "Max" }
     ];
 
     this.chart.periodSelector = periodSelector;
-
     this.chart.panels = [pricePanel, volPanel];
+    this.chart.addListener('rendered', this.onRendered.bind(this));
 
     this.chart['write']('candlestick-container');
 
   }
 
   // this method is called when this.chart is first inited as we listen for "rendered" event
-  private zoomChart(event) {
-    // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
-    // var zoomToIndexes: any = this.pricePanel.zoomToIndexes;
-    // zoomToIndexes(new Date(2007, 1, 1), new Date(2007, 6, 1));
-    this.data = this.chart.dataSets[0].dataProvider;
-    if (this.data && this.data.length > 0) {
-      var start = this.data[0].date;
-      var end = this.data[100].date;
+  private onRendered(event) {
 
-      this.pricePanel.zoomToIndexes(<any>0, <any>100);
-    }
+    this.renderComplete = true;
+    this.firstDate = moment(this.chart['firstDate']);
+    this.endDate = moment(this.firstDate).add(180, 'days');
+    this.data = this.chart.dataSets[0].dataProvider;
+
+  }
+
+  /**
+   * Clear all markers
+   */
+  public clearMarkers() {    
+    this.chart.dataSets[0].stockEvents = this.stockEvents = [];     
+    this.firstDate = moment(this.chart['firstDate']);
+    this.endDate = moment(this.firstDate).add(180, 'days');
+    this.chart.zoom(this.firstDate.toDate(), this.endDate.toDate());
+    this.chart.validateData();
   }
 }

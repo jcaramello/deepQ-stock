@@ -1,20 +1,18 @@
 ﻿using DeepQStock.Agents;
+using DeepQStock.Domain;
 using DeepQStock.Stocks;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeepQStock.Storage
 {
     public class StorageManager
     {
-
+        //Storages
         public BaseStorage<StockExchangeParameters> StockExchangeStorage { get; set; }
         public BaseStorage<DeepRLAgentParameters> AgentStorage { get; set; }
         public BaseStorage<QNetworkParameters> QNetworkStorage { get; set; }
+        public BaseStorage<SimulationResult> SimulationResultStorage { get; set; }
 
 
         /// <summary>
@@ -26,6 +24,7 @@ namespace DeepQStock.Storage
             QNetworkStorage = new BaseStorage<QNetworkParameters>(redis);
             AgentStorage = new BaseStorage<DeepRLAgentParameters>(redis);
             StockExchangeStorage = new BaseStorage<StockExchangeParameters>(redis);
+            SimulationResultStorage = new BaseStorage<SimulationResult>(redis);
         }
 
         /// <summary>

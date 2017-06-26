@@ -70,21 +70,22 @@
                                 <div class="col">
                                     <label for="name">Nombre</label>
                                     <input id="name" type="text" class="form-control has-danger" [(ngModel)]="currentAgent.name" required>
-                                </div>                                
+                                </div>
+                                <div class="col">
+                                    <br>
+                                    <label for="eGreedy">ε-greedy policy</label>
+                                    <md-slider id="eGreedy" [max]="1" [min]="0" [step]="0.1" [thumb-label]="true" [(ngModel)]="currentAgent.eGreedyProbability"></md-slider>
+                                </div>
                             </div>
                             <br>
                             <div class="row">
-                                <div class="col">
-                                    <label for="eGreedy">ε-greedy policy: {{ currentAgent.eGreedyProbability * 100 }}%</label>
-                                    <nouislider id="eGreedy" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentAgent.eGreedyProbability"></nouislider>
+                                <div class="col">                                  
+                                    <label for="discountFactor">Factor de descuento</label>
+                                    <md-slider id="discountFactor" [max]="1" [min]="0" [step]="0.1" [thumb-label]="true" [(ngModel)]="currentAgent.discountFactor"></md-slider>
                                 </div>
-                                <div class="col">
-                                    <label for="discountFactor">Factor de descuento: {{ currentAgent.discountFactor * 100 }}%</label>
-                                    <nouislider id="discountFactor" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentAgent.discountFactor"></nouislider>
-                                </div>
-                                <div class="col">
-                                    <label for="inOutStrategy">Estrategia de Entrada/Salida: {{ currentAgent.inOutStrategy * 100 }}%</label>
-                                    <nouislider id="inOutStrategy" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentAgent.inOutStrategy"></nouislider>
+                                <div class="col">                                    
+                                    <label for="inOutStrategy">Estrategia de Entrada/Salida</label>
+                                    <md-slider id="inOutStrategy" [max]="1" [min]="0" [step]="0.1" [thumb-label]="true" [(ngModel)]="currentAgent.inOutStrategy"></md-slider>
                                 </div>
                             </div>
                             <br>
@@ -105,8 +106,7 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="hiddenLayersCount">Numero de hidden layers</label>
-                                    <input id="hiddenLayersCount" type="number" class="form-control" [(ngModel)]="currentAgent.qNetwork.hiddenLayersCount"
-                                        required>
+                                    <input id="hiddenLayersCount" type="number" class="form-control" [(ngModel)]="currentAgent.qNetwork.hiddenLayersCount" required>
                                 </div>
                                 <div class="col">
                                     <label for="neuronCountForHiddenLayers">Numero de neuronas por capa</label>
@@ -137,35 +137,35 @@
                         <tab heading="Mercado de valores">
                             <div class="row">
                                 <div class="col">
-                                    <label for="episodeLength">Longuitud de episodio (dias)</label>
-                                    <input id="episodeLength" type="number" class="form-control" [(ngModel)]="currentStock.episodeLength" required>
-                                </div>
-                                <div class="col">
-                                    <label for="numberOfPeriods">Numero de periodos por estado</label>
-                                    <input id="numberOfPeriods" type="number" class="form-control" [(ngModel)]="currentStock.numberOfPeriods" required>
-                                </div>
-                                <div class="col">
-                                    <label for="initialCapital">Caital inicial</label>
-                                    <input id="initialCapital" type="number" class="form-control" [(ngModel)]="currentStock.initialCapital" required>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col">
-                                    <label for="transactionCost">Costo de transaccion: {{ currentStock.transactionCost * 100 }}%</label>
-                                    <nouislider id="transactionCost" [config]="{start:0}" [min]="0" [max]="1" [step]="0.01" [(ngModel)]="currentStock.transactionCost"></nouislider>
-                                </div>
-                                <div class="col">
-                                    <label for="simulationVelocity">Velocidad de simulacion: {{ currentStock.simulationVelocity  > 0 ? currentStock.simulationVelocity / 1000 : 0}}</label>
-                                    <nouislider id="simulationVelocity" [config]="{start:0}" [min]="0" [max]="10000" [step]="1000" [(ngModel)]="currentStock.simulationVelocity"></nouislider>
-                                </div>
-                                <div class="col">
                                     <label for="symbol">Compañia</label>
                                     <select class="form-control" id="state" [(ngModel)]="currentStock.symbol">
                                         <option *ngFor="let c of companies" ngValue="{{ c.symbol }}">
                                             {{c.name}}
                                         </option>
                                      </select>
+                                </div>
+                                <div class="col">
+                                    <label for="episodeLength">Longuitud de episodio</label>
+                                    <input id="episodeLength" type="number" class="form-control" [(ngModel)]="currentStock.episodeLength" required>
+                                </div>
+                                <div class="col">
+                                    <label for="numberOfPeriods">Numero de periodos</label>
+                                    <input id="numberOfPeriods" type="number" class="form-control" [(ngModel)]="currentStock.numberOfPeriods" required>
+                                </div>
+                                <div class="col">
+                                    <label for="initialCapital">Capital inicial</label>
+                                    <input id="initialCapital" type="number" class="form-control" [(ngModel)]="currentStock.initialCapital" required>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col">                                   
+                                    <label for="transactionCost">Costo de transaccion</label>
+                                    <md-slider id="transactionCost" [max]="1" [min]="0" [step]="0.1" [thumb-label]="true" [(ngModel)]="currentStock.transactionCost"></md-slider>
+                                </div>
+                                <div class="col">                                  
+                                    <label for="simulationVelocity">Velocidad de simulacion</label>
+                                    <md-slider id="simulationVelocity" [max]="5" [min]="0.5" [step]="0.5" [thumb-label]="true" [(ngModel)]="currentStock.simulationVelocityType"></md-slider>
                                 </div>
                             </div>
                         </tab>
