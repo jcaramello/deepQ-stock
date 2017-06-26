@@ -16,7 +16,7 @@ namespace DeepQStock.Storage
         /// <summary>
         /// Gets or sets the redis manager.
         /// </summary>
-        private IDatabase Database { get; set; }        
+        private IDatabase Database { get; set; }
 
         #endregion
 
@@ -28,7 +28,7 @@ namespace DeepQStock.Storage
         /// <param name="redis">The redis.</param>
         public BaseStorage(IConnectionMultiplexer redis)
         {
-            Database = redis.GetDatabase();            
+            Database = redis.GetDatabase();
         }
 
         #endregion
@@ -59,7 +59,8 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         protected long GetNextSequence()
         {
-            var keyGenerator = string.Format("key:{0}", typeof(T).Name);
+            var typeName = typeof(T).Name;
+            var keyGenerator = string.Format("key:{0}", typeName);
 
             if (Database.KeyExists(keyGenerator))
             {
@@ -70,7 +71,27 @@ namespace DeepQStock.Storage
                 Database.StringSet(keyGenerator, 1);
             }
 
-            return long.Parse(Database.StringGet(keyGenerator));
+            var id = long.Parse(Database.StringGet(keyGenerator));
+
+            var index = string.Format("index:{0}", typeName);
+            var key = string.Format("key:{0}:{1}", typeName, id);
+
+            Database.SortedSetAdd(index, key, id);
+
+            return id;
+        }
+
+        /// <summary>
+        /// Gets the keys.
+        /// </summary>
+        /// <returns></returns>
+        protected IEnumerable<string> GetKeys()
+        {
+            var typeName = typeof(T).Name;
+            var keyGenerator = string.Format("key:{0}", typeName);
+            var index = string.Format("index:{0}", typeName);
+
+            return Database.SortedSetRangeByScore(index).Select(s => s.ToString());
         }
 
         #endregion
@@ -83,7 +104,7 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         public virtual IEnumerable<T> GetAll()
         {
-            //var keys = 
+            //var keys =
             //var s = Database.StringGetRange(GetKey(), 0, -1).Select(v => JsonConvert.DeserializeObject<T>(v));
             //return s;
             return null;
