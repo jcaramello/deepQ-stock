@@ -1,13 +1,8 @@
-﻿using DeepQStock.Domain;
-using DeepQStock.Storage;
+﻿using DeepQStock.Storage;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ServiceStack.Redis;
-using System;
-using System.Collections.Generic;
+using StackExchange.Redis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeepQStock.Tests
 {
@@ -31,10 +26,10 @@ namespace DeepQStock.Tests
         /// </summary>
         public StorageTests()
         {
-            var manager = new BasicRedisClientManager("localhost:6379");
+            var redis = ConnectionMultiplexer.Connect("localhost");            
 
-            PeriodStorage = new PeriodStorage(manager);
-            StateStorage = new StateStorage(manager);
+            PeriodStorage = new PeriodStorage(redis);
+            StateStorage = new StateStorage(redis);
         }
 
         #endregion

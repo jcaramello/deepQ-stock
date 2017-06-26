@@ -1,5 +1,5 @@
-﻿using ServiceStack.Redis;
-using ServiceStack.Redis.Generic;
+﻿using Newtonsoft.Json;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,48 +16,61 @@ namespace DeepQStock.Storage
         /// <summary>
         /// Gets or sets the redis manager.
         /// </summary>
-        private IRedisClientsManager RedisManager { get; set; }
+        private IDatabase Database { get; set; }
 
         #endregion
 
         #region << Constructor >>
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PeriodStorage"/> class.
-        /// </summary>        
-        public BaseStorage(IRedisClientsManager manager)
+        /// Initializes a new instance of the <see cref="PeriodStorage" /> class.
+        /// </summary>
+        /// <param name="redis">The redis.</param>
+        public BaseStorage(IConnectionMultiplexer redis)
         {
-            RedisManager = manager;
+            Database = redis.GetDatabase();
         }
 
         #endregion
 
-        #region << Public Methods >>
+        #region << Protected Members >>
 
         /// <summary>
-        /// Executes the specified action.
+        /// Gets the key.
         /// </summary>
-        /// <param name="action">The action.</param>
-        public TResult Execute<TResult>(Func<IRedisClient, IRedisTypedClient<T>, TResult> action)
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        protected string GetKey(long? id = null)
         {
-            using (IRedisClient redis = RedisManager.GetClient())
+            if (id.HasValue)
             {
-                var periods = redis.As<T>();
-                return action.Invoke(redis, periods);
-            };
+                return string.Format("entity:{0}:{1}", typeof(T).Name, id.Value);
+            }
+            else
+            {
+                return string.Format("entity:{0}", typeof(T).Name);
+            }
         }
 
         /// <summary>
-        /// Executes the specified action.
+        /// Gets the next sequence.
         /// </summary>
-        /// <param name="action">The action.</param>
-        public void Execute(Action<IRedisClient, IRedisTypedClient<T>> action)
+        /// <returns></returns>
+        protected long GetNextSequence()
         {
-            using (IRedisClient redis = RedisManager.GetClient())
+            var keyGenerator = string.Format("key:{0}", typeof(T).Name);
+
+            if (Database.KeyExists(keyGenerator))
             {
-                var periods = redis.As<T>();
-                action.Invoke(redis, periods);
-            };
+                Database.StringIncrement(keyGenerator);
+            }
+            else
+            {
+                Database.StringSet(keyGenerator, 1);
+            }
+
+            return long.Parse(Database.StringGet(keyGenerator));
         }
 
         #endregion
@@ -70,7 +83,7 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         public virtual IEnumerable<T> GetAll()
         {
-            return Execute((client, items) => items.GetAll());
+            return Database.SetMembers(GetKey()).Select(v => JsonConvert.DeserializeObject<T>(v));
         }
 
         /// <summary>
@@ -79,7 +92,17 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         public virtual T GetById(long id)
         {
-            return Execute((client, items) => items.GetById(id));
+            return JsonConvert.DeserializeObject<T>(Database.StringGet(GetKey(id)));
+        }
+
+        /// <summary>
+        /// Gets the by ids.
+        /// </summary>
+        /// <param name="ids">The ids.</param>
+        /// <returns></returns>
+        public virtual IEnumerable<T> GetByIds(IEnumerable<long> ids)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -88,16 +111,13 @@ namespace DeepQStock.Storage
         /// <param name="name"></param>
         public virtual void Save(T model)
         {
-            Execute((client, items) =>
+            if (model.Id == 0)
             {
-                if (model.Id == 0)
-                {
-                    model.Id = items.GetNextSequence();
-                }
+                model.Id = GetNextSequence();
+            }
 
-                items.Store(model);
-            });
-
+            var serialized = JsonConvert.SerializeObject(model);
+            Database.StringSet(GetKey(model.Id), serialized);
         }
 
 
@@ -107,7 +127,7 @@ namespace DeepQStock.Storage
         /// <param name="model">The item.</param>
         public virtual void Delete(T model)
         {
-            Execute((client, items) => items.DeleteById(model.Id));
+            Database.KeyDelete(GetKey(model.Id));
         }
 
         #endregion

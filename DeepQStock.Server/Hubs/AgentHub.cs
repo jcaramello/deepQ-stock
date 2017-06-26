@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using DeepQStock.Stocks;
 using DeepQStock.Utils;
 using Hangfire;
-using ServiceStack.Redis;
 using Newtonsoft.Json;
 using System.Linq;
 
@@ -16,24 +15,9 @@ namespace DeepQStock.Server.Hubs
         #region << Private Properties >>       
 
         /// <summary>
-        /// Agent Storage
-        /// </summary>
-        public BaseStorage<DeepRLAgentParameters> AgentStorage { get; set; }
-
-        /// <summary>
-        /// QNetwork Storage
-        /// </summary>
-        public BaseStorage<QNetworkParameters> QNetworkStorage { get; set; }
-
-        /// <summary>
-        /// Stock Exchange Storage
-        /// </summary>
-        public BaseStorage<StockExchangeParameters> StockExchangeStorage { get; set; }
-
-        /// <summary>
         /// Gets or sets the client.
         /// </summary>
-        public IRedisClientsManager Manager { get; set; }
+        public StorageManager Manager { get; set; }
 
         /// <summary>
         /// Gets or sets the agent listeners.
@@ -45,8 +29,6 @@ namespace DeepQStock.Server.Hubs
         /// </summary>
         private static string GroupNameTemplate = "ListenersForAgent-{0}";
 
-
-
         #endregion
 
         #region << Constructor >> 
@@ -54,16 +36,10 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public AgentHub(IRedisClientsManager manager, BaseStorage<DeepRLAgentParameters> agentStorage, BaseStorage<QNetworkParameters> qnetworkStorage, BaseStorage<StockExchangeParameters> stockExchangeStorage)
+        public AgentHub(StorageManager manager)
         {
             Manager = manager;
-
-            IRedisPubSubServer server = Manager.CreatePubSubServer(RedisPubSubChannels.OnDayComplete, (c, a) => OnDayComplete(JsonConvert.DeserializeObject<OnDayComplete>(a)));
-            server.Start();
-
-            AgentStorage = agentStorage;
-            QNetworkStorage = qnetworkStorage;
-            StockExchangeStorage = stockExchangeStorage;
+            Manager.Subscribe(RedisPubSubChannels.OnDayComplete, a => OnDayComplete(JsonConvert.DeserializeObject<OnDayComplete>(a)));                       
             AgentListeners = new Dictionary<string, IList<string>>();
         }
 
@@ -75,7 +51,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public IEnumerable<DeepRLAgentParameters> GetAll()
         {
-            return AgentStorage.GetAll();
+            return Manager.AgentStorage.GetAll();
         }
 
         /// <summary>
@@ -84,7 +60,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public DeepRLAgentParameters GetById(long id)
         {
-            return AgentStorage.GetById(id);
+            return Manager.AgentStorage.GetById(id);
         }
 
         /// <summary>
@@ -134,11 +110,11 @@ namespace DeepQStock.Server.Hubs
         public long Save(DeepRLAgentParameters agent)
         {
             var qNetwork = agent.QNetworkParameters;
-            QNetworkStorage.Save(qNetwork);
+            Manager.QNetworkStorage.Save(qNetwork);
             agent.QNetworkParametersId = qNetwork.Id;
             agent.QNetworkParameters = null;
 
-            AgentStorage.Save(agent);
+            Manager.AgentStorage.Save(agent);
 
             Clients.All.onCreatedAgent(agent);
 

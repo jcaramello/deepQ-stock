@@ -3,7 +3,7 @@ using DeepQStock.Stocks;
 using DeepQStock.Storage;
 using DeepQStock.Utils;
 using Newtonsoft.Json;
-using ServiceStack.Redis;
+using StackExchange.Redis;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +22,7 @@ namespace DeepQStock.Console
         /// </summary>
         /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
-        {            
+        {
             var options = new Options();
             var parsed = CommandLine.Parser.Default.ParseArguments(args, options);
 
@@ -31,12 +31,11 @@ namespace DeepQStock.Console
                 var companyName = "";
                 var status = "";
                 var episodeLength = 5;
-                var manager = new BasicRedisClientManager("localhost:6379");
-                var periodStorage = new PeriodStorage(manager);
-                var initialCapital = 100000;                
+                var redis = ConnectionMultiplexer.Connect("localhost:6379");
+                var manager = new StorageManager(redis);
+                var initialCapital = 100000;
                 var dayNumber = 0;
                 int totalTrainingDays = 0;
-                var pubSubServer = manager.CreatePubSubServer(RedisPubSubChannels.OnDayComplete);                                
 
                 var agentParameters = new DeepRLAgentParameters();
                 agentParameters.DiscountFactor = options.DiscountFactor > 0 ? options.DiscountFactor : agentParameters.DiscountFactor;
@@ -57,15 +56,14 @@ namespace DeepQStock.Console
 
                 var stock = new StockExchange(stockParameters, manager, agent, null);
 
-                pubSubServer.OnMessage += (channel, msg) =>
+                manager.Subscribe(RedisPubSubChannels.OnDayComplete, msg =>
                 {
                     var a = JsonConvert.DeserializeObject<OnDayComplete>(msg);
                     dayNumber = a.DayNumber - totalTrainingDays;
                     initialValue = initialValue == 0.0 ? a.Period.Open : initialValue;
                     DrawSummarySection(companyName, status, dayNumber, initialCapital, a);
-                };
-
-                pubSubServer.Start();
+                });
+                
 
                 agent.OnTrainingEpochComplete += DrawStatusBar;
 
@@ -99,7 +97,7 @@ namespace DeepQStock.Console
                         status = "Etapa: Entrenamiento Completado";
                         WriteLine(StatusBarLine + 5, "Etapa de entrenamiento Completada, Presione una tecla para continuar con la etapa de evaluacion... ");
                         System.Console.ReadLine();
-                        ClearCurrentLine();                        
+                        ClearCurrentLine();
                         totalTrainingDays = dayNumber;
                         stock.TotalOfYears = 0;
 
@@ -115,7 +113,7 @@ namespace DeepQStock.Console
                         agentParameters.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : agentParameters.MiniBatchSize;
                         agentParameters.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : agentParameters.MemoryReplaySize;
 
-                        agent = new DeepRLAgent(agentParameters);                                            
+                        agent = new DeepRLAgent(agentParameters);
 
                         agent.NetworkPath = "./";
                         stock.Agent = agent;
@@ -217,7 +215,7 @@ namespace DeepQStock.Console
             WriteLine(MainSectionLine, " Simbolo {0} - {1}", companyName, status);
             DrawLine(MainSectionLine + 1);
             WriteLine(MainSectionLine + 2, " Periodo: ");
-            WriteLine(MainSectionLine + 3, " Fecha {0} - Open: {1:C} - High: {2:C} - Low: {3:C} - Close: {4:C} \t\t\t Incremento: {5:P2}", a.Date.ToShortDateString(), a.Period.Open, a.Period.High, a.Period.Low, a.Period.Close, (a.Period.Close - initialValue) / initialValue );
+            WriteLine(MainSectionLine + 3, " Fecha {0} - Open: {1:C} - High: {2:C} - Low: {3:C} - Close: {4:C} \t\t\t Incremento: {5:P2}", a.Date.ToShortDateString(), a.Period.Open, a.Period.High, a.Period.Low, a.Period.Close, (a.Period.Close - initialValue) / initialValue);
             WriteLine(MainSectionLine + 4);
             DrawLine(MainSectionLine + 5);
             WriteLine(MainSectionLine + 6, " Indicadores Bursatiles: ");
@@ -238,7 +236,7 @@ namespace DeepQStock.Console
             DrawLine(agentSummary + 1);
             WriteLine(agentSummary + 2, " Estado del Agente - Año {0} - Dia {1}", a.TotalOfYears, dayNumber);
             WriteLine(agentSummary + 3);
-            WriteLine(agentSummary + 4, " Accion: {0}\t Recompenza: {1:N9}\t", a.SelectedAction, a.Reward);            
+            WriteLine(agentSummary + 4, " Accion: {0}\t Recompenza: {1:N9}\t", a.SelectedAction, a.Reward);
             WriteLine(agentSummary + 5, " Capital Actual: {0:C}\t Cantidad de Acciones: {1}\t Ganancia Acumulada: {2:C}\t\t Renta Anual: {3:P2}", a.Period.CurrentCapital, a.Period.ActualPosicion, a.AccumulatedProfit, a.AnnualRent);
         }
 

@@ -1,5 +1,5 @@
 ﻿using DeepQStock.Domain;
-using ServiceStack.Redis;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace DeepQStock.Storage
         /// <summary>
         /// Initializes a new instance of the <see cref="PeriodStorage"/> class.
         /// </summary>        
-        public PeriodStorage(IRedisClientsManager manager) : base(manager)
+        public PeriodStorage(IConnectionMultiplexer conn) : base(conn)
         {
         }
 

@@ -12,7 +12,7 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Agent Storage
         /// </summary>
-        public BaseStorage<StockExchangeParameters> StockExchangeStorage { get; set; }
+        public StorageManager Manager { get; set; }
 
         #endregion
 
@@ -21,9 +21,9 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public StockExchangeHub(BaseStorage<StockExchangeParameters> stockExchangeStorage)
+        public StockExchangeHub(StorageManager manager)
         {           
-            StockExchangeStorage = stockExchangeStorage;
+            Manager = manager;
         }
 
         #endregion
@@ -37,7 +37,7 @@ namespace DeepQStock.Server.Hubs
         public long Save(StockExchangeParameters stock)
         {
             stock.CsvDataFilePath = string.Format("{0}\\{1}.csv", Settings.CsvDataDirectory, stock.Symbol);
-            StockExchangeStorage.Save(stock);
+            Manager.StockExchangeStorage.Save(stock);
             
             return stock.Id;
         }
@@ -49,7 +49,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public StockExchangeParameters GetById(long id)
         {
-            return StockExchangeStorage.GetById(id);
+            return Manager.StockExchangeStorage.GetById(id);
         }
 
         #endregion

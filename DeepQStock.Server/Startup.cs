@@ -5,13 +5,12 @@ using DeepQStock.Server.Resolvers;
 using DeepQStock.Server.Utils;
 using DeepQStock.Stocks;
 using DeepQStock.Storage;
-using DeepQStock.Utils;
 using Hangfire;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Cors;
 using Newtonsoft.Json;
 using Owin;
-using ServiceStack.Redis;
+using StackExchange.Redis;
 using System.Linq;
 using System.Web.Http;
 
@@ -61,10 +60,8 @@ namespace DeepQStock.Server
         /// <param name="services"></param>
         public void ConfigureService()
         {
-            var redisManager = new BasicRedisClientManager(Settings.RedisConnectionString);            
-            var qNetworkStorage = new BaseStorage<QNetworkParameters>(redisManager);
-            var agentStorage = new BaseStorage<DeepRLAgentParameters>(redisManager);
-            var stockExchangeStorage = new BaseStorage<StockExchangeParameters>(redisManager);
+            var redis = ConnectionMultiplexer.Connect(Settings.RedisConnectionString);
+            var manager = new StorageManager(redis);
 
             var settings = new JsonSerializerSettings();
             settings.ContractResolver = new SignalRContractResolver();
@@ -72,13 +69,13 @@ namespace DeepQStock.Server
 
             GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);
 
-            var agentHub = new AgentHub(redisManager, agentStorage, qNetworkStorage, stockExchangeStorage);
-            var stockExchangeHub = new StockExchangeHub(stockExchangeStorage);
+            var agentHub = new AgentHub(manager);
+            var stockExchangeHub = new StockExchangeHub(manager);
 
             //Register Hubs
             GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => agentHub);
             GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => stockExchangeHub);
-            GlobalHost.DependencyResolver.Register(typeof(StockExchange), () => new StockExchange(redisManager));
+            GlobalHost.DependencyResolver.Register(typeof(StockExchange), () => new StockExchange(manager));
 
         }
     }
