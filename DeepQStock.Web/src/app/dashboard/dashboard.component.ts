@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public today = new OnDayCompletedArgs();
   public daysCompleted: OnDayCompletedArgs[] = [];
   public days: any[] = [];
+  public isRuning: boolean;
 
   /**
    * Creates an instance of DashboardComponent.
@@ -66,11 +67,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Execute when a simulation day is completed
    * @param args 
    */
-  public onDayCompleted(args: OnDayCompletedArgs) {    
-    if(args){
+  public onDayCompleted(args: OnDayCompletedArgs) {
+    if (this.isRuning && args) {
       args.date = new Date(args.date);
       this.zone.run(() => this.today = args);
-    }    
+    }
   }
 
   /**
@@ -80,6 +81,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @memberof DashboardComponent
    */
   public play(event) {
+    this.isRuning = !this.isRuning;
     this.notificationService.info("Info", "Simulacion iniciada");
     this.agentService.start(this.agent.id);
   }
@@ -88,16 +90,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Stop the agent simulation
    * @param event 
    */
-  public stop(event){
+  public stop(event, stockChart) {
+    this.isRuning = !this.isRuning;
     this.notificationService.info("Info", "Simulacion detenida");
     this.agentService.stop(this.agent.id);
+    stockChart.clearMarkers();
+    this.today = new OnDayCompletedArgs();
   }
 
   /**
    * Reset the agent 
    * @param event 
    */
-  public reset(event){
+  public reset(event, stockChart) {
+    this.stop(event, stockChart)
     this.notificationService.info("Info", "El agente fue reseteado.");
     this.agentService.reset(this.agent.id);
   }

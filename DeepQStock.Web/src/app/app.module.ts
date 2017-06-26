@@ -16,7 +16,7 @@ import { StockExchangeService } from './services/stock-exchange-service';
 import { AgentService } from './services/agent-service';
 import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
 import { ModalModule } from 'ng2-bootstrap';
-import { NouisliderModule } from 'ng2-nouislider';
+import { MdSliderModule } from '@angular/material';
 
 
 // Routing Module
@@ -35,7 +35,7 @@ import { FullLayoutComponent } from './layouts/full-layout.component';
     SimpleNotificationsModule.forRoot(),
     SlimLoadingBarModule.forRoot(),
     ModalModule.forRoot(),
-    NouisliderModule,
+    MdSliderModule,
     FormsModule
   ],
   declarations: [

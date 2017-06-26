@@ -77,8 +77,10 @@ export class CandlestickComponent {
       if (day && day.selectedAction != ActionType.Wait) {
         var event = {
           date: new Date(day.period.date),
-          type: day.selectedAction == ActionType.Buy ? "arrowUp" : "arrowDown",
+         // type: day.selectedAction == ActionType.Buy ? "arrowUp" : "arrowDown",
+          type: "sign",
           graph: this.priceGraph,
+          text: day.selectedAction == ActionType.Buy ? "B" : "S", 
           backgroundColor: day.selectedAction == ActionType.Buy ? "#20a8d8" : "#FFBF00",
           description: ""
         };
@@ -88,9 +90,9 @@ export class CandlestickComponent {
       }
 
       if (day.dayNumber > 25) {
-        
+
         this.firstDate = moment(day.date).add(-90, 'days');
-        this.endDate =  moment(day.date).add(90, 'days');
+        this.endDate = moment(day.date).add(90, 'days');
 
         this.chart.zoom(this.firstDate.toDate(), this.endDate.toDate());
       }
@@ -176,7 +178,7 @@ export class CandlestickComponent {
     priceGraph.lineColor = '#595959';
     priceGraph.fillAlphas = 0.9;
     priceGraph.negativeFillColors = "#db4c3c";
-    priceGraph.negativeLineColor = "#595959";  
+    priceGraph.negativeLineColor = "#595959";
     pricePanel.addStockGraph(priceGraph);
 
     dataSet.stockEvents = this.stockEvents;
@@ -240,8 +242,19 @@ export class CandlestickComponent {
 
     this.renderComplete = true;
     this.firstDate = moment(this.chart['firstDate']);
-    this.endDate = this.firstDate.add(180, 'days');
+    this.endDate = moment(this.firstDate).add(180, 'days');
     this.data = this.chart.dataSets[0].dataProvider;
 
+  }
+
+  /**
+   * Clear all markers
+   */
+  public clearMarkers() {    
+    this.chart.dataSets[0].stockEvents = this.stockEvents = [];     
+    this.firstDate = moment(this.chart['firstDate']);
+    this.endDate = moment(this.firstDate).add(180, 'days');
+    this.chart.zoom(this.firstDate.toDate(), this.endDate.toDate());
+    this.chart.validateData();
   }
 }

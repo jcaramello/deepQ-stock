@@ -9,8 +9,8 @@
                                         </div>
                                         <div class="btn-group" role="group" aria-label="Basic example">
                                                 <button type="button" class="btn btn-sm btn-secondary" (click)="play($event)"><i class="fa fa-play"></i></button>                                        
-                                                <button type="button" class="btn btn-sm btn-secondary" (click)="stop($event)"><i class="fa fa-stop"></i></button>
-                                                <button type="button" class="btn btn-sm btn-secondary" (click)="reset($event)"><i class="fa fa-eject"></i></button>
+                                                <button type="button" class="btn btn-sm btn-secondary" (click)="stop($event, stockChart)"><i class="fa fa-stop"></i></button>
+                                                <button type="button" class="btn btn-sm btn-secondary" (click)="reset($event, stockChart)"><i class="fa fa-eject"></i></button>
                                         </div>
 
                                 </div>
@@ -92,7 +92,7 @@
 
         <div class="row">
                 <div class="col">
-                        <candlestick [agent]="agent" [stock]="stock" [day]="today"></candlestick>
+                        <candlestick #stockChart [agent]="agent" [stock]="stock" [day]="today"></candlestick>
                 </div>
         </div>
 </div>

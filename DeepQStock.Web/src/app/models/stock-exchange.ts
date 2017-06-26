@@ -14,6 +14,14 @@ export class StockExchange {
     public numberOfPeriods: number;
     public initialCapital: number;
     public transactionCost: number;
+
+    get simulationVelocityType(){
+        return this.simulationVelocity / 1000;
+    }
+    set simulationVelocityType(value){
+        this.simulationVelocity = value * 1000;
+    }
+
     public simulationVelocity: number;
     public symbol:string;
 

@@ -185,6 +185,7 @@ namespace DeepQStock.Stocks
         public BaseStorage<StockExchangeParameters> StockExchangeStorage { get; set; }
         public BaseStorage<DeepRLAgentParameters> AgentStorage { get; set; }
         public BaseStorage<QNetworkParameters> QNetworkStorage { get; set; }
+        public BaseStorage<SimulationResult> SimulationResultStorage { get; set; }
 
         #endregion
 
@@ -199,6 +200,7 @@ namespace DeepQStock.Stocks
             StockExchangeStorage = new BaseStorage<StockExchangeParameters>(manager);
             AgentStorage = new BaseStorage<DeepRLAgentParameters>(manager);
             QNetworkStorage = new BaseStorage<QNetworkParameters>(manager);
+            SimulationResultStorage = new BaseStorage<SimulationResult>(manager);
         }
 
         /// <summary>
@@ -221,6 +223,11 @@ namespace DeepQStock.Stocks
 
         #region << Public Methods >>     
 
+        /// <summary>
+        /// Initialize and execute the simulation
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="agentId"></param>
         public void Run(IJobCancellationToken token, long? agentId = null)
         {
             Initialize(agentId);
@@ -240,7 +247,7 @@ namespace DeepQStock.Stocks
         }         
 
         /// <summary>
-        /// Start the simulation
+        /// Simulate the enviroment and the agent integration
         /// </summary>
         protected void Simulate(IJobCancellationToken token)
         {            
@@ -252,7 +259,6 @@ namespace DeepQStock.Stocks
 
             do
             {
-
                 token.ThrowIfCancellationRequested();
 
                 foreach (var state in episode)
@@ -281,6 +287,8 @@ namespace DeepQStock.Stocks
                 episode = NextEpisode();
 
             } while (episode != null);
+
+            SaveResults();
         }
 
 
@@ -307,7 +315,7 @@ namespace DeepQStock.Stocks
         /// </summary>
         public void Shutdown()
         {
-            var i = 9;
+           
         }
 
         #endregion
@@ -475,6 +483,25 @@ namespace DeepQStock.Stocks
             {
                 redisClient.PublishMessage(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(args));
             }
+        }
+
+        /// <summary>
+        /// Save simulation result for staticts
+        /// </summary>
+        private void SaveResults()
+        {
+            var result = new SimulationResult()
+            {
+                agentId = Agent.Parameters.Id,
+                AnnualProfits = AnnualProfits,
+                AnnualRent = AnnualRent,
+                NetCapital = NetCapital,
+                Profits= Profits,
+                Symbol = Agent.Parameters.Symbol,
+                TransactionCost = TransactionCost
+            };
+
+            SimulationResultStorage.Save(result);
         }
 
         #endregion

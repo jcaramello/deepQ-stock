@@ -97,7 +97,7 @@ namespace DeepQStock.Server.Hubs
         /// <param name="args">The arguments.</param>
         public void OnDayComplete(OnDayComplete args)
         {
-            Clients.Group(string.Format(GroupNameTemplate, args.AgentId)).onDayComplete(args);
+            Clients.Group(string.Format(GroupNameTemplate, args.AgentId))?.onDayComplete(args);
         }
 
         /// <summary>
