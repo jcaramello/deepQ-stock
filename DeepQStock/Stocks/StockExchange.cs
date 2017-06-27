@@ -176,7 +176,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the storage manager.
         /// </summary>      
-        public StorageManager StorageManager { get; set; }
+        public RedisContext StorageManager { get; set; }
 
 
         #endregion
@@ -186,7 +186,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// We Need this constructor for hangfire
         /// </summary>
-        public StockExchange(StorageManager manager)
+        public StockExchange(RedisContext manager)
         {
             StorageManager = manager;
         }
@@ -198,7 +198,7 @@ namespace DeepQStock.Stocks
         /// <param name="agent">The agent.</param>
         /// <param name="provider">The provider.</param>
         /// <exception cref="System.Exception">You must pass a csv file path for load the simulated data</exception>
-        public StockExchange(StockExchangeParameters parameters, StorageManager manager, IAgent agent, IDataProvider provider)
+        public StockExchange(StockExchangeParameters parameters, RedisContext manager, IAgent agent, IDataProvider provider)
         {
             StorageManager = manager;
             Agent = agent;
@@ -288,12 +288,12 @@ namespace DeepQStock.Stocks
         {
             if (agentId.HasValue)
             {
-                var agentParameters = StorageManager.AgentStorage.GetById(agentId.Value);
-                agentParameters.QNetworkParameters = StorageManager.QNetworkStorage.GetById(agentParameters.QNetworkParametersId);
+                var agentParameters = StorageManager.Agent.GetById(agentId.Value);
+                agentParameters.QNetworkParameters = StorageManager.QNetwork.GetById(agentParameters.QNetworkParametersId);
 
                 Agent = new DeepRLAgent(agentParameters);
                 RewardCalculator = Stocks.RewardCalculators.WinningsOverLoosings;
-                Parameters = StorageManager.StockExchangeStorage.GetById(agentParameters.StockExchangeParametersId);
+                Parameters = StorageManager.StockExchange.GetById(agentParameters.StockExchangeParametersId);
                 DataProvider = new CsvDataProvider(Parameters.CsvDataFilePath, Parameters.EpisodeLength);
             }
         }
@@ -486,7 +486,7 @@ namespace DeepQStock.Stocks
                 TransactionCost = TransactionCost
             };
 
-            StorageManager.SimulationResultStorage.Save(result);            
+            StorageManager.SimulationResult.Save(result);            
 
         }
 

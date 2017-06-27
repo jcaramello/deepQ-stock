@@ -21,7 +21,7 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Gets or sets the client.
         /// </summary>
-        public StorageManager Manager { get; set; }
+        public RedisContext Context { get; set; }
 
         /// <summary>
         /// Gets or sets the agent listeners.
@@ -40,10 +40,10 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public AgentHub(StorageManager manager)
+        public AgentHub(RedisContext ctx)
         {
-            Manager = manager;
-            Manager.Subscribe(RedisPubSubChannels.OnDayComplete, a => OnDayComplete(JsonConvert.DeserializeObject<OnDayComplete>(a)));                       
+            Context = ctx;
+            Context.Subscribe(RedisPubSubChannels.OnDayComplete, (c, a) => OnDayComplete(JsonConvert.DeserializeObject<OnDayComplete>(a)));                       
             AgentListeners = new Dictionary<string, IList<string>>();
         }
 
@@ -55,7 +55,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public IEnumerable<DeepRLAgentParameters> GetAll()
         {
-            return Manager.AgentStorage.GetAll();
+            return Context.Agent.GetAll();
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public DeepRLAgentParameters GetById(long id)
         {
-            return Manager.AgentStorage.GetById(id);
+            return Context.Agent.GetById(id);
         }
 
         /// <summary>
@@ -89,19 +89,19 @@ namespace DeepQStock.Server.Hubs
                 AgentListeners[groupName] = new List<string>();
             }
 
-            var previousSubcription = AgentListeners.Where(i => i.Value.Contains(Context.ConnectionId));
+            var previousSubcription = AgentListeners.Where((KeyValuePair<string, IList<string>> i) => i.Value.Contains(base.Context.ConnectionId));
             if (previousSubcription.Count() > 0)
             {
                 var previousGroupName = previousSubcription.First().Key;
-                AgentListeners[previousGroupName].Remove(Context.ConnectionId);
-                Groups.Remove(Context.ConnectionId, previousGroupName);
+                AgentListeners[previousGroupName].Remove(base.Context.ConnectionId);
+                Groups.Remove(base.Context.ConnectionId, previousGroupName);
             }
 
             var listerners = AgentListeners[groupName];
-            if (!listerners.Contains(Context.ConnectionId))
+            if (!listerners.Contains(base.Context.ConnectionId))
             {
-                listerners.Add(Context.ConnectionId);
-                Groups.Add(Context.ConnectionId, groupName);
+                listerners.Add(base.Context.ConnectionId);
+                Groups.Add(base.Context.ConnectionId, groupName);
             }
 
         }
@@ -114,11 +114,11 @@ namespace DeepQStock.Server.Hubs
         public long Save(DeepRLAgentParameters agent)
         {
             var qNetwork = agent.QNetworkParameters;
-            Manager.QNetworkStorage.Save(qNetwork);
+            Context.QNetwork.Save(qNetwork);
             agent.QNetworkParametersId = qNetwork.Id;
             agent.QNetworkParameters = null;
 
-            Manager.AgentStorage.Save(agent);
+            Context.Agent.Save(agent);
 
             Clients.All.onCreatedAgent(agent);
 

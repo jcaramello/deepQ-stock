@@ -61,7 +61,7 @@ namespace DeepQStock.Server
         public void ConfigureService()
         {
             var redis = ConnectionMultiplexer.Connect(Settings.RedisConnectionString);            
-            var manager = new StorageManager(redis);
+            var manager = new RedisContext(redis);
 
             var settings = new JsonSerializerSettings();
             settings.ContractResolver = new SignalRContractResolver();

@@ -10,13 +10,38 @@ namespace DeepQStock.Storage
 {
     public class BaseStorage<T> : IStorage<T> where T : BaseModel
     {
-
         #region << Protected Properties >>  
 
         /// <summary>
         /// Gets or sets the redis manager.
         /// </summary>
         private IDatabase Database { get; set; }
+
+        /// <summary>
+        /// The Type name
+        /// </summary>
+        private string TypeName { get; set; }
+
+        /// <summary>
+        /// Key Name Generator
+        /// </summary>                       
+        private string SequenceTpl
+        {
+            get { return string.Format("key:{0}", TypeName); }
+        }
+
+        /// <summary>
+        /// Index key template
+        /// </summary>
+        private string IndexTpl
+        {
+            get { return string.Format("index:{0}", TypeName); }
+        }
+
+        private string KeyEntityTpl
+        {
+            get { return string.Format("entity:{0}", TypeName); }
+        }
 
         #endregion
 
@@ -29,6 +54,7 @@ namespace DeepQStock.Storage
         public BaseStorage(IConnectionMultiplexer redis)
         {
             Database = redis.GetDatabase();
+            TypeName = typeof(T).Name;
         }
 
         #endregion
@@ -45,11 +71,11 @@ namespace DeepQStock.Storage
         {
             if (id.HasValue)
             {
-                return string.Format("entity:{0}:{1}", typeof(T).Name, id.Value);
+                return string.Format("{0}:{1}", KeyEntityTpl, id.Value);
             }
             else
             {
-                return string.Format("entity:{0}", typeof(T).Name);
+                return KeyEntityTpl;
             }
         }
 
@@ -59,24 +85,18 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         protected long GetNextSequence()
         {
-            var typeName = typeof(T).Name;
-            var keyGenerator = string.Format("key:{0}", typeName);
-
-            if (Database.KeyExists(keyGenerator))
+            if (Database.KeyExists(SequenceTpl))
             {
-                Database.StringIncrement(keyGenerator);
+                Database.StringIncrement(SequenceTpl);
             }
             else
             {
-                Database.StringSet(keyGenerator, 1);
+                Database.StringSet(SequenceTpl, 1);
             }
 
-            var id = long.Parse(Database.StringGet(keyGenerator));
+            var id = long.Parse(Database.StringGet(SequenceTpl));            
 
-            var index = string.Format("index:{0}", typeName);
-            var key = string.Format("key:{0}:{1}", typeName, id);
-
-            Database.SortedSetAdd(index, key, id);
+            Database.SortedSetAdd(IndexTpl, GetKey(id), id);
 
             return id;
         }
@@ -85,13 +105,9 @@ namespace DeepQStock.Storage
         /// Gets the keys.
         /// </summary>
         /// <returns></returns>
-        protected IEnumerable<string> GetKeys()
-        {
-            var typeName = typeof(T).Name;
-            var keyGenerator = string.Format("key:{0}", typeName);
-            var index = string.Format("index:{0}", typeName);
-
-            return Database.SortedSetRangeByScore(index).Select(s => s.ToString());
+        protected RedisKey[] GetKeys()
+        {            
+            return Database.SortedSetRangeByScore(IndexTpl).Select(s => (RedisKey)s.ToString()).ToArray();
         }
 
         #endregion
@@ -104,10 +120,15 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         public virtual IEnumerable<T> GetAll()
         {
-            //var keys =
-            //var s = Database.StringGetRange(GetKey(), 0, -1).Select(v => JsonConvert.DeserializeObject<T>(v));
-            //return s;
-            return null;
+            var keys = GetKeys();
+            if (keys.Length > 0)
+            {
+                return Database.StringGet(keys).Select(v => JsonConvert.DeserializeObject<T>(v));
+            }
+            else
+            {
+                return new List<T>();
+            }
         }
 
         /// <summary>
@@ -151,7 +172,10 @@ namespace DeepQStock.Storage
         /// <param name="model">The item.</param>
         public virtual void Delete(T model)
         {
-            Database.KeyDelete(GetKey(model.Id));
+            var key = GetKey(model.Id);
+
+            Database.SortedSetRemove(IndexTpl, key);
+            Database.KeyDelete(key);
         }
 
         #endregion

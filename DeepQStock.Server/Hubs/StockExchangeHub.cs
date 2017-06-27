@@ -12,7 +12,7 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Agent Storage
         /// </summary>
-        public StorageManager Manager { get; set; }
+        public RedisContext Context { get; set; }
 
         #endregion
 
@@ -21,9 +21,9 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public StockExchangeHub(StorageManager manager)
+        public StockExchangeHub(RedisContext ctx)
         {           
-            Manager = manager;
+            Context = ctx;
         }
 
         #endregion
@@ -37,7 +37,7 @@ namespace DeepQStock.Server.Hubs
         public long Save(StockExchangeParameters stock)
         {
             stock.CsvDataFilePath = string.Format("{0}\\{1}.csv", Settings.CsvDataDirectory, stock.Symbol);
-            Manager.StockExchangeStorage.Save(stock);
+            Context.StockExchange.Save(stock);
             
             return stock.Id;
         }
@@ -49,7 +49,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public StockExchangeParameters GetById(long id)
         {
-            return Manager.StockExchangeStorage.GetById(id);
+            return Context.StockExchange.GetById(id);
         }
 
         #endregion
