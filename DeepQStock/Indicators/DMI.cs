@@ -16,7 +16,7 @@ namespace DeepQStock.Indicators
     /// By combining all three, a technical analyst has a way of determining and measuring a trend's strength as well as its direction.
     /// https://www.tradingview.com/wiki/Directional_Movement_(DMI)
     /// </summary>
-    public class DMI : ITechnicalIndicator
+    public class DMI : TechnicalIndicatorBase,  ITechnicalIndicator
     {
 
         #region << Public Properties >>
@@ -80,18 +80,13 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public string Name { get { return "DMI"; } }
-
-        /// <summary>
-        /// Gets the value.
-        /// </summary>
-        public double[] Value { get; set; }
+        public override string Name { get { return "DMI"; } }
 
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period)
         {
             var adx = 0.0;
             var plusDI = 0.0;

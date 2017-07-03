@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Agents;
 using DeepQStock.Domain;
+using DeepQStock.Indicators;
 using DeepQStock.Stocks;
 using StackExchange.Redis;
 using System;
@@ -9,11 +10,13 @@ namespace DeepQStock.Storage
     public class RedisContext
     {
         //Storages
-        public BaseStorage<StockExchangeParameters> StockExchange { get; set; }
-        public BaseStorage<DeepRLAgentParameters> Agent { get; set; }
-        public BaseStorage<QNetworkParameters> QNetwork { get; set; }
-        public BaseStorage<SimulationResult> SimulationResult { get; set; }
+        public BaseStorage<StockExchangeParameters> StockExchanges { get; set; }
+        public BaseStorage<DeepRLAgentParameters> Agents { get; set; }
+        public BaseStorage<QNetworkParameters> QNetworks { get; set; }
+        public BaseStorage<SimulationResult> SimulationResults { get; set; }
+        public BaseStorage<TechnicalIndicatorBase> Indicators { get; set; }
 
+        public StateStorage StateStorage { get; set; }
 
         // Privates
         private ISubscriber Subscriber { get; set; }
@@ -24,10 +27,13 @@ namespace DeepQStock.Storage
         /// <param name="redis">The redis.</param>
         public RedisContext(IConnectionMultiplexer redis)
         {
-            QNetwork = new BaseStorage<QNetworkParameters>(redis);
-            Agent = new BaseStorage<DeepRLAgentParameters>(redis);
-            StockExchange = new BaseStorage<StockExchangeParameters>(redis);
-            SimulationResult = new BaseStorage<SimulationResult>(redis);
+            QNetworks = new BaseStorage<QNetworkParameters>(redis);
+            Agents = new BaseStorage<DeepRLAgentParameters>(redis);
+            StockExchanges = new BaseStorage<StockExchangeParameters>(redis);
+            SimulationResults = new BaseStorage<SimulationResult>(redis);
+            Indicators = new BaseStorage<TechnicalIndicatorBase>(redis);
+
+            StateStorage = new StateStorage(redis);
 
             Subscriber = redis.GetSubscriber();
         }

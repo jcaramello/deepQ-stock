@@ -13,7 +13,7 @@ namespace DeepQStock.Indicators
     /// What the %B indicator does is quantify or display where price is in relation to the bands. %B can be useful in identifying trends and trading signals.
     /// https://www.tradingview.com/wiki/Bollinger_Bands_%25B_(%25B)
     /// </summary>
-    public class BollingerBandsPercentB : ITechnicalIndicator
+    public class BollingerBandsPercentB : TechnicalIndicatorBase,  ITechnicalIndicator
     {
         #region << Private Properties >>
 
@@ -41,18 +41,13 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public string Name { get { return "Bollinger Bands %B"; } }
-
-        /// <summary>
-        /// Gets the value.
-        /// </summary>
-        public double[] Value { get; set; }
-
+        public override string Name { get { return "Bollinger Bands %B"; } }      
+      
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period)
         {
             var ma_20 = MA_20.Update(period).First();
             var two_std_dev = 2 * IndicatorUtils.StandardDeviation(MA_20.Periods.Select(p => p.Close));

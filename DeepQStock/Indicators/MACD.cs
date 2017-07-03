@@ -12,7 +12,7 @@ namespace DeepQStock.Indicators
     /// First, MACD employs two Moving Averages of varying lengths (which are lagging indicators) to identify trend direction and duration
     /// https://www.tradingview.com/wiki/MACD_(Moving_Average_Convergence/Divergence)
     /// </summary>
-    public class MACD : ITechnicalIndicator
+    public class MACD : TechnicalIndicatorBase, ITechnicalIndicator
     {
 
         #region << Private Properties >>
@@ -53,18 +53,13 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public string Name { get { return "MACD"; } }
-
-        /// <summary>
-        /// Gets the value.
-        /// </summary>
-        public double[] Value { get; set; }
-
+        public override string Name { get { return "MACD"; } }
+      
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period)
         {
             var ema_12 = EMA_12.Update(period).First();
             var ema_26 = EMA_12.Update(period).First();

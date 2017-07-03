@@ -8,7 +8,12 @@ using System.Threading.Tasks;
 namespace DeepQStock.Indicators
 {
     public interface ITechnicalIndicator
-    {
+    {   
+        /// <summary>
+        /// Stock Exchange Id
+        /// </summary>
+        long StockExchangeId { get; set; }
+
         /// <summary>
         /// Gets the name.
         /// </summary>

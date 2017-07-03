@@ -37,7 +37,7 @@ namespace DeepQStock.Server.Hubs
         public long Save(StockExchangeParameters stock)
         {
             stock.CsvDataFilePath = string.Format("{0}\\{1}.csv", Settings.CsvDataDirectory, stock.Symbol);
-            Context.StockExchange.Save(stock);
+            Context.StockExchanges.Save(stock);
             
             return stock.Id;
         }
@@ -49,7 +49,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public StockExchangeParameters GetById(long id)
         {
-            return Context.StockExchange.GetById(id);
+            return Context.StockExchanges.GetById(id);
         }
 
         #endregion

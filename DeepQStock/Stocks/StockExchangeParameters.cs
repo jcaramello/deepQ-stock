@@ -67,6 +67,11 @@ namespace DeepQStock.Stocks
         public double TransactionCost { get; set; }
 
         /// <summary>
+        /// Current State Id
+        /// </summary>
+        public long CurrentStateId { get; set; }
+
+        /// <summary>
         /// Gets or sets the simulation velocity in miliseconds.
         /// </summary>
         public int SimulationVelocity { get; set; }

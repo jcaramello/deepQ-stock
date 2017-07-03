@@ -12,7 +12,7 @@ namespace DeepQStock.Indicators
     /// Moving Averages smooth out the “noise” when trying to interpret charts. Noise is made up of fluctuations of both price and volume. 
     /// https://www.tradingview.com/wiki/Moving_Average
     /// </summary>
-    public class SimpleMovingAverage : ITechnicalIndicator
+    public class SimpleMovingAverage : TechnicalIndicatorBase, ITechnicalIndicator
     {       
         #region << Public Properties >>
 
@@ -47,18 +47,13 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public string Name { get { return string.Format("SMA({0})", Size);  } }
-
-        /// <summary>
-        /// Gets the value.
-        /// </summary>
-        public double[] Value { get; set; }
+        public override string Name { get { return string.Format("SMA({0})", Size);  } }      
 
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period)
         {
             if (Periods.Count == Size)
             {

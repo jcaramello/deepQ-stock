@@ -16,7 +16,7 @@ namespace DeepQStock.Indicators
     /// and leveraged financial products (the entire field of derivatives); RSI has proven to be a viable indicator of price movements.
     /// https://www.tradingview.com/wiki/Relative_Strength_Index_(RSI)
     /// </summary>
-    public class RSI : ITechnicalIndicator
+    public class RSI : TechnicalIndicatorBase, ITechnicalIndicator
     {
         #region << Private Properties >>
 
@@ -62,18 +62,13 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public string Name { get { return "RSI"; } }
-
-        /// <summary>
-        /// Gets the value.
-        /// </summary>
-        public double[] Value { get; set; }
+        public override string Name { get { return "RSI"; } }       
 
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period)
         {
             double emaU = UpwardPeriods.Value != null ? UpwardPeriods.Value.First() : 0.0;
             double emaD = DownwardPeriods.Value != null ? DownwardPeriods.Value.First() : 0.0;

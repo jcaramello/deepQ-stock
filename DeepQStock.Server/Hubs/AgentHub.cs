@@ -55,7 +55,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public IEnumerable<DeepRLAgentParameters> GetAll()
         {
-            return Context.Agent.GetAll();
+            return Context.Agents.GetAll();
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public DeepRLAgentParameters GetById(long id)
         {
-            return Context.Agent.GetById(id);
+            return Context.Agents.GetById(id);
         }
 
         /// <summary>
@@ -73,7 +73,8 @@ namespace DeepQStock.Server.Hubs
         /// <param name="args">The arguments.</param>
         public void OnDayComplete(OnDayComplete args)
         {
-            Clients.Group(string.Format(GroupNameTemplate, args.AgentId))?.onDayComplete(args);
+            var group = Clients.Group(string.Format(GroupNameTemplate, args.AgentId));
+            group?.onDayComplete(args);
         }
 
         /// <summary>
@@ -114,11 +115,11 @@ namespace DeepQStock.Server.Hubs
         public long Save(DeepRLAgentParameters agent)
         {
             var qNetwork = agent.QNetworkParameters;
-            Context.QNetwork.Save(qNetwork);
+            Context.QNetworks.Save(qNetwork);
             agent.QNetworkParametersId = qNetwork.Id;
             agent.QNetworkParameters = null;
 
-            Context.Agent.Save(agent);
+            Context.Agents.Save(agent);
 
             Clients.All.onCreatedAgent(agent);
 
@@ -143,6 +144,19 @@ namespace DeepQStock.Server.Hubs
         /// Start the simulation of the agent agentId
         /// </summary>
         /// <param name="id"></param>
+        public void Pause(long id)
+        {
+            var agent = Context.Agents.GetById(id);
+            agent.Status = AgentStatus.Paused;
+
+            Context.Agents.Save(agent);
+            Stop(id);   
+        }
+
+        /// <summary>
+        /// Start the simulation of the agent agentId
+        /// </summary>
+        /// <param name="id"></param>
         public void Stop(long id)
         {
             string jobId = null;
@@ -150,8 +164,8 @@ namespace DeepQStock.Server.Hubs
 
             if (!string.IsNullOrEmpty(jobId))
             {
-                BackgroundJob.Delete(jobId);                
-            }            
+                BackgroundJob.Delete(jobId);
+            }
         }
 
         /// <summary>

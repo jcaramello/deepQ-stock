@@ -1,4 +1,5 @@
-﻿using DeepQStock.Storage;
+﻿using DeepQStock.Enums;
+using DeepQStock.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,11 @@ namespace DeepQStock.Agents
         /// Stock Exchange parameters id
         /// </summary>
         public long StockExchangeParametersId { get; set; }
+
+        /// <summary>
+        /// Agent Status
+        /// </summary>
+        public AgentStatus Status { get; set; }
 
         #endregion
 

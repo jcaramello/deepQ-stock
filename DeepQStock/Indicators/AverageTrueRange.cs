@@ -13,7 +13,7 @@ namespace DeepQStock.Indicators
     /// Rather, it is a metric used solely to measure volatility, especially volatility caused by price gaps or limit moves.
     /// https://www.tradingview.com/wiki/Average_True_Range_(ATR)
     /// </summary>
-    public class AverageTrueRange : ITechnicalIndicator
+    public class AverageTrueRange : TechnicalIndicatorBase,  ITechnicalIndicator
     {        
         #region << Private Properties >>
 
@@ -61,19 +61,14 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public string Name { get { return "ATR"; } }
-
-        /// <summary>
-        /// Gets the value.
-        /// </summary>
-        public double[] Value { get; set; }
+        public override string Name { get { return "ATR"; } }            
 
         /// <summary>
         /// Calculate the average true range
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        public IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period)
         {
             if (PreviousPeriod != null)
             {

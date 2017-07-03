@@ -90,6 +90,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Stop the agent simulation
    * @param event 
    */
+  public puase(event, stockChart) {
+    this.isRuning = !this.isRuning;
+    this.notificationService.info("Info", "Simulacion pausada");
+    this.agentService.pause(this.agent.id);        
+  }
+
+   /**
+   * Stop the agent simulation
+   * @param event 
+   */
   public stop(event, stockChart) {
     this.isRuning = !this.isRuning;
     this.notificationService.info("Info", "Simulacion detenida");

@@ -69,6 +69,14 @@ export class AgentService extends BaseService {
      * Stop the simulation of a particular agent      
      * @memberof AgentService
      */
+    public pause(id: number): void {
+        this.execute('pause', id);
+    }
+
+    /**
+     * Stop the simulation of a particular agent      
+     * @memberof AgentService
+     */
     public stop(id: number): void {
         this.execute('stop', id);
     }
