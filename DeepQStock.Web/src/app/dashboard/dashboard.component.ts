@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, EventEmitter, Input, Output, NgZone } fro
 import { ActivatedRoute, Router } from '@angular/router';
 import { Agent } from '../models/agent';
 import { StockExchange } from '../models/stock-exchange';
-import { OnDayCompletedArgs } from '../models/on-day-completed-args';
+import { OnDayComplete } from '../models/on-day-complete';
 import { AgentService } from '../services/agent-service';
 import { StockExchangeService } from '../services/stock-exchange-service';
 import { NotificationsService } from 'angular2-notifications';
@@ -20,8 +20,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Public fields
   public agent: Agent = new Agent();
   public stock: StockExchange = new StockExchange();
-  public today = new OnDayCompletedArgs();
-  public daysCompleted: OnDayCompletedArgs[] = [];
+  public today = new OnDayComplete();
+  public daysCompleted: OnDayComplete[] = [];
   public days: any[] = [];
   public isRuning: boolean;
 
@@ -48,10 +48,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.sub = this.route.params.subscribe(params => {
       this.slimLoadingBarService.start();
       this.agentService
-        .getById(+params['id'])
-        .then(a => this.agent = a)
+        .getById(+params['id'])        
+        .then(a => this.agent = a)        
         .then(a => this.stockExchangeService.getById(this.agent.stockExchangeParametersId))
-        .then(s => this.stock = s);
+        .then(s => this.stock = s)        
     });
   }
 
@@ -67,7 +67,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Execute when a simulation day is completed
    * @param args 
    */
-  public onDayCompleted(args: OnDayCompletedArgs) {
+  public onDayCompleted(args: OnDayComplete) {
     if (this.isRuning && args) {
       args.date = new Date(args.date);
       this.zone.run(() => this.today = args);
@@ -90,7 +90,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Stop the agent simulation
    * @param event 
    */
-  public puase(event, stockChart) {
+  public pause(event, stockChart) {
     this.isRuning = !this.isRuning;
     this.notificationService.info("Info", "Simulacion pausada");
     this.agentService.pause(this.agent.id);        
@@ -105,7 +105,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.notificationService.info("Info", "Simulacion detenida");
     this.agentService.stop(this.agent.id);
     stockChart.clearMarkers();
-    this.today = new OnDayCompletedArgs();
+    this.today = new OnDayComplete();
   }
 
   /**

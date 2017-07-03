@@ -1,7 +1,7 @@
 
 import { Injectable, EventEmitter } from '@angular/core';
 import { Agent } from '../models/agent';
-import { OnDayCompletedArgs } from '../models/on-day-completed-args';
+import { OnDayComplete } from '../models/on-day-complete';
 import { BaseService } from './base-service';
 
 /**
@@ -14,7 +14,7 @@ import { BaseService } from './base-service';
 export class AgentService extends BaseService {
 
     // public events    
-    public onDayCompleted: EventEmitter<OnDayCompletedArgs>;
+    public onDayCompleted: EventEmitter<OnDayComplete>;
     public onCreatedAgent: EventEmitter<Agent>;
 
     /**
@@ -25,7 +25,7 @@ export class AgentService extends BaseService {
     constructor() {
         super('agentHub');
 
-        this.onDayCompleted = new EventEmitter<OnDayCompletedArgs>();
+        this.onDayCompleted = new EventEmitter<OnDayComplete>();
         this.onCreatedAgent = new EventEmitter<Agent>();
 
         this.proxy.on('onCreatedAgent', a => this.onCreatedAgent.emit(a));
@@ -46,7 +46,7 @@ export class AgentService extends BaseService {
      * @param id
      */
     public getById(id: number): Promise<Agent> {
-        return this.execute('getById', id)
+        return this.execute('getById', id);
     }
 
     /**
@@ -55,6 +55,10 @@ export class AgentService extends BaseService {
      */
     public save(agent: Agent) {
         return this.execute('save', agent);
+    }
+
+    public getDecisions(id: number) {
+        return this.execute('getDecisions', id);
     }
 
     /**

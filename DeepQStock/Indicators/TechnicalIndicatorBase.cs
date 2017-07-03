@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 
 namespace DeepQStock.Indicators
 {
-    public abstract class TechnicalIndicatorBase : BaseModel, ITechnicalIndicator
+    public class TechnicalIndicatorBase : BaseModel, ITechnicalIndicator
     {
+        public string ClassType { get; set; }
+
         /// <summary>
         /// Stock Exchange id
         /// </summary>
@@ -29,12 +31,21 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public virtual string Name { get; }   
+        public virtual string Name { get; }
+
+
+        public TechnicalIndicatorBase()
+        {
+            ClassType = GetType().FullName;
+        }
 
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public virtual IEnumerable<double> Update(Period period);
+        public virtual IEnumerable<double> Update(Period period)
+        {
+            return null;
+        }
     }
 }

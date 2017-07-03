@@ -5,9 +5,9 @@ import { ActionType } from './enums';
  * On day completed arguments
  * 
  * @export
- * @class OnDayCompletedArgs
+ * @class OnDayComplete
  */
-export class OnDayCompletedArgs {
+export class OnDayComplete {
 
     // Public Properties
     public dayNumber: number;
@@ -21,9 +21,9 @@ export class OnDayCompletedArgs {
     public period: Period;
 
     /**
-     * Creates an instance of OnDayCompletedArgs.
+     * Creates an instance of OnDayComplete.
      * 
-     * @memberof OnDayCompletedArgs
+     * @memberof OnDayComplete
      */
     constructor() {
         this.period = new Period();        

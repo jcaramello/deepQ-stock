@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Enums;
+using DeepQStock.Stocks;
 using DeepQStock.Storage;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,11 @@ namespace DeepQStock.Agents
         /// Agent Status
         /// </summary>
         public AgentStatus Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets my property.
+        /// </summary>
+        public IEnumerable<OnDayComplete> Decisions { get; set; }
 
         #endregion
 

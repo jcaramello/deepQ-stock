@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Domain;
+using DeepQStock.Enums;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,15 @@ namespace DeepQStock.Storage
 {
     public class StateStorage : BaseStorage<State>
     {
+        #region << Private >>         
+
+        /// <summary>
+        /// Gets or sets the period storage.
+        /// </summary>
+        private PeriodStorage PeriodStorage { get; set; }
+
+        #endregion
+
         #region << Constructor >>
 
         /// <summary>
@@ -18,6 +28,7 @@ namespace DeepQStock.Storage
         /// <param name="conn">The CTX.</param>
         public StateStorage(IConnectionMultiplexer conn) : base(conn)
         {
+            PeriodStorage = new PeriodStorage(conn);
         }
 
         #endregion
@@ -30,17 +41,13 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         public override IEnumerable<State> GetAll()
         {
-            IEnumerable<State> all = null;
+            return base.GetAll().Select(s => 
+            {
+                s.Clone();
+                LoadLayers(s);
 
-          
-                all = GetAll().Select(s => s.Clone());                 
-                foreach (var state in all)
-                {
-                    LoadLayers(state);
-                }                
-                    
-
-            return all;
+                return s;
+            });                      
         }
 
         /// <summary>
@@ -50,18 +57,15 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         public override State GetById(long id)
         {
-            State state = null;
-           
-                state = GetById(id);
+            State state = base.GetById(id);
 
-                if (state != null)
-                {
-                    // We have to do this trick beacuase Redis is created the State object using reflection and it's not intializating the state in correct way
-                    state = state.Clone();
-                    LoadLayers(state);
-                }                
-                     
-
+            if (state != null)
+            {
+                // We have to do this trick beacuase Redis is created the State object using reflection and it's not intializating the state in correct way
+                state = state.Clone();
+                LoadLayers(state);
+            }
+            
             return state;
         }
 
@@ -71,18 +75,16 @@ namespace DeepQStock.Storage
         /// <param name="item">The item.</param>        
         public override void Save(State item)
         {
-        
-                var statePeriods = item.DayLayer.Concat(item.WeekLayer).Concat(item.MonthLayer);
-                SaveLayers(statePeriods);
+            var periods = item.DayLayer.Concat(item.WeekLayer).Concat(item.MonthLayer).ToList();
+            periods.ForEach(p => PeriodStorage.Save(p));
 
-                if (item.Id == 0)
-                {
-                    item.Id = GetNextSequence();
-                }
+            if (item.Id == 0)
+            {
+                item.Id = GetNextSequence();
+            }
 
-                item.PeriodIds = item.FlattenPeriods.Select(p => p.Id).ToList();
-                Save(item);
-            
+            item.PeriodIds = periods.Select(p => p.Id).ToList();
+            base.Save(item);
         }
 
         #endregion
@@ -95,46 +97,25 @@ namespace DeepQStock.Storage
         /// <param name="client">The client.</param>
         /// <param name="state">The state.</param>
         private void LoadLayers(State state)
-        {            
-            //var periods = GetByIds(state.PeriodIds);
-            //foreach (var p in periods.OrderByDescending(p => p.Date))
-            //{
-            //    switch (p.PeriodType)
-            //    {
-            //        case Enums.PeriodType.Day:
-            //            state.DayLayer.Enqueue(p);
-            //            break;
-            //        case Enums.PeriodType.Week:
-            //            state.WeekLayer.Enqueue(p);
-            //            break;
-            //        case Enums.PeriodType.Month:
-            //            state.MonthLayer.Enqueue(p);
-            //            break;                    
-            //    }
-            //}
-        }
-
-        /// <summary>
-        /// Saves the layers.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <param name="layer">The layer.</param>
-        private void SaveLayers(IEnumerable<Period> layer)
         {
-          
-            var unsavedPeriods = layer.Where(p => p.Id == 0).ToList() ;
+            var periods = PeriodStorage.GetByIds(state.PeriodIds);
 
-            foreach (var period in unsavedPeriods)
+            foreach (var p in periods.OrderByDescending(p => p.Date))
             {
-                period.Id = GetNextSequence();
+                switch (p.PeriodType)
+                {
+                    case PeriodType.Day:
+                        state.DayLayer.Enqueue(p);
+                        break;
+                    case PeriodType.Week:
+                        state.WeekLayer.Enqueue(p);
+                        break;
+                    case PeriodType.Month:
+                        state.MonthLayer.Enqueue(p);
+                        break;
+                }
             }
-
-            if (unsavedPeriods.Count > 0)
-            {
-                //unsavedPeriods.ForEach(p => Save(p));
-            }            
         }
-
         #endregion
 
     }

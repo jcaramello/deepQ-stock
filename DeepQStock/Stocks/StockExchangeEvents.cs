@@ -1,15 +1,17 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Storage;
+using Newtonsoft.Json;
 using System;
 
 namespace DeepQStock.Stocks
 {
-    public class OnEpisodeComplete : EventArgs
+    public class OnEpisodeComplete : BaseModel
     {
         public double Reward { get; set; }
     }   
 
-    public class OnDayComplete : EventArgs
+    public class OnDayComplete : BaseModel
     {
         /// <summary>
         /// Gets or sets the agent identifier.
@@ -58,7 +60,7 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// Gets or sets the actual position.
-        /// </summary>
+        /// </summary>        
         public Period Period { get; set; }
     }
 }

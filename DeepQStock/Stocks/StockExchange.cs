@@ -10,6 +10,7 @@ using System.Linq;
 using DeepQStock.Agents;
 using DeepQStock.Storage;
 using Hangfire;
+using Hangfire.Server;
 
 namespace DeepQStock.Stocks
 {
@@ -133,7 +134,7 @@ namespace DeepQStock.Stocks
         /// List of stock exchange  daily indicators used in each state
         /// </summary>
         [JsonIgnore]
-        public IList<ITechnicalIndicator> DailyIndicators
+        public IList<TechnicalIndicatorBase> DailyIndicators
         {
             get
             {
@@ -145,7 +146,7 @@ namespace DeepQStock.Stocks
         /// List of stock exchange  weekly indicators used in each state
         /// </summary>
         [JsonIgnore]
-        public IList<ITechnicalIndicator> WeeklyIndicators
+        public IList<TechnicalIndicatorBase> WeeklyIndicators
         {
             get
             {
@@ -157,7 +158,7 @@ namespace DeepQStock.Stocks
         /// List of stock exchange monthly indicators used in each state
         /// </summary>
         [JsonIgnore]
-        public IList<ITechnicalIndicator> MonthlyIndicators
+        public IList<TechnicalIndicatorBase> MonthlyIndicators
         {
             get
             {
@@ -228,13 +229,13 @@ namespace DeepQStock.Stocks
                 while (true)
                 {
                     Simulate(token);
+                    ClearDesicions();
                     SaveResults();
                 }
             }
-            catch (Exception)
+            catch (JobAbortedException)
             {
-                Shutdown();
-                throw;
+                Shutdown();                
             }
         }         
 
@@ -304,9 +305,9 @@ namespace DeepQStock.Stocks
                     CurrentState = Context.StateStorage.GetById(Parameters.CurrentStateId);
                     var indicators = Context.Indicators.GetAll().Where(i => i.StockExchangeId == Parameters.Id);
 
-                    Parameters.DailyIndicators = indicators.Where(i => i.Type == PeriodType.Day).Cast<ITechnicalIndicator>().ToList();
-                    Parameters.WeeklyIndicators = indicators.Where(i => i.Type == PeriodType.Week).Cast<ITechnicalIndicator>().ToList();
-                    Parameters.MonthlyIndicators = indicators.Where(i => i.Type == PeriodType.Month).Cast<ITechnicalIndicator>().ToList();
+                    Parameters.DailyIndicators = indicators.Where(i => i.Type == PeriodType.Day).ToList();
+                    Parameters.WeeklyIndicators = indicators.Where(i => i.Type == PeriodType.Week).ToList();
+                    Parameters.MonthlyIndicators = indicators.Where(i => i.Type == PeriodType.Month).ToList();
 
                     DataProvider.Seek(CurrentState.Today.Date.AddDays(1));
                 }                
@@ -314,7 +315,7 @@ namespace DeepQStock.Stocks
         }
 
         /// <summary>
-        /// 
+        /// Shutdowns this instance.
         /// </summary>
         public void Shutdown()
         {
@@ -326,6 +327,9 @@ namespace DeepQStock.Stocks
                 Parameters.CurrentStateId = CurrentState.Id;
                 Context.StockExchanges.Save(Parameters);
 
+                SaveIndicators(DailyIndicators);
+                SaveIndicators(WeeklyIndicators);
+                SaveIndicators(MonthlyIndicators);
             }
         }
 
@@ -476,7 +480,7 @@ namespace DeepQStock.Stocks
         /// <param name="reward">The reward.</param>
         private void DayCompleted(ActionType action, double reward)
         {
-            var args = new OnDayComplete()
+            var dayCompleted = new OnDayComplete()
             {
                 AgentId = Agent.Parameters.Id,
                 DayNumber = DaysSimulated,
@@ -486,11 +490,13 @@ namespace DeepQStock.Stocks
                 AccumulatedProfit = Profits,
                 AnnualProfits = AnnualProfits,
                 AnnualRent = AnnualRent,
-                TotalOfYears = TotalOfYears,
-                Period = CurrentPeriod
+                TotalOfYears = TotalOfYears,                
             };
 
-            Context.Publish(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(args));
+            Context.OnDayCompleted.Save(dayCompleted);
+
+            dayCompleted.Period = CurrentPeriod;
+            Context.Publish(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(dayCompleted));
         }
 
         /// <summary>
@@ -514,6 +520,28 @@ namespace DeepQStock.Stocks
 
         }
 
+
+        /// <summary>
+        /// Saves the indicators.
+        /// </summary>
+        /// <param name="indicators">The indicators.</param>
+        private void SaveIndicators(IEnumerable<ITechnicalIndicator> indicators)
+        {
+            foreach (var indicator in indicators)
+            {
+                indicator.StockExchangeId = Parameters.Id;
+                Context.Indicators.Save(indicator as TechnicalIndicatorBase);
+            }
+        }
+
+        /// <summary>
+        /// Clears the desicions.
+        /// </summary>
+        private void ClearDesicions()
+        {
+            var decisions = Context.OnDayCompleted.GetAll().Where(d => d.AgentId == Agent.Parameters.Id);
+            Context.OnDayCompleted.Delete(decisions);
+        }
         #endregion
 
     }

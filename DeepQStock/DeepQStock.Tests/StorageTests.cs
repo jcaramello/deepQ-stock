@@ -84,6 +84,7 @@ namespace DeepQStock.Tests
             var retreivedState = StateStorage.GetById(state.Id);
 
             retreivedState.ShouldBeEquivalentTo(state);
+            retreivedState.Today.Date.Should().Be(state.Today.Date);
 
             retreivedState.Size = state.Size + 1;
             StateStorage.Save(retreivedState);

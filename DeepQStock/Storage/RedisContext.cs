@@ -13,9 +13,10 @@ namespace DeepQStock.Storage
         public BaseStorage<StockExchangeParameters> StockExchanges { get; set; }
         public BaseStorage<DeepRLAgentParameters> Agents { get; set; }
         public BaseStorage<QNetworkParameters> QNetworks { get; set; }
-        public BaseStorage<SimulationResult> SimulationResults { get; set; }
-        public BaseStorage<TechnicalIndicatorBase> Indicators { get; set; }
+        public BaseStorage<SimulationResult> SimulationResults { get; set; }        
+        public BaseStorage<OnDayComplete> OnDayCompleted { get; set; }
 
+        public TechnicalIndicatorStorage Indicators { get; set; }
         public StateStorage StateStorage { get; set; }
 
         // Privates
@@ -30,10 +31,11 @@ namespace DeepQStock.Storage
             QNetworks = new BaseStorage<QNetworkParameters>(redis);
             Agents = new BaseStorage<DeepRLAgentParameters>(redis);
             StockExchanges = new BaseStorage<StockExchangeParameters>(redis);
-            SimulationResults = new BaseStorage<SimulationResult>(redis);
-            Indicators = new BaseStorage<TechnicalIndicatorBase>(redis);
+            SimulationResults = new BaseStorage<SimulationResult>(redis);            
+            OnDayCompleted = new BaseStorage<OnDayComplete>(redis);
 
             StateStorage = new StateStorage(redis);
+            Indicators = new TechnicalIndicatorStorage(redis);
 
             Subscriber = redis.GetSubscriber();
         }

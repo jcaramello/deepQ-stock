@@ -64,7 +64,20 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public DeepRLAgentParameters GetById(long id)
         {
-            return Context.Agents.GetById(id);
+            var agent = Context.Agents.GetById(id);
+            agent.Decisions = GetDecisions(id);
+
+            return agent;
+        }
+
+        /// <summary>
+        /// Gets the decisions.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        public IEnumerable<OnDayComplete> GetDecisions(long id)
+        {
+            return Context.OnDayCompleted.GetAll().Where(d => d.AgentId == id);
         }
 
         /// <summary>

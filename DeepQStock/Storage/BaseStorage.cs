@@ -15,7 +15,7 @@ namespace DeepQStock.Storage
         /// <summary>
         /// Gets or sets the redis manager.
         /// </summary>
-        private IDatabase Database { get; set; }
+        protected IDatabase Database { get; set; }
 
         /// <summary>
         /// The Type name
@@ -94,7 +94,7 @@ namespace DeepQStock.Storage
                 Database.StringSet(SequenceTpl, 1);
             }
 
-            var id = long.Parse(Database.StringGet(SequenceTpl));            
+            var id = long.Parse(Database.StringGet(SequenceTpl));
 
             Database.SortedSetAdd(IndexTpl, GetKey(id), id);
 
@@ -105,9 +105,16 @@ namespace DeepQStock.Storage
         /// Gets the keys.
         /// </summary>
         /// <returns></returns>
-        protected RedisKey[] GetKeys()
-        {            
-            return Database.SortedSetRangeByScore(IndexTpl).Select(s => (RedisKey)s.ToString()).ToArray();
+        protected RedisKey[] GetKeys(IEnumerable<long> ids = null)
+        {
+            var keys = Database.SortedSetRangeByScore(IndexTpl).Select(s => (RedisKey)s.ToString());
+
+            if (ids != null)
+            {
+                keys = keys.Where(k => ids.Contains(long.Parse(k.ToString().Split(':').Last())));
+            }
+
+            return keys.ToArray();
         }
 
         #endregion
@@ -137,7 +144,16 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         public virtual T GetById(long id)
         {
-            return JsonConvert.DeserializeObject<T>(Database.StringGet(GetKey(id)));
+            var period = Database.StringGet(GetKey(id));
+            if (period.HasValue)
+            {
+                return JsonConvert.DeserializeObject<T>(period);
+            }
+            else
+            {
+                return default(T);
+            }
+
         }
 
         /// <summary>
@@ -147,7 +163,10 @@ namespace DeepQStock.Storage
         /// <returns></returns>
         public virtual IEnumerable<T> GetByIds(IEnumerable<long> ids)
         {
-            throw new NotImplementedException();
+            var keys = GetKeys(ids);
+            var models = Database.StringGet(keys);
+
+            return models.Select(m => JsonConvert.DeserializeObject<T>(m));
         }
 
         /// <summary>
@@ -176,6 +195,18 @@ namespace DeepQStock.Storage
 
             Database.SortedSetRemove(IndexTpl, key);
             Database.KeyDelete(key);
+        }
+
+        /// <summary>
+        /// Deletes an item of type T from the storage.
+        /// </summary>
+        /// <param name="model">The item.</param>
+        public virtual void Delete(IEnumerable<T> models)
+        {
+            var keys = models.Select(m => GetKey(m.Id));
+
+            Database.SortedSetRemove(IndexTpl, keys.Cast<RedisValue>().ToArray());
+            Database.KeyDelete(keys.Cast<RedisKey>().ToArray());
         }
 
         #endregion

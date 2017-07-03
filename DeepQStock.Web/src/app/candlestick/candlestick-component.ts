@@ -2,7 +2,7 @@ import { Component, HostListener, EventEmitter, Input, Output, SimpleChanges } f
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { StockExchangeService } from '../services/stock-exchange-service';
 import { Agent } from '../models/agent';
-import { OnDayCompletedArgs } from '../models/on-day-completed-args';
+import { OnDayComplete } from '../models/on-day-complete';
 import { StockExchange } from '../models/stock-exchange';
 import { Period } from '../models/period';
 import { ActionType } from '../models/enums';
@@ -25,7 +25,7 @@ export class CandlestickComponent {
   public stock: StockExchange;
 
   @Input()
-  public day: OnDayCompletedArgs;
+  public day: OnDayComplete;
 
   private stockEvents = [];
 

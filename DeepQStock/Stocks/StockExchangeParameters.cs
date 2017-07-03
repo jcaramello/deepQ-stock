@@ -47,19 +47,19 @@ namespace DeepQStock.Stocks
         /// Gets or sets the indicators.
         /// </summary>
         [JsonIgnore]
-        public IList<ITechnicalIndicator> DailyIndicators { get; set; }
+        public IList<TechnicalIndicatorBase> DailyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the weekly indicators.
         /// </summary>
         [JsonIgnore]
-        public IList<ITechnicalIndicator> WeeklyIndicators { get; set; }
+        public IList<TechnicalIndicatorBase> WeeklyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the monthly indicators.
         /// </summary>
         [JsonIgnore]
-        public IList<ITechnicalIndicator> MonthlyIndicators { get; set; }
+        public IList<TechnicalIndicatorBase> MonthlyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the transaction cost.
@@ -97,7 +97,7 @@ namespace DeepQStock.Stocks
             TransactionCost = 0.01;            
             SimulationVelocity = 0;
             RewardCalculator = RewardCalculators.WinningsOverLoosings;
-            DailyIndicators = new List<ITechnicalIndicator>()
+            DailyIndicators = new List<TechnicalIndicatorBase>()
             {
                 new SimpleMovingAverage(8),
                 new ExponentialMovingAverage(20),
@@ -109,7 +109,7 @@ namespace DeepQStock.Stocks
                 new MACD(),
                 new BollingerBandsPercentB()
             };
-            WeeklyIndicators = new List<ITechnicalIndicator>()
+            WeeklyIndicators = new List<TechnicalIndicatorBase>()
             {
                 new SimpleMovingAverage(8),
                 new ExponentialMovingAverage(20),
@@ -121,7 +121,7 @@ namespace DeepQStock.Stocks
                 new MACD(),
                 new BollingerBandsPercentB()
             };
-            MonthlyIndicators = new List<ITechnicalIndicator>()
+            MonthlyIndicators = new List<TechnicalIndicatorBase>()
             {
                 new SimpleMovingAverage(8),
                 new ExponentialMovingAverage(20),
