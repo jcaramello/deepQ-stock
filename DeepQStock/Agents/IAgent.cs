@@ -21,6 +21,11 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Called when [episode complete].
         /// </summary>        
-        void OnEpisodeComplete();  
+        void OnEpisodeComplete();
+
+        /// <summary>
+        /// Saves this instance.
+        /// </summary>
+        void Save(); 
     }
 }

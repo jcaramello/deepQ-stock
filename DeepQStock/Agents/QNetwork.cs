@@ -58,7 +58,7 @@ namespace DeepQStock.Agents
         public QNetwork(string path)
         {
             Parameters = new QNetworkParameters();
-            FileInfo networkFile = new FileInfo(string.Format(@"{0}\QNetwork.eg", path));
+            FileInfo networkFile = new FileInfo(path);
             NeuralNetwork = (BasicNetwork)(Encog.Persist.EncogDirectoryPersistence.LoadObject(networkFile));
 
         }
@@ -132,9 +132,13 @@ namespace DeepQStock.Agents
             } while (train.Error > Parameters.TrainingError && epoch < Parameters.MaxIterationPerTrainging);
         }
 
+        /// <summary>
+        /// Saves the specified path.
+        /// </summary>
+        /// <param name="path">The path.</param>
         public void Save(string path)
         {
-            FileInfo networkFile = new FileInfo(string.Format(@"{0}\QNetwork.eg", path));
+            FileInfo networkFile = new FileInfo(path);
             Encog.Persist.EncogDirectoryPersistence.SaveObject(networkFile, (BasicNetwork)NeuralNetwork);
         }
 

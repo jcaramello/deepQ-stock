@@ -80,7 +80,7 @@ export class CandlestickComponent {
           
           type: "sign",
           graph: this.priceGraph,
-          text: day.selectedAction == ActionType.Buy ? "B" : "S",
+          text: day.selectedAction == ActionType.Buy ? "C" : "V",
           backgroundColor: day.selectedAction == ActionType.Buy ? "#20a8d8" : "#FFBF00",
           description: ""
         };
@@ -186,7 +186,7 @@ export class CandlestickComponent {
         date: new Date(d.date),        
         type: "sign",
         graph: this.priceGraph,
-        text: d.selectedAction == ActionType.Buy ? "B" : "S",
+        text: d.selectedAction == ActionType.Buy ? "C" : "V",
         backgroundColor: d.selectedAction == ActionType.Buy ? "#20a8d8" : "#FFBF00",
         description: ""
       };

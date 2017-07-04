@@ -5,6 +5,7 @@ using System.Linq;
 using DeepQStock.Utils;
 using Encog.Engine.Network.Activation;
 using DeepQStock.Domain;
+using System.IO;
 
 namespace DeepQStock.Agents
 {
@@ -58,8 +59,27 @@ namespace DeepQStock.Agents
         /// </summary>
         public event EventHandler<OnTrainingEpochCompleteArgs> OnTrainingEpochComplete;
 
+        /// <summary>
+        /// Gets the network path.
+        /// </summary>
+        private string TempFolder
+        {
+            get
+            {
+                return string.Format(@"{0}deepQStock", Path.GetTempPath());
+            }
+        }
 
-        public string NetworkPath { get; set; }
+        /// <summary>
+        /// Gets the network path.
+        /// </summary>
+        private string NetworkPath
+        {
+            get
+            {
+                return string.Format(@"{0}\Agent-{1}",  TempFolder, Parameters.Id);
+            }
+        }
 
         #endregion
 
@@ -124,9 +144,19 @@ namespace DeepQStock.Agents
             UpdateKnowledge();
         }
 
-        public void Save(string path)
+        /// <summary>
+        /// Saves the specified path.
+        /// </summary>        
+        public void Save()
         {
-            Q.Save(path);
+            if (!Directory.Exists(TempFolder))
+            {
+                Directory.CreateDirectory(TempFolder);
+            }
+
+            Q.Save(NetworkPath);
+
+            //Save Memory Replay
         }
 
         #endregion
@@ -245,8 +275,8 @@ namespace DeepQStock.Agents
         /// </summary>
         /// <param name="state">The state.</param>
         private void InitializeQNetwork(State state)
-        {
-            if (!string.IsNullOrEmpty(NetworkPath))
+        {            
+            if (File.Exists(NetworkPath))
             {
                 Q = new QNetwork(NetworkPath);
             }

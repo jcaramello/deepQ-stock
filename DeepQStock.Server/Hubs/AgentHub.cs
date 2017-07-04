@@ -43,7 +43,10 @@ namespace DeepQStock.Server.Hubs
         public AgentHub(RedisContext ctx)
         {
             Context = ctx;
-            Context.Subscribe(RedisPubSubChannels.OnDayComplete, (c, a) => OnDayComplete(JsonConvert.DeserializeObject<OnDayComplete>(a)));                       
+            Context.Subscribe(RedisPubSubChannels.OnDayComplete, (c, a) =>
+            {
+                OnDayComplete(JsonConvert.DeserializeObject<OnDayComplete>(a));
+            });
             AgentListeners = new Dictionary<string, IList<string>>();
         }
 
@@ -146,7 +149,7 @@ namespace DeepQStock.Server.Hubs
         public string Start(long id)
         {
             var jobId = BackgroundJob.Enqueue<StockExchange>(s => s.Run(JobCancellationToken.Null, id));
-            
+
             ActiveAgents.TryAdd(id, jobId);
             Subscribe(id);
 
@@ -163,7 +166,7 @@ namespace DeepQStock.Server.Hubs
             agent.Status = AgentStatus.Paused;
 
             Context.Agents.Save(agent);
-            Stop(id);   
+            Stop(id);
         }
 
         /// <summary>
@@ -187,7 +190,7 @@ namespace DeepQStock.Server.Hubs
         /// <param name="id"></param>
         public void Reset(int id)
         {
-           
+
         }
 
     }

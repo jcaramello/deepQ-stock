@@ -106,7 +106,7 @@ namespace DeepQStock.Console
 
                         stock.CurrentState = null;
                         stock.DataProvider.Seek(startDate: endTraining);
-                        agent.Save(@"./");
+                        agent.Save();
 
 
                         agentParameters.DiscountFactor = options.DiscountFactor > 0 ? options.DiscountFactor : agentParameters.DiscountFactor;
@@ -114,9 +114,7 @@ namespace DeepQStock.Console
                         agentParameters.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : agentParameters.MiniBatchSize;
                         agentParameters.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : agentParameters.MemoryReplaySize;
 
-                        agent = new DeepRLAgent(agentParameters);
-
-                        agent.NetworkPath = "./";
+                        agent = new DeepRLAgent(agentParameters);                        
                         stock.Agent = agent;
 
                         stockTask = Task.Run(() => stock.Run(new JobCancellationToken(false)));
