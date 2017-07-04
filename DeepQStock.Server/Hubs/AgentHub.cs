@@ -77,7 +77,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public IEnumerable<OnDayComplete> GetDecisions(long id)
         {
-            return Context.OnDayCompleted.GetAll().Where(d => d.AgentId == id);
+            return Context.OnDayCompleted.GetAll().Where(d => d.AgentId == id).OrderBy(d => d.Date);
         }
 
         /// <summary>

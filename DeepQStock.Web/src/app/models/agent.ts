@@ -1,5 +1,5 @@
 import { QNetwork } from './q-network';
-import { OnDayCompletedArgs } from './on-day-completed-args';
+import { OnDayComplete } from './on-day-complete';
 
 /**
  * Agent
@@ -20,7 +20,7 @@ export class Agent {
     public qNetwork: QNetwork
     public qNetworkId: number;
     public stockExchangeParametersId: number;
-    public decisions: OnDayCompletedArgs[];
+    public decisions: OnDayComplete[];
 
     /**
      * Creates an instance of Agent.

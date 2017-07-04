@@ -60,7 +60,12 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// Gets or sets the actual position.
-        /// </summary>        
+        /// </summary>               
         public Period Period { get; set; }
+
+        /// <summary>
+        /// PeriodId
+        /// </summary>
+        public long PeriodId { get; set; }
     }
 }

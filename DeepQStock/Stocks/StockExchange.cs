@@ -490,12 +490,11 @@ namespace DeepQStock.Stocks
                 AccumulatedProfit = Profits,
                 AnnualProfits = AnnualProfits,
                 AnnualRent = AnnualRent,
-                TotalOfYears = TotalOfYears,                
+                TotalOfYears = TotalOfYears,
+                Period = CurrentPeriod
             };
 
-            Context.OnDayCompleted.Save(dayCompleted);
-
-            dayCompleted.Period = CurrentPeriod;
+            Context.OnDayCompleted.Save(dayCompleted);            
             Context.Publish(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(dayCompleted));
         }
 

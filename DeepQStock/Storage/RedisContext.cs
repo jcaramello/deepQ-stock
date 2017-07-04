@@ -13,9 +13,9 @@ namespace DeepQStock.Storage
         public BaseStorage<StockExchangeParameters> StockExchanges { get; set; }
         public BaseStorage<DeepRLAgentParameters> Agents { get; set; }
         public BaseStorage<QNetworkParameters> QNetworks { get; set; }
-        public BaseStorage<SimulationResult> SimulationResults { get; set; }        
-        public BaseStorage<OnDayComplete> OnDayCompleted { get; set; }
+        public BaseStorage<SimulationResult> SimulationResults { get; set; }
 
+        public OnDayCompleteStorage OnDayCompleted { get; set; }
         public TechnicalIndicatorStorage Indicators { get; set; }
         public StateStorage StateStorage { get; set; }
 
@@ -32,8 +32,8 @@ namespace DeepQStock.Storage
             Agents = new BaseStorage<DeepRLAgentParameters>(redis);
             StockExchanges = new BaseStorage<StockExchangeParameters>(redis);
             SimulationResults = new BaseStorage<SimulationResult>(redis);            
-            OnDayCompleted = new BaseStorage<OnDayComplete>(redis);
 
+            OnDayCompleted = new OnDayCompleteStorage(redis);
             StateStorage = new StateStorage(redis);
             Indicators = new TechnicalIndicatorStorage(redis);
 

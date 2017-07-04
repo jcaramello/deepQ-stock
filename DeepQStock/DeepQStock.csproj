@@ -39,6 +39,7 @@
     <Compile Include="Stocks\StockExchangeEvents.cs" />
     <Compile Include="Stocks\RewardCalculators.cs" />
     <Compile Include="Storage\BaseModel.cs" />
+    <Compile Include="Storage\OnDayCompleteStorage.cs" />
     <Compile Include="Storage\RedisContext.cs" />
     <Compile Include="Storage\TechnicalIndicatorStorage.cs" />
     <Compile Include="Utils\CsvDataProvider.cs" />

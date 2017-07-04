@@ -27,7 +27,7 @@ export class CandlestickComponent {
   @Input()
   public day: OnDayComplete;
 
-  private stockEvents = [];
+  private stockEvents: AmCharts.StockEvent[] = [];
 
   private chart: AmCharts.AmStockChart;
   private priceGraph: AmCharts.StockGraph;
@@ -66,26 +66,26 @@ export class CandlestickComponent {
    */
   ngOnChanges(changes: SimpleChanges): void {
     this.agent = changes['agent'] && changes['agent'].currentValue;
-    var day = <OnDayCompletedArgs>(changes['day'] && changes['day'].currentValue);
+    var day = <OnDayComplete>(changes['day'] && changes['day'].currentValue);
     var newEvent = false;
 
     if (this.agent && this.agent.id && !this.initialized) {
-      this.init();
+      this.init();      
       this.initialized = true;
     } else if (this.renderComplete) {
 
       if (day && day.selectedAction != ActionType.Wait) {
         var event = {
           date: new Date(day.period.date),
-         // type: day.selectedAction == ActionType.Buy ? "arrowUp" : "arrowDown",
+          
           type: "sign",
           graph: this.priceGraph,
-          text: day.selectedAction == ActionType.Buy ? "B" : "S", 
+          text: day.selectedAction == ActionType.Buy ? "B" : "S",
           backgroundColor: day.selectedAction == ActionType.Buy ? "#20a8d8" : "#FFBF00",
           description: ""
         };
 
-        this.stockEvents.push(event);
+        this.stockEvents.push(<any>event);
         newEvent = true;
       }
 
@@ -181,7 +181,16 @@ export class CandlestickComponent {
     priceGraph.negativeLineColor = "#595959";
     pricePanel.addStockGraph(priceGraph);
 
-    dataSet.stockEvents = this.stockEvents;
+    dataSet.stockEvents = this.stockEvents = this.agent.decisions.map(d => {
+      return <any>{
+        date: new Date(d.date),        
+        type: "sign",
+        graph: this.priceGraph,
+        text: d.selectedAction == ActionType.Buy ? "B" : "S",
+        backgroundColor: d.selectedAction == ActionType.Buy ? "#20a8d8" : "#FFBF00",
+        description: ""
+      };
+    });
 
     var volGraph = new AmCharts.StockGraph();
     volGraph.valueField = "volume";
@@ -250,8 +259,8 @@ export class CandlestickComponent {
   /**
    * Clear all markers
    */
-  public clearMarkers() {    
-    this.chart.dataSets[0].stockEvents = this.stockEvents = [];     
+  public clearMarkers() {
+    this.chart.dataSets[0].stockEvents = this.stockEvents = [];
     this.firstDate = moment(this.chart['firstDate']);
     this.endDate = moment(this.firstDate).add(180, 'days');
     this.chart.zoom(this.firstDate.toDate(), this.endDate.toDate());

@@ -8,6 +8,7 @@ import { StockExchangeService } from '../services/stock-exchange-service';
 import { NotificationsService } from 'angular2-notifications';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 import { ActionType } from '../models/enums';
+import * as _ from 'lodash';
 
 @Component({
   templateUrl: 'dashboard.component.html'
@@ -48,10 +49,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.sub = this.route.params.subscribe(params => {
       this.slimLoadingBarService.start();
       this.agentService
-        .getById(+params['id'])        
-        .then(a => this.agent = a)        
+        .getById(+params['id'])
+        .then(a => {
+          this.agent = a;
+          this.today = _.last(a.decisions) || this.today;  
+          return a;
+        })
         .then(a => this.stockExchangeService.getById(this.agent.stockExchangeParametersId))
-        .then(s => this.stock = s)        
+        .then(s => this.stock = s)
     });
   }
 
@@ -93,13 +98,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public pause(event, stockChart) {
     this.isRuning = !this.isRuning;
     this.notificationService.info("Info", "Simulacion pausada");
-    this.agentService.pause(this.agent.id);        
+    this.agentService.pause(this.agent.id);
   }
 
-   /**
-   * Stop the agent simulation
-   * @param event 
-   */
+  /**
+  * Stop the agent simulation
+  * @param event 
+  */
   public stop(event, stockChart) {
     this.isRuning = !this.isRuning;
     this.notificationService.info("Info", "Simulacion detenida");
