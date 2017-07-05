@@ -55,7 +55,7 @@ namespace DeepQStock.Storage
         public override IEnumerable<OnDayComplete> GetAll()
         {
             var days = base.GetAll().ToList();
-            var periods = PeriodStorage.GetByIds(days.Select(d => d.PeriodId).Distinct());
+            var periods = PeriodStorage.GetByIds(days.Select(d => d.PeriodId).Distinct()).ToList();
             foreach (var day in days)
             {
                 day.Period = periods.Single(p => p.Id == day.PeriodId);

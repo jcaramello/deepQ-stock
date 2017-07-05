@@ -172,15 +172,17 @@ namespace DeepQStock.Agents
         {
             var probability = RandomGenerator.NextDouble();
             var validActions = GetActions();
+            var maxAction = Q[CurrentState].Where(i => validActions.Contains(i.Key)).MaxBy(i => i.Value).Key;
 
             if (probability <= _parameters.eGreedyProbability)
             {
-                var randomIndex = RandomGenerator.Next(validActions.Count);
-                CurrentAction = validActions[randomIndex];
+                var randomActions = validActions.Where(a => a != maxAction).ToList();
+                var randomIndex = RandomGenerator.Next(randomActions.Count);
+                CurrentAction = randomActions[randomIndex];
             }
             else
             {
-                CurrentAction = Q[CurrentState].Where(i => validActions.Contains(i.Key)).MaxBy(i => i.Value).Key;
+                CurrentAction = maxAction;
             }
 
             return CurrentAction;

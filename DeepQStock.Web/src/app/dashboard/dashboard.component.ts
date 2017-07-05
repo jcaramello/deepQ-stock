@@ -44,8 +44,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @memberof DashboardComponent
    */
   ngOnInit() {
-    this.agentService.onDayCompleted.subscribe(this.onDayCompleted.bind(this));
     this.slimLoadingBarService.start();
+    this.agentService.onDayCompleted.subscribe(this.onDayCompleted.bind(this));    
     this.sub = this.route.params.subscribe(params => this.loadData(+params['id']));
   }
 

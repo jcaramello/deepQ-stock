@@ -30,7 +30,7 @@ export class Agent {
      * @memberof Agent
      */
     constructor() {
-        this.eGreedyProbability = 0.05;
+        this.eGreedyProbability = 0.1;
         this.inOutStrategy = 0.33;
         this.miniBatchSize = 50;
         this.discountFactor = 0.8;

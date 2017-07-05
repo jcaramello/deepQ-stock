@@ -298,7 +298,11 @@ namespace DeepQStock.Stocks
                     Parameters.MonthlyIndicators = indicators.Where(i => i.Type == PeriodType.Month).ToList();
 
                     DataProvider.Seek(CurrentState.Today.Date.AddDays(1));
-                }                
+
+                    agentParameters.Status = AgentStatus.Running;
+                    Context.Agents.Save(agentParameters);
+
+                }
             }
         }
 

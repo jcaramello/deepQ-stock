@@ -39,6 +39,7 @@ export class CandlestickComponent {
   private endDate: moment.Moment;
   private renderComplete;
   private numberOfScroll = 0;
+  private initForAgent: number;
 
   /**
    * Creates an instance of BreadcrumbsComponent.
@@ -65,19 +66,22 @@ export class CandlestickComponent {
    * Trigger when inputs changes
    */
   ngOnChanges(changes: SimpleChanges): void {
-    this.agent = changes['agent'] && changes['agent'].currentValue;
+    var currentAgent = changes['agent'] && changes['agent'].currentValue;    
     var day = <OnDayComplete>(changes['day'] && changes['day'].currentValue);
     var newEvent = false;
 
-    if (this.agent && this.agent.id && !this.initialized) {
-      this.init();      
+    if (currentAgent && currentAgent.id && (!this.initialized || currentAgent.id != this.initForAgent)) {
+      this.init();
+      this.agent = currentAgent;
       this.initialized = true;
+      this.initForAgent = this.agent.id;
+      
     } else if (this.renderComplete) {
 
       if (day && day.selectedAction != ActionType.Wait) {
         var event = {
           date: new Date(day.period.date),
-          
+
           type: "sign",
           graph: this.priceGraph,
           text: day.selectedAction == ActionType.Buy ? "C" : "V",
@@ -89,7 +93,7 @@ export class CandlestickComponent {
         newEvent = true;
       }
 
-      if (day.dayNumber > 25) {
+      if (day && day.dayNumber > 25) {
 
         this.firstDate = moment(day.date).add(-90, 'days');
         this.endDate = moment(day.date).add(90, 'days');
@@ -183,7 +187,7 @@ export class CandlestickComponent {
 
     dataSet.stockEvents = this.stockEvents = this.agent.decisions.map(d => {
       return <any>{
-        date: new Date(d.date),        
+        date: new Date(d.date),
         type: "sign",
         graph: this.priceGraph,
         text: d.selectedAction == ActionType.Buy ? "C" : "V",

@@ -151,12 +151,7 @@ namespace DeepQStock.Server.Hubs
             var jobId = BackgroundJob.Enqueue<StockExchange>(s => s.Run(JobCancellationToken.Null, id));
 
             ActiveAgents.TryAdd(id, jobId);
-            Subscribe(id);
-            var agent = Context.Agents.GetById(id);
-            agent.Status = AgentStatus.Running;
-
-            Context.Agents.Save(agent);
-
+            Subscribe(id);           
             return jobId;
         }
 
@@ -170,7 +165,14 @@ namespace DeepQStock.Server.Hubs
             agent.Status = AgentStatus.Paused;
 
             Context.Agents.Save(agent);
-            Stop(id);
+
+            string jobId = null;
+            ActiveAgents.TryRemove(id, out jobId);
+                       
+            if (!string.IsNullOrEmpty(jobId))
+            {
+                BackgroundJob.Delete(jobId);
+            }
         }
 
         /// <summary>
@@ -184,7 +186,6 @@ namespace DeepQStock.Server.Hubs
 
             var agent = Context.Agents.GetById(id);
             agent.Status = AgentStatus.Stoped;
-
             Context.Agents.Save(agent);
 
             if (!string.IsNullOrEmpty(jobId))

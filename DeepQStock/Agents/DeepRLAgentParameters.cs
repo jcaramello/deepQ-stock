@@ -66,7 +66,7 @@ namespace DeepQStock.Agents
         /// </summary>
         public DeepRLAgentParameters()
         {
-            eGreedyProbability = 0.05;
+            eGreedyProbability = 0.1;
             InOutStrategy = 0.33;
             MiniBatchSize = 50;
             DiscountFactor = 0.8;
