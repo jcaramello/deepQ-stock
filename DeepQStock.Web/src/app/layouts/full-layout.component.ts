@@ -5,6 +5,7 @@ import { Agent } from '../models/agent';
 import { StockExchange } from '../models/stock-exchange';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 import { NotificationsService } from 'angular2-notifications';
+import * as _ from 'lodash';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class FullLayoutComponent implements OnInit {
   public status: { isopen: boolean } = { isopen: false };
   public currentStock: StockExchange = new StockExchange();
   public currentAgent: Agent = new Agent();
+  public agentToRemove: Agent;
 
   /**
    * Companies  
@@ -80,7 +82,22 @@ export class FullLayoutComponent implements OnInit {
 
     this.slimLoadingBarService.start();
     this.agentService.getAll().then(a => this.agents = a).then(() => this.slimLoadingBarService.complete());
-    this.agentService.onCreatedAgent.subscribe(a => this.zone.run(() => this.agents.push(a)));
+    this.agentService.onCreatedAgent.subscribe(this.onCreatedAgent.bind(this));
+  }
+
+
+  /**   
+   * Register the new agent
+   * @param {Agent} newAgent 
+   * @memberof FullLayoutComponent
+   */
+  onCreatedAgent(agent: Agent) {
+    var existingAgent = this.agents.filter(a => a.id == agent.id)[0];
+    if (existingAgent) {
+      _.remove(this.agents, a => a.id == agent.id);
+    }
+
+    this.zone.run(() => this.agents.push(agent));
   }
 
   /**
@@ -93,15 +110,25 @@ export class FullLayoutComponent implements OnInit {
   }
 
   /**
+   * Confirm Elimination
+   * @param {any} modal 
+   * @param {any} agent 
+   * @memberof FullLayoutComponent
+   */
+  confirmElimination(modal, agent) {
+    this.agentToRemove = agent;
+    modal.show();
+  }
+
+  /**
    * Save the new stock
    * @memberof FullLayoutComponent
    */
   save(modal) {
     this.slimLoadingBarService.start();
-    this.currentStock.simulationVelocity
     this.stockExchangeService.save(this.currentStock)
       .then(id => {
-        this.currentAgent.stockExchangeParametersId = id;
+        this.currentAgent.stockExchangeId = id;
         this.agentService.save(this.currentAgent);
       })
       .then(() => {
@@ -111,5 +138,26 @@ export class FullLayoutComponent implements OnInit {
       });
   }
 
+  /**
+   * Edit an agent
+   * @param agentId
+   */
+  edit(modal, agent: Agent) {
+    this.currentAgent = agent;
+    this.currentStock = agent.stockExchange;
+    modal.show();
+  }
+
+  /**
+   * Remove an agent 
+   * @memberof FullLayoutComponent
+   */
+  remove(modal) {
+    this.slimLoadingBarService.start();
+    this.agentService.remove(this.agentToRemove.id).then(() =>{
+       this.slimLoadingBarService.complete();
+       modal.hide();
+    })    
+  }
 
 }

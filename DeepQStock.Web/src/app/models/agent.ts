@@ -1,4 +1,5 @@
 import { QNetwork } from './q-network';
+import { StockExchange } from './stock-exchange';
 import { OnDayComplete } from './on-day-complete';
 import { AgentStatus } from './enums';
 
@@ -20,7 +21,8 @@ export class Agent {
     public memoryReplaySize: number;
     public qNetwork: QNetwork
     public qNetworkId: number;
-    public stockExchangeParametersId: number;
+    public stockExchangeId: number;
+    public stockExchange: StockExchange;
     public decisions: OnDayComplete[];
     public status: AgentStatus;
 
@@ -36,5 +38,6 @@ export class Agent {
         this.discountFactor = 0.8;
         this.memoryReplaySize = 500;
         this.qNetwork = new QNetwork();
+        this.stockExchange = new StockExchange();
     }
 }

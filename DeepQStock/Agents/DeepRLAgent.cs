@@ -288,16 +288,16 @@ namespace DeepQStock.Agents
 
                 Q = new QNetwork(p =>
                 {
-                    p.TrainingError = _parameters.QNetworkParameters.TrainingError;
-                    p.MaxIterationPerTrainging = _parameters.QNetworkParameters.MaxIterationPerTrainging;
+                    p.TrainingError = _parameters.QNetwork.TrainingError;
+                    p.MaxIterationPerTrainging = _parameters.QNetwork.MaxIterationPerTrainging;
 
                     // Input Layer
                     p.Layers.Add(new LayerParameters(null, true, inputLength));
 
                     // Hidden Layers
-                    for (int i = 0; i < _parameters.QNetworkParameters.HiddenLayersCount; i++)
+                    for (int i = 0; i < _parameters.QNetwork.HiddenLayersCount; i++)
                     {
-                        p.Layers.Add(new LayerParameters(new ActivationSigmoid(), true, _parameters.QNetworkParameters.NeuronCountForHiddenLayers));
+                        p.Layers.Add(new LayerParameters(new ActivationSigmoid(), true, _parameters.QNetwork.NeuronCountForHiddenLayers));
                     }
 
                     // Output Layer

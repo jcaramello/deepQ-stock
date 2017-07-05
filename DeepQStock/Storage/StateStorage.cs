@@ -87,6 +87,16 @@ namespace DeepQStock.Storage
             base.Save(item);
         }
 
+        /// <summary>
+        /// Deletes an item of type T from the storage.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        public override void Delete(State item)
+        {
+            PeriodStorage.DeleteByIds(item.PeriodIds);
+            base.Delete(item);
+        }
+
         #endregion
 
         #region << Private Methods >>

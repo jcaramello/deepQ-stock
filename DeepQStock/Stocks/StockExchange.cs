@@ -60,7 +60,7 @@ namespace DeepQStock.Stocks
         /// Current State
         /// </summary>
         [JsonIgnore]
-        public State CurrentState { get; set; }       
+        public State CurrentState { get; set; }
 
         /// <summary>
         /// Gets the annual profits.
@@ -214,24 +214,21 @@ namespace DeepQStock.Stocks
 
             try
             {
-                while (true)
-                {
-                    Simulate(token);
-                    ClearDesicions();
-                    SaveResults();
-                }
+                Simulate(token);
+                ClearDesicions();
+                SaveResults();
             }
             catch (JobAbortedException)
             {
-                Shutdown();                
+                Shutdown();
             }
-        }         
+        }
 
         /// <summary>
         /// Simulate the enviroment and the agent integration
         /// </summary>
         protected void Simulate(IJobCancellationToken token)
-        {            
+        {
             IEnumerable<State> episode = null;
             var action = ActionType.Wait;
             double reward = 0.0;
@@ -239,7 +236,7 @@ namespace DeepQStock.Stocks
             episode = NextEpisode();
 
             do
-            {                
+            {
                 foreach (var state in episode)
                 {
                     CurrentState = state;
@@ -267,7 +264,7 @@ namespace DeepQStock.Stocks
                 token.ThrowIfCancellationRequested();
                 episode = NextEpisode();
 
-            } while (episode != null);            
+            } while (episode != null);
         }
 
 
@@ -280,11 +277,11 @@ namespace DeepQStock.Stocks
             if (agentId.HasValue)
             {
                 var agentParameters = Context.Agents.GetById(agentId.Value);
-                agentParameters.QNetworkParameters = Context.QNetworks.GetById(agentParameters.QNetworkParametersId);
+                agentParameters.QNetwork = Context.QNetworks.GetById(agentParameters.QNetworkId);
 
                 Agent = new DeepRLAgent(agentParameters);
                 RewardCalculator = Stocks.RewardCalculators.WinningsOverLoosings;
-                Parameters = Context.StockExchanges.GetById(agentParameters.StockExchangeParametersId);
+                Parameters = Context.StockExchanges.GetById(agentParameters.StockExchangeId);
 
                 DataProvider = new CsvDataProvider(Parameters.CsvDataFilePath, Parameters.EpisodeLength);
 
@@ -311,10 +308,10 @@ namespace DeepQStock.Stocks
         /// </summary>
         public void Shutdown()
         {
-            var agentParameters = Context.Agents.GetById(Agent.Parameters.Id);
+            var agent = Context.Agents.GetById(Agent.Parameters.Id);
 
-            if (agentParameters.Status == AgentStatus.Paused)
-            {                
+            if (agent.Status == AgentStatus.Paused)
+            {
                 Context.StateStorage.Save(CurrentState);
                 Parameters.CurrentStateId = CurrentState.Id;
                 Context.StockExchanges.Save(Parameters);
@@ -323,6 +320,20 @@ namespace DeepQStock.Stocks
                 SaveIndicators(WeeklyIndicators);
                 SaveIndicators(MonthlyIndicators);
                 Agent.Save();
+            }
+
+            if (agent.Status == AgentStatus.Removed)
+            {
+                var decisions = Context.OnDayCompleted.GetAll().Where(d => d.AgentId == agent.Id);
+                if (decisions.Count() > 0)
+                {
+                    Context.OnDayCompleted.DeleteByIds(decisions.Select(d => d.Id));
+                }
+                
+                Context.StateStorage.Delete(CurrentState);
+                Context.StockExchanges.Delete(agent.StockExchange);
+                Context.QNetworks.Delete(agent.QNetwork);
+                Context.Agents.Delete(agent);
             }
         }
 
@@ -487,7 +498,7 @@ namespace DeepQStock.Stocks
                 Period = CurrentState.Today
             };
 
-            Context.OnDayCompleted.Save(dayCompleted);                        
+            Context.OnDayCompleted.Save(dayCompleted);
             Context.Publish(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(dayCompleted));
         }
 
@@ -502,13 +513,13 @@ namespace DeepQStock.Stocks
                 AnnualProfits = AnnualProfits,
                 AnnualRent = AnnualRent,
                 NetCapital = NetCapital,
-                Profits= Profits,
+                Profits = Profits,
                 Earnings = Earnings,
                 Symbol = Agent.Parameters.Symbol,
                 TransactionCost = TransactionCost
             };
 
-            Context.SimulationResults.Save(result);            
+            Context.SimulationResults.Save(result);
 
         }
 
@@ -532,7 +543,7 @@ namespace DeepQStock.Stocks
         private void ClearDesicions()
         {
             var decisions = Context.OnDayCompleted.GetAll().Where(d => d.AgentId == Agent.Parameters.Id);
-            Context.OnDayCompleted.Delete(decisions);
+            Context.OnDayCompleted.DeleteByIds(decisions.Select(d => d.Id));
         }
         #endregion
 

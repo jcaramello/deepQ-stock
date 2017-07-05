@@ -101,4 +101,13 @@ export class AgentService extends BaseService {
     public reset(id: number): void {
         this.execute('reset', id);
     }
+
+    /**
+     * Remove an agent 
+     * @param {number} id 
+     * @memberof AgentService
+     */
+    public remove(id: number){
+        return this.execute('remove', id);
+    }
 }

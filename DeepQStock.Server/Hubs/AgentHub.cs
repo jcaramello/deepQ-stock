@@ -58,7 +58,17 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public IEnumerable<DeepRLAgentParameters> GetAll()
         {
-            return Context.Agents.GetAll();
+            var agents = Context.Agents.GetAll();
+            var stocks = Context.StockExchanges.GetByIds(agents.Select(a => a.StockExchangeId));
+            var networks = Context.QNetworks.GetByIds(agents.Select(a => a.QNetworkId));
+
+            foreach (var a in agents)
+            {
+                a.StockExchange = stocks.Single(s => s.Id == a.StockExchangeId);
+                a.QNetwork = networks.Single(n => n.Id == a.QNetworkId);
+            }
+
+            return agents;
         }
 
         /// <summary>
@@ -69,6 +79,8 @@ namespace DeepQStock.Server.Hubs
         {
             var agent = Context.Agents.GetById(id);
             agent.Decisions = GetDecisions(id);
+            agent.QNetwork = Context.QNetworks.GetById(agent.QNetworkId);
+            agent.StockExchange = Context.StockExchanges.GetById(agent.StockExchangeId);
 
             return agent;
         }
@@ -130,10 +142,10 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public long Save(DeepRLAgentParameters agent)
         {
-            var qNetwork = agent.QNetworkParameters;
+            var qNetwork = agent.QNetwork;
             Context.QNetworks.Save(qNetwork);
-            agent.QNetworkParametersId = qNetwork.Id;
-            agent.QNetworkParameters = null;
+            agent.QNetworkId = qNetwork.Id;
+            agent.QNetwork = null;
 
             Context.Agents.Save(agent);
 
@@ -151,7 +163,7 @@ namespace DeepQStock.Server.Hubs
             var jobId = BackgroundJob.Enqueue<StockExchange>(s => s.Run(JobCancellationToken.Null, id));
 
             ActiveAgents.TryAdd(id, jobId);
-            Subscribe(id);           
+            Subscribe(id);
             return jobId;
         }
 
@@ -168,7 +180,7 @@ namespace DeepQStock.Server.Hubs
 
             string jobId = null;
             ActiveAgents.TryRemove(id, out jobId);
-                       
+
             if (!string.IsNullOrEmpty(jobId))
             {
                 BackgroundJob.Delete(jobId);
@@ -198,9 +210,48 @@ namespace DeepQStock.Server.Hubs
         /// Start the simulation of the agent agentId
         /// </summary>
         /// <param name="id"></param>
-        public void Reset(int id)
+        public void Reset(long id)
         {
 
+        }
+
+        /// <summary>
+        /// Removes the specified identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        public void Remove(long id)
+        {
+            string jobId = null;
+            ActiveAgents.TryRemove(id, out jobId);
+
+            var agent = GetById(id);
+
+            if (agent.Status == AgentStatus.Running)
+            {
+                agent.Status = AgentStatus.Removed;
+                Context.Agents.Save(agent);
+
+                if (!string.IsNullOrEmpty(jobId))
+                {
+                    BackgroundJob.Delete(jobId);
+                }
+
+            }
+            else
+            {
+                var decisions = Context.OnDayCompleted.GetAll().Where(d => d.AgentId == id);
+                if (decisions.Count() > 0)
+                {
+                    Context.OnDayCompleted.DeleteByIds(decisions.Select(d => d.Id));
+                }
+
+                var currentState = Context.StateStorage.GetById(agent.StockExchange.CurrentStateId);
+                
+                Context.StateStorage.Delete(currentState);
+                Context.StockExchanges.Delete(agent.StockExchange);
+                Context.QNetworks.Delete(agent.QNetwork);
+                Context.Agents.Delete(agent);
+            }                       
         }
 
     }

@@ -130,7 +130,7 @@ namespace DeepQStock.Storage
             var keys = GetKeys();
             if (keys.Length > 0)
             {
-                return Database.StringGet(keys).Select(v => JsonConvert.DeserializeObject<T>(v));
+                return Database.StringGet(keys).Select(v => JsonConvert.DeserializeObject<T>(v)).ToList();
             }
             else
             {
@@ -166,7 +166,7 @@ namespace DeepQStock.Storage
             var keys = GetKeys(ids);
             var models = Database.StringGet(keys);
 
-            return models.Select(m => JsonConvert.DeserializeObject<T>(m));
+            return models.Select(m => JsonConvert.DeserializeObject<T>(m)).ToList();
         }
 
         /// <summary>
@@ -201,12 +201,13 @@ namespace DeepQStock.Storage
         /// Deletes an item of type T from the storage.
         /// </summary>
         /// <param name="model">The item.</param>
-        public virtual void Delete(IEnumerable<T> models)
+        public virtual void DeleteByIds(IEnumerable<long> ids)
         {
-            var keys = models.Select(m => GetKey(m.Id));
+            var keys = ids.Select(id => GetKey(id)).ToArray();
+            var values = keys.Select(k => (RedisValue)k).ToArray();
 
-            Database.SortedSetRemove(IndexTpl, keys.Cast<RedisValue>().ToArray());
-            Database.KeyDelete(keys.Cast<RedisKey>().ToArray());
+            Database.SortedSetRemove(IndexTpl, values);
+            Database.KeyDelete(keys.Select(k => (RedisKey)k).ToArray());
         }
 
         #endregion

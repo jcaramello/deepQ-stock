@@ -61,7 +61,7 @@ namespace DeepQStock.Storage
                 day.Period = periods.Single(p => p.Id == day.PeriodId);
             }
 
-            return days;
+            return days.ToList();
         }
 
         /// <summary>

@@ -10,6 +10,7 @@ namespace DeepQStock.Enums
     {
         Running,
         Paused,
-        Stoped
+        Stoped,
+        Removed
     }
 }

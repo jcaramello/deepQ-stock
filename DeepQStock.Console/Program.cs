@@ -43,8 +43,8 @@ namespace DeepQStock.Console
                 agentParameters.eGreedyProbability = options.eGreedyProbability > 0 ? options.eGreedyProbability : agentParameters.eGreedyProbability;
                 agentParameters.MiniBatchSize = options.MiniBatchSize > 0 ? options.MiniBatchSize : agentParameters.MiniBatchSize;
                 agentParameters.MemoryReplaySize = options.MemoryReplaySize > 0 ? options.MemoryReplaySize : agentParameters.MemoryReplaySize;
-                agentParameters.QNetworkParameters.MaxIterationPerTrainging = options.MaxIterationPerTrainging > 0 ? options.MaxIterationPerTrainging : agentParameters.QNetworkParameters.MaxIterationPerTrainging;
-                agentParameters.QNetworkParameters.TrainingError = options.TrainingError > 0 ? options.TrainingError : agentParameters.QNetworkParameters.TrainingError;
+                agentParameters.QNetwork.MaxIterationPerTrainging = options.MaxIterationPerTrainging > 0 ? options.MaxIterationPerTrainging : agentParameters.QNetwork.MaxIterationPerTrainging;
+                agentParameters.QNetwork.TrainingError = options.TrainingError > 0 ? options.TrainingError : agentParameters.QNetwork.TrainingError;
 
                 var agent = new DeepRLAgent(agentParameters); ;
 

@@ -19,7 +19,7 @@ body {
     height: 70vh;
 }
 
-.sidebar ul.nav li.nav-title {
+.sidebar ul.nav li.nav-title a{
     padding: .75rem 1rem;
     font-size: 11px;
     font-weight: 600;
@@ -27,22 +27,28 @@ body {
     text-transform: uppercase;
 }
 
-.sidebar ul.nav li.nav-item a.nav-link.active {
+.sidebar ul.nav li.nav-item.active a{
     color: #fff;
     background: #304047;
 }
 
-.sidebar ul.nav li.nav-item a.nav-link:hover {
+.sidebar ul.nav li.nav-item:hover{
     color: #fff!important;
-    background: #20a8d8!important;
+    background: $brand-primary !important;
+    a {
+        color: #fff!important;
+    }
 }
 
-.sidebar ul.nav li.nav-item a.nav-link {
+.sidebar ul.nav li.nav-item {
     display: block;
     padding: .75rem 1rem;
     color: #fff;
     text-decoration: none;
     background: 0 0;
+    a {
+        color: #fff!important;
+    }
 }
 
 .text-xs-center {
@@ -68,10 +74,32 @@ body {
     margin: 20px auto 50px auto;
     border: 0;
     border-top: 2px solid rgba(0, 0, 0, 0.1);
-    border-color: #20a8d8;
+    border-color: $brand-primary;
 }
 
 a, a:link, a:visited{
-    color: #20a8d8;
+    color: $brand-primary;
     text-decoration: none;
+}
+
+.agent-ops{    
+    & a{
+        &:hover{
+            color: $gray-dark;
+        }
+    }       
+}
+
+.agent-ops-icons{
+    cursor: pointer;
+    color: #fff!important;
+    margin: 1px !important;       
+    &:hover{
+        text-decoration: underline;
+        color:$gray-dark !important;
+    }
+}
+
+.btn-agent-ops{
+    padding: 0px;
 }

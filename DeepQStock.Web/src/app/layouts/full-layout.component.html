@@ -31,7 +31,17 @@
                     <i class="fa fa-line-chart"></i>&nbsp;&nbsp;&nbsp;Agentes
                 </li>
                 <li class="nav-item" *ngFor="let a of agents">
-                    <a class="nav-link" [routerLink]="['/dashboard', a.id]"><i class="fa fa-tag"></i> {{ a.name }}</a>
+                    <div class="row">
+                        <div class="col-7">                        
+                            <a [routerLink]="['/dashboard', a.id]"><i class="fa fa-tag"></i> {{ a.name }}</a>
+                        </div>
+                        <div class="col">
+                            <span class="agent-ops pull-rigth">
+                                <button class="btn btn-link btn-agent-ops" (click)="edit(addEditAgent, a)"><i class="fa fa-edit agent-ops-icons"></i></button>
+                                <button class="btn btn-link btn-agent-ops" (click)="confirmElimination(removeConfirmation, a)"><i class="fa fa-trash agent-ops-icons"></i></button>
+                            </span>          
+                        </div>
+                    </div>          
                 </li>
             </ul>
         </nav>
@@ -79,11 +89,11 @@
                             </div>
                             <br>
                             <div class="row">
-                                <div class="col">                                  
+                                <div class="col">
                                     <label for="discountFactor">Factor de descuento</label>
                                     <md-slider id="discountFactor" [max]="1" [min]="0" [step]="0.1" [thumb-label]="true" [(ngModel)]="currentAgent.discountFactor"></md-slider>
                                 </div>
-                                <div class="col">                                    
+                                <div class="col">
                                     <label for="inOutStrategy">Estrategia de Entrada/Salida</label>
                                     <md-slider id="inOutStrategy" [max]="1" [min]="0" [step]="0.1" [thumb-label]="true" [(ngModel)]="currentAgent.inOutStrategy"></md-slider>
                                 </div>
@@ -159,11 +169,11 @@
                             </div>
                             <br>
                             <div class="row">
-                                <div class="col">                                   
+                                <div class="col">
                                     <label for="transactionCost">Costo de transaccion</label>
                                     <md-slider id="transactionCost" [max]="1" [min]="0" [step]="0.1" [thumb-label]="true" [(ngModel)]="currentStock.transactionCost"></md-slider>
                                 </div>
-                                <div class="col">                                  
+                                <div class="col">
                                     <label for="simulationVelocity">Velocidad de simulacion</label>
                                     <md-slider id="simulationVelocity" [max]="5" [min]="0.2" [step]="0.1" [thumb-label]="true" [(ngModel)]="currentStock.simulationVelocityType"></md-slider>
                                 </div>
@@ -176,6 +186,24 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" (click)="save(addEditAgent)">Guardar</button>
                 <button type="button" class="btn btn-secondary" (click)="addEditAgent.hide()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div bsModal #removeConfirmation="bs-modal" class="modal fade" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog" aria-labelledby="removeConfirmation"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Eliminar agente</h4>                
+            </div>
+            <div class="modal-body">
+                ¿Esta seguro que desea eliminar el agente?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="remove(addEditAgent)">Eliminar</button>
+                <button type="button" class="btn btn-secondary" (click)="removeConfirmation.hide()">Cancelar</button>
             </div>
         </div>
     </div>
