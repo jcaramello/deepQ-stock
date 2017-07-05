@@ -100,7 +100,7 @@ namespace DeepQStock.Storage
         {
             var periods = PeriodStorage.GetByIds(state.PeriodIds);
 
-            foreach (var p in periods.OrderByDescending(p => p.Date))
+            foreach (var p in periods.OrderBy(p => p.Date))
             {
                 switch (p.PeriodType)
                 {

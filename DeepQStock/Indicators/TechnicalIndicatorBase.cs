@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace DeepQStock.Indicators
 {
+    /// <summary>
+    /// Base Class for technical indicators
+    /// </summary>
     public class TechnicalIndicatorBase : BaseModel, ITechnicalIndicator
     {
         public string ClassType { get; set; }
@@ -34,9 +37,10 @@ namespace DeepQStock.Indicators
         public virtual string Name { get; }
 
 
-        public TechnicalIndicatorBase()
+        public TechnicalIndicatorBase(PeriodType type)
         {
             ClassType = GetType().FullName;
+            Type = type;
         }
 
         /// <summary>

@@ -60,19 +60,7 @@ namespace DeepQStock.Stocks
         /// Current State
         /// </summary>
         [JsonIgnore]
-        public State CurrentState { get; set; }
-
-        /// <summary>
-        /// Gets or sets the current period.
-        /// </summary>
-        [JsonIgnore]
-        public Period CurrentPeriod
-        {
-            get
-            {
-                return CurrentState != null ? CurrentState.Today : null;
-            }
-        }
+        public State CurrentState { get; set; }       
 
         /// <summary>
         /// Gets the annual profits.
@@ -112,7 +100,7 @@ namespace DeepQStock.Stocks
         [JsonIgnore]
         public double NetCapital
         {
-            get { return CurrentPeriod.CurrentCapital + (CurrentPeriod.ActualPosition * CurrentPeriod.Close); }
+            get { return CurrentState.Today.CurrentCapital + (CurrentState.Today.ActualPosition * CurrentState.Today.Close); }
         }
 
         /// <summary>
@@ -251,9 +239,7 @@ namespace DeepQStock.Stocks
             episode = NextEpisode();
 
             do
-            {
-                token.ThrowIfCancellationRequested();
-
+            {                
                 foreach (var state in episode)
                 {
                     CurrentState = state;
@@ -261,9 +247,9 @@ namespace DeepQStock.Stocks
                     reward = Execute(action, Agent.Parameters.InOutStrategy);
                     DaysSimulated++;
 
-                    if (currentYear == null || currentYear != CurrentPeriod.Date.Year)
+                    if (currentYear == null || currentYear != CurrentState.Today.Date.Year)
                     {
-                        currentYear = CurrentPeriod.Date.Year;
+                        currentYear = CurrentState.Today.Date.Year;
                         TotalOfYears++;
                     }
 
@@ -277,6 +263,8 @@ namespace DeepQStock.Stocks
 
                 Agent.OnEpisodeComplete();
                 EpisodeSimulated++;
+
+                token.ThrowIfCancellationRequested();
                 episode = NextEpisode();
 
             } while (episode != null);            
@@ -347,9 +335,9 @@ namespace DeepQStock.Stocks
         /// <returns></returns>
         private double Execute(ActionType action, double inOutStrategy)
         {
-            var actionPrice = CurrentPeriod.Close;
-            var capital = CurrentPeriod.CurrentCapital;
-            var position = CurrentPeriod.ActualPosition;
+            var actionPrice = CurrentState.Today.Close;
+            var capital = CurrentState.Today.CurrentCapital;
+            var position = CurrentState.Today.ActualPosition;
 
             if (action == ActionType.Buy && capital > 0)
             {
@@ -361,8 +349,8 @@ namespace DeepQStock.Stocks
                     if (TransactionCost <= capital)
                     {
                         var operationCost = actionPrice * actionsToQuantity;
-                        CurrentPeriod.ActualPosition += actionsToQuantity;
-                        CurrentPeriod.CurrentCapital -= operationCost + TransactionCost;
+                        CurrentState.Today.ActualPosition += actionsToQuantity;
+                        CurrentState.Today.CurrentCapital -= operationCost + TransactionCost;
                     }
                 }
             }
@@ -375,14 +363,14 @@ namespace DeepQStock.Stocks
                 }
 
                 TransactionCost = actionsToSell * actionPrice * Parameters.TransactionCost;
-                CurrentPeriod.ActualPosition -= actionsToSell;
-                CurrentPeriod.CurrentCapital += (actionsToSell * actionPrice) - TransactionCost;
+                CurrentState.Today.ActualPosition -= actionsToSell;
+                CurrentState.Today.CurrentCapital += (actionsToSell * actionPrice) - TransactionCost;
 
             }
 
             if (position > 0)
             {
-                Earnings = position * (CurrentPeriod.Close - CurrentPeriod.Open);
+                Earnings = position * (CurrentState.Today.Close - CurrentState.Today.Open);
             }
 
             var reward = RewardCalculator(this);
@@ -399,10 +387,10 @@ namespace DeepQStock.Stocks
 
             foreach (var upcomingDay in upcomingDays)
             {
-                if (CurrentPeriod != null)
+                if (CurrentState != null && CurrentState.Today != null)
                 {
-                    upcomingDay.ActualPosition = CurrentPeriod.ActualPosition;
-                    upcomingDay.CurrentCapital = CurrentPeriod.CurrentCapital;
+                    upcomingDay.ActualPosition = CurrentState.Today.ActualPosition;
+                    upcomingDay.CurrentCapital = CurrentState.Today.CurrentCapital;
                 }
                 else
                 {
@@ -485,14 +473,14 @@ namespace DeepQStock.Stocks
             {
                 AgentId = Agent.Parameters.Id,
                 DayNumber = DaysSimulated,
-                Date = CurrentPeriod.Date,
+                Date = CurrentState.Today.Date,
                 SelectedAction = action,
                 Reward = reward,
                 AccumulatedProfit = Profits,
                 AnnualProfits = AnnualProfits,
                 AnnualRent = AnnualRent,
                 TotalOfYears = TotalOfYears,
-                Period = CurrentPeriod
+                Period = CurrentState.Today
             };
 
             Context.OnDayCompleted.Save(dayCompleted);                        

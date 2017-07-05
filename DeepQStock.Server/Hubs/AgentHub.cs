@@ -152,6 +152,10 @@ namespace DeepQStock.Server.Hubs
 
             ActiveAgents.TryAdd(id, jobId);
             Subscribe(id);
+            var agent = Context.Agents.GetById(id);
+            agent.Status = AgentStatus.Running;
+
+            Context.Agents.Save(agent);
 
             return jobId;
         }
@@ -177,6 +181,11 @@ namespace DeepQStock.Server.Hubs
         {
             string jobId = null;
             ActiveAgents.TryRemove(id, out jobId);
+
+            var agent = Context.Agents.GetById(id);
+            agent.Status = AgentStatus.Stoped;
+
+            Context.Agents.Save(agent);
 
             if (!string.IsNullOrEmpty(jobId))
             {

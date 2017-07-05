@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Domain;
+using DeepQStock.Enums;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,27 +19,27 @@ namespace DeepQStock.Indicators
     /// </summary>
     public class RSI : TechnicalIndicatorBase, ITechnicalIndicator
     {
-        #region << Private Properties >>
+        #region << Properties >>
 
         /// <summary>
         /// The number of periods to use for calculate the rsi
         /// </summary>
-        private int Length { get; set; }
+        public int Length { get; set; }
 
         /// <summary>
         /// Upward Periods used in the calculation
         /// </summary>
-        private ExponentialMovingAverage UpwardPeriods{ get; set; }
+        public ExponentialMovingAverage UpwardPeriods{ get; set; }
 
         /// <summary>
         /// Upward Periods used in the calculation
         /// </summary>
-        private ExponentialMovingAverage DownwardPeriods { get; set; }
+        public ExponentialMovingAverage DownwardPeriods { get; set; }
 
         /// <summary>
         /// Previous Period
         /// </summary>
-        private Period PreviousPeriod{ get; set; }
+        public Period PreviousPeriod{ get; set; }
 
         #endregion
 
@@ -48,11 +49,11 @@ namespace DeepQStock.Indicators
         /// Default Constructor
         /// </summary>
         /// <param name="size"></param>
-        public RSI(int length = 14)
+        public RSI(PeriodType type, int length = 14): base(type)
         {
             Length = length;
-            UpwardPeriods = new ExponentialMovingAverage(Length);
-            DownwardPeriods = new ExponentialMovingAverage(Length);
+            UpwardPeriods = new ExponentialMovingAverage(type, Length);
+            DownwardPeriods = new ExponentialMovingAverage(type, Length);
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Domain;
+using DeepQStock.Enums;
 using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace DeepQStock.Indicators
     /// </summary>
     public class BollingerBandsPercentB : TechnicalIndicatorBase,  ITechnicalIndicator
     {
-        #region << Private Properties >>
+        #region << Properties >>
 
         /// <summary>
         /// Simple moving average of 20 periods
@@ -29,9 +30,9 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public BollingerBandsPercentB()
+        public BollingerBandsPercentB(PeriodType type) : base(type)
         {
-            MA_20 = new SimpleMovingAverage(20);
+            MA_20 = new SimpleMovingAverage(type, 20);
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using DeepQStock.Utils;
+﻿using DeepQStock.Enums;
+using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace DeepQStock.Indicators
     /// </summary>
     public class ExponentialMovingAverage : SimpleMovingAverage, ITechnicalIndicator
     {
-        #region << Private Properties >>        
+        #region << Properties >>        
 
         /// <summary>
         /// Get the EMA multiplier
@@ -34,7 +35,7 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Mantain Previous EMA
         /// </summary>
-        private double PreviousEMA { get; set; }
+        public double PreviousEMA { get; set; }
 
         #endregion
 
@@ -44,7 +45,7 @@ namespace DeepQStock.Indicators
         /// Default Constructor
         /// </summary>
         /// <param name="size"></param>
-        public ExponentialMovingAverage(int size) : base(size)
+        public ExponentialMovingAverage(PeriodType type, int size) : base(type, size)
         {            
         }
 

@@ -70,6 +70,15 @@ export class AgentService extends BaseService {
     }
 
     /**
+     * Subscribe to agent events 
+     * @param {number} id 
+     * @memberof AgentService
+     */
+    public subscribe(id:number){
+        this.execute('subscribe', id);
+    }
+
+    /**
      * Stop the simulation of a particular agent      
      * @memberof AgentService
      */

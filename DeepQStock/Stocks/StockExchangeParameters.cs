@@ -79,7 +79,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Get or Set the agent initial capital
         /// </summary>
-        public double InitialCapital { get; set; }      
+        public double InitialCapital { get; set; }
 
         #endregion
 
@@ -89,49 +89,49 @@ namespace DeepQStock.Stocks
         /// Initializes a new instance of the <see cref="StockExchangeParameters"/> class.
         /// </summary>
         public StockExchangeParameters()
-        {            
+        {
             PeriodTypes = new PeriodType[] { PeriodType.Day, PeriodType.Week, PeriodType.Month };
             EpisodeLength = 7;
             NumberOfPeriods = 14;
             InitialCapital = 100000;
-            TransactionCost = 0.01;            
+            TransactionCost = 0.01;
             SimulationVelocity = 0;
             RewardCalculator = RewardCalculators.WinningsOverLoosings;
             DailyIndicators = new List<TechnicalIndicatorBase>()
             {
-                new SimpleMovingAverage(8),
-                new ExponentialMovingAverage(20),
-                new ExponentialMovingAverage(50),
-                new ExponentialMovingAverage(200),
-                new AverageTrueRange(),
-                new RSI(),
-                new DMI(),
-                new MACD(),
-                new BollingerBandsPercentB()
+                new SimpleMovingAverage(PeriodType.Day, 8),
+                new ExponentialMovingAverage(PeriodType.Day, 20),
+                new ExponentialMovingAverage(PeriodType.Day, 50),
+                new ExponentialMovingAverage(PeriodType.Day, 200),
+                new AverageTrueRange(PeriodType.Day),
+                new RSI(PeriodType.Day),
+                new DMI(PeriodType.Day),
+                new MACD(PeriodType.Day),
+                new BollingerBandsPercentB(PeriodType.Day)
             };
             WeeklyIndicators = new List<TechnicalIndicatorBase>()
             {
-                new SimpleMovingAverage(8),
-                new ExponentialMovingAverage(20),
-                new ExponentialMovingAverage(50),
-                new ExponentialMovingAverage(200),
-                new AverageTrueRange(),
-                new RSI(),
-                new DMI(),
-                new MACD(),
-                new BollingerBandsPercentB()
+                new SimpleMovingAverage(PeriodType.Week, 8),
+                new ExponentialMovingAverage(PeriodType.Week, 20),
+                new ExponentialMovingAverage(PeriodType.Week, 50),
+                new ExponentialMovingAverage(PeriodType.Week, 200),
+                new AverageTrueRange(PeriodType.Week),
+                new RSI(PeriodType.Week),
+                new DMI(PeriodType.Week),
+                new MACD(PeriodType.Week),
+                new BollingerBandsPercentB(PeriodType.Week)
             };
             MonthlyIndicators = new List<TechnicalIndicatorBase>()
             {
-                new SimpleMovingAverage(8),
-                new ExponentialMovingAverage(20),
-                new ExponentialMovingAverage(50),
-                new ExponentialMovingAverage(200),
-                new AverageTrueRange(),
-                new RSI(),
-                new DMI(),
-                new MACD(),
-                new BollingerBandsPercentB()
+                new SimpleMovingAverage(PeriodType.Month, 8),
+                new ExponentialMovingAverage(PeriodType.Month, 20),
+                new ExponentialMovingAverage(PeriodType.Month, 50),
+                new ExponentialMovingAverage(PeriodType.Month, 200),
+                new AverageTrueRange(PeriodType.Month),
+                new RSI(PeriodType.Month),
+                new DMI(PeriodType.Month),
+                new MACD(PeriodType.Month),
+                new BollingerBandsPercentB(PeriodType.Month)
             };
 
 

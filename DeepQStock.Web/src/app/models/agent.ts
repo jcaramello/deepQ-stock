@@ -1,5 +1,6 @@
 import { QNetwork } from './q-network';
 import { OnDayComplete } from './on-day-complete';
+import { AgentStatus } from './enums';
 
 /**
  * Agent
@@ -21,6 +22,7 @@ export class Agent {
     public qNetworkId: number;
     public stockExchangeParametersId: number;
     public decisions: OnDayComplete[];
+    public status: AgentStatus;
 
     /**
      * Creates an instance of Agent.

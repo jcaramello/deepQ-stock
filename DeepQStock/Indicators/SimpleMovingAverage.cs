@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Domain;
+using DeepQStock.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace DeepQStock.Indicators
         /// Default Constructor
         /// </summary>
         /// <param name="size">The number of periods to consider</param>
-        public SimpleMovingAverage(int size)
+        public SimpleMovingAverage(PeriodType type, int size) : base(type)
         {
             Size = size;            
             Periods = new Queue<Period>(Size);

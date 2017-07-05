@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Domain;
+using DeepQStock.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,12 @@ namespace DeepQStock.Indicators
     /// </summary>
     public class AverageTrueRange : TechnicalIndicatorBase,  ITechnicalIndicator
     {        
-        #region << Private Properties >>
+        #region << Properties >>
 
         /// <summary>
         /// Total of periods used
         /// </summary>
-        private int Length { get; set; }
+        public int Length { get; set; }
 
         /// <summary>
         /// Get the EMA multiplier
@@ -33,12 +34,12 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Get or sets the previous atr
         /// </summary>
-        private double PreviousATR { get; set; }
+        public double PreviousATR { get; set; }
 
         /// <summary>
         /// Get or set the previous period
         /// </summary>
-        private Period PreviousPeriod { get; set; }
+        public Period PreviousPeriod { get; set; }
 
 
         #endregion
@@ -49,7 +50,7 @@ namespace DeepQStock.Indicators
         /// Default Constructor
         /// </summary>
         /// <param name="length"></param>
-        public AverageTrueRange(int length = 14)
+        public AverageTrueRange(PeriodType type, int length = 14) : base(type)
         {
             Length = length;           
         }

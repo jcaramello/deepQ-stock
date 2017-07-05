@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Domain;
+using DeepQStock.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,7 @@ namespace DeepQStock.Indicators
     /// </summary>
     public class MACD : TechnicalIndicatorBase, ITechnicalIndicator
     {
-
-        #region << Private Properties >>
+        #region << Properties >>
 
         /// <summary>
         /// Exponetial moving average of 9 periods
@@ -39,11 +39,11 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Initializes a new instance of the <see cref="MACD"/> class.
         /// </summary>
-        public MACD()
+        public MACD(PeriodType type) : base(type)
         {
-            EMA_9 = new ExponentialMovingAverage(9);
-            EMA_12 = new ExponentialMovingAverage(12);
-            EMA_26 = new ExponentialMovingAverage(26);
+            EMA_9 = new ExponentialMovingAverage(type, 9);
+            EMA_12 = new ExponentialMovingAverage(type, 12);
+            EMA_26 = new ExponentialMovingAverage(type, 26);
         }
 
         #endregion

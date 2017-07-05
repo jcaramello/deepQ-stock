@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Domain;
+using DeepQStock.Enums;
 using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
@@ -18,38 +19,37 @@ namespace DeepQStock.Indicators
     /// </summary>
     public class DMI : TechnicalIndicatorBase,  ITechnicalIndicator
     {
-
         #region << Public Properties >>
 
         /// <summary>
         /// Get or set the previous period
         /// </summary>
-        private Period PreviousPeriod { get; set; }
+        public Period PreviousPeriod { get; set; }
 
         /// <summary>
         /// The total of periods used for calculate
         /// </summary>
-        private int Length { get; set; }
+        public int Length { get; set; }
 
         /// <summary>
         /// Mantains an exponential moving average of the +DM / Average True Range
         /// </summary>
-        private double PreviousEMAPlusDI { get; set; }
+        public double PreviousEMAPlusDI { get; set; }
 
         /// <summary>
         /// Mantains an exponential moving average of the +DM / Average True Range
         /// </summary>
-        private double PreviousEMAMinusDI { get; set; }
+        public double PreviousEMAMinusDI { get; set; }
 
         /// <summary>
         /// get or set the previous adx ema
         /// </summary>
-        private double PreviousEmaADX { get; set; }
+        public double PreviousEmaADX { get; set; }
 
         /// <summary>
         /// Average True range
         /// </summary>
-        private AverageTrueRange ATR { get; set; }
+        public AverageTrueRange ATR { get; set; }
 
         /// <summary>
         /// Get the EMA multiplier
@@ -67,10 +67,10 @@ namespace DeepQStock.Indicators
         /// Default Constructor
         /// </summary>
         /// <param name="length"></param>
-        public DMI(int length = 14)
+        public DMI(PeriodType type, int length = 14) : base(type)
         {
             Length = length;
-            ATR = new AverageTrueRange(length);        
+            ATR = new AverageTrueRange(type, length);        
         }
 
         #endregion

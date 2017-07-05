@@ -9,3 +9,10 @@ export enum PeriodType {
     Week,
     Month
 }
+
+
+export enum AgentStatus {
+    Running,
+    Paused,
+    Stoped
+}

@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DeepQStock.Indicators;
 using System.Linq;
+using DeepQStock.Enums;
 
 namespace DeepQStock.Tests
 {
@@ -13,8 +14,8 @@ namespace DeepQStock.Tests
         [TestMethod]
         public void MovingAverage_Test()
         {
-            var sma = new SimpleMovingAverage(10);
-            var ema = new ExponentialMovingAverage(10);
+            var sma = new SimpleMovingAverage(PeriodType.Day, 10);
+            var ema = new ExponentialMovingAverage(PeriodType.Day, 10);
             var periods = DataGenerator.GetSamplePeriodsWithCloseValue();
             var sma_value = 0.0;
             var ema_value = 0.0;

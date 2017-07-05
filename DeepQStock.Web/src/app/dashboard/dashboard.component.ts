@@ -7,7 +7,7 @@ import { AgentService } from '../services/agent-service';
 import { StockExchangeService } from '../services/stock-exchange-service';
 import { NotificationsService } from 'angular2-notifications';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
-import { ActionType } from '../models/enums';
+import { ActionType, AgentStatus } from '../models/enums';
 import * as _ from 'lodash';
 
 @Component({
@@ -23,8 +23,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public stock: StockExchange = new StockExchange();
   public today = new OnDayComplete();
   public daysCompleted: OnDayComplete[] = [];
-  public days: any[] = [];
-  public isRuning: boolean;
+  public days: any[] = [];  
 
   /**
    * Creates an instance of DashboardComponent.
@@ -46,18 +45,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.agentService.onDayCompleted.subscribe(this.onDayCompleted.bind(this));
-    this.sub = this.route.params.subscribe(params => {
-      this.slimLoadingBarService.start();
-      this.agentService
-        .getById(+params['id'])
-        .then(a => {
-          this.agent = a;
-          this.today = _.last(a.decisions) || this.today;  
-          return a;
-        })
-        .then(a => this.stockExchangeService.getById(this.agent.stockExchangeParametersId))
-        .then(s => this.stock = s)
-    });
+    this.slimLoadingBarService.start();
+    this.sub = this.route.params.subscribe(params => this.loadData(+params['id']));
   }
 
   /**
@@ -69,11 +58,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Load page data
+   * @param agentId 
+   */
+  public loadData(agentId:number) {    
+    return this.agentService
+      .getById(agentId)
+      .then(a => {
+        this.agent = a;
+        this.today = _.last(a.decisions) || this.today;
+        if(a.status == AgentStatus.Running){
+          this.agentService.subscribe(agentId);
+        }
+        return a;
+      })
+      .then(a => this.stockExchangeService.getById(this.agent.stockExchangeParametersId))
+      .then(s => this.stock = s)
+  }
+
+  /**
    * Execute when a simulation day is completed
    * @param args 
    */
   public onDayCompleted(args: OnDayComplete) {
-    if (this.isRuning && args) {
+    if (this.agent.status == AgentStatus.Running && args) {
       args.date = new Date(args.date);
       this.zone.run(() => this.today = args);
     }
@@ -86,7 +94,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @memberof DashboardComponent
    */
   public play(event) {
-    this.isRuning = !this.isRuning;
+    this.agent.status = AgentStatus.Running
     this.notificationService.info("Info", "Simulacion iniciada");
     this.agentService.start(this.agent.id);
   }
@@ -95,10 +103,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Stop the agent simulation
    * @param event 
    */
-  public pause(event, stockChart) {
-    this.isRuning = !this.isRuning;
+  public pause(event, stockChart) {    
+    this.agent.status = AgentStatus.Paused
     this.notificationService.info("Info", "Simulacion pausada");
-    this.agentService.pause(this.agent.id);
+    this.agentService.pause(this.agent.id);    
   }
 
   /**
@@ -106,7 +114,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   * @param event 
   */
   public stop(event, stockChart) {
-    this.isRuning = !this.isRuning;
+    this.agent.status = AgentStatus.Stoped
     this.notificationService.info("Info", "Simulacion detenida");
     this.agentService.stop(this.agent.id);
     stockChart.clearMarkers();
