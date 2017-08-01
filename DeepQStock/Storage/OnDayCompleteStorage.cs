@@ -78,6 +78,27 @@ namespace DeepQStock.Storage
             onDayComplete.Period = period;
         }
 
+        /// <summary>
+        /// Deletes an item of type T from the storage.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        public override void Delete(OnDayComplete item)
+        {
+            PeriodStorage.Delete(item.Period);
+            base.Delete(item);
+        }
+
+        /// <summary>
+        /// Deletes an item of type T from the storage.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        public override void DeleteByIds(IEnumerable<long> ids)
+        {
+            var periodsIds = GetByIds(ids).Select(d => d.PeriodId);
+            PeriodStorage.DeleteByIds(periodsIds);
+            base.DeleteByIds(ids);
+        }
+
         #endregion
     }
 }

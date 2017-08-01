@@ -156,8 +156,12 @@ export class FullLayoutComponent implements OnInit {
     this.slimLoadingBarService.start();
     this.agentService.remove(this.agentToRemove.id).then(() =>{
        this.slimLoadingBarService.complete();
-       modal.hide();
-    })    
+       this.zone.run(() => {
+          var idx = this.agents.indexOf(this.agentToRemove);
+          this.agents.splice(idx, 1);
+          modal.hide();
+       });       
+    });        
   }
 
 }

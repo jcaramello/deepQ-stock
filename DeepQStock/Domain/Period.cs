@@ -13,7 +13,7 @@ namespace DeepQStock.Domain
     public class Period : BaseModel
     {
         #region << Public Properties >>            
-
+     
         /// <summary>
         /// Period Type
         /// </summary>

@@ -72,7 +72,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
         return a;
       })
-      .then(a => this.stockExchangeService.getById(this.agent.stockExchangeParametersId))
+      .then(a => this.stockExchangeService.getById(this.agent.stockExchangeId))
       .then(s => this.stock = s)
   }
 

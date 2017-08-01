@@ -93,6 +93,8 @@ namespace DeepQStock.Storage
         /// <param name="item">The item.</param>
         public override void Delete(State item)
         {
+            if (item == null) return;
+
             PeriodStorage.DeleteByIds(item.PeriodIds);
             base.Delete(item);
         }

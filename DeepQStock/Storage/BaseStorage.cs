@@ -203,6 +203,11 @@ namespace DeepQStock.Storage
         /// <param name="model">The item.</param>
         public virtual void DeleteByIds(IEnumerable<long> ids)
         {
+            if (ids == null || ids.Count() == 0)
+            {
+                return;
+            }
+
             var keys = ids.Select(id => GetKey(id)).ToArray();
             var values = keys.Select(k => (RedisValue)k).ToArray();
 

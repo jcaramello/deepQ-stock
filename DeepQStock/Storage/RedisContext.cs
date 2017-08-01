@@ -4,6 +4,7 @@ using DeepQStock.Indicators;
 using DeepQStock.Stocks;
 using StackExchange.Redis;
 using System;
+using System.Linq;
 
 namespace DeepQStock.Storage
 {
@@ -58,6 +59,33 @@ namespace DeepQStock.Storage
         public void Subscribe(string channel, Action<RedisChannel, RedisValue> handler)
         {
             Subscriber.Subscribe(channel, handler);
+        }
+
+        /// <summary>
+        /// Removes the agent.
+        /// </summary>
+        public void RemoveAgent(DeepRLAgentParameters agent)
+        {
+            var decisions = OnDayCompleted.GetAll().Where(d => d.AgentId == agent.Id);
+            if (decisions.Count() > 0)
+            {
+                OnDayCompleted.DeleteByIds(decisions.Select(d => d.Id));
+            }
+
+            var currentState = StateStorage.GetById(agent.StockExchange.CurrentStateId);
+
+            StateStorage.Delete(currentState);
+
+            var indicatorsIds = Indicators.GetAll().Where(i => i.StockExchangeId == agent.StockExchangeId).Select(i => i.Id).ToList();
+            Indicators.DeleteByIds(indicatorsIds);
+            
+            StockExchanges.Delete(agent.StockExchange);
+
+            QNetworks.Delete(agent.QNetwork);
+
+            //TODO: Remove the simulation results.
+
+            Agents.Delete(agent);
         }
     }
 }

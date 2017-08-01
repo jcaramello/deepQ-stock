@@ -215,7 +215,7 @@ namespace DeepQStock.Stocks
             try
             {
                 Simulate(token);
-                ClearDesicions();
+                //ClearDesicions();
                 SaveResults();
             }
             catch (JobAbortedException)
@@ -233,7 +233,7 @@ namespace DeepQStock.Stocks
             var action = ActionType.Wait;
             double reward = 0.0;
             int? currentYear = null;
-            episode = NextEpisode();
+            episode = NextEpisode();            
 
             do
             {
@@ -264,7 +264,7 @@ namespace DeepQStock.Stocks
                 token.ThrowIfCancellationRequested();
                 episode = NextEpisode();
 
-            } while (episode != null);
+            } while (episode.Count() > 0);
         }
 
 
@@ -324,16 +324,7 @@ namespace DeepQStock.Stocks
 
             if (agent.Status == AgentStatus.Removed)
             {
-                var decisions = Context.OnDayCompleted.GetAll().Where(d => d.AgentId == agent.Id);
-                if (decisions.Count() > 0)
-                {
-                    Context.OnDayCompleted.DeleteByIds(decisions.Select(d => d.Id));
-                }
-                
-                Context.StateStorage.Delete(CurrentState);
-                Context.StockExchanges.Delete(agent.StockExchange);
-                Context.QNetworks.Delete(agent.QNetwork);
-                Context.Agents.Delete(agent);
+                Context.RemoveAgent(agent);
             }
         }
 
@@ -399,6 +390,7 @@ namespace DeepQStock.Stocks
         private IEnumerable<State> NextEpisode()
         {
             var upcomingDays = DataProvider.NextDays();
+            var episode = new List<State>();
 
             foreach (var upcomingDay in upcomingDays)
             {
@@ -412,8 +404,10 @@ namespace DeepQStock.Stocks
                     upcomingDay.CurrentCapital = Parameters.InitialCapital;
                 }
 
-                yield return GenerateState(upcomingDay);
+                episode.Add(GenerateState(upcomingDay));
             }
+
+            return episode;
         }
 
         /// <summary>

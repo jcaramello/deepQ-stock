@@ -226,6 +226,9 @@ namespace DeepQStock.Server.Hubs
 
             var agent = GetById(id);
 
+            // Here we have two posible situations, one is if the agent is running, in this case we cannot remove the agent immediately, 
+            // we need mark the agent as removed and stop the agent's job. The remove process will be handle in the shutdown process.
+            // And the other situation is when the agent is not running, in that case, we can remove immediately.
             if (agent.Status == AgentStatus.Running)
             {
                 agent.Status = AgentStatus.Removed;
@@ -235,22 +238,10 @@ namespace DeepQStock.Server.Hubs
                 {
                     BackgroundJob.Delete(jobId);
                 }
-
             }
             else
             {
-                var decisions = Context.OnDayCompleted.GetAll().Where(d => d.AgentId == id);
-                if (decisions.Count() > 0)
-                {
-                    Context.OnDayCompleted.DeleteByIds(decisions.Select(d => d.Id));
-                }
-
-                var currentState = Context.StateStorage.GetById(agent.StockExchange.CurrentStateId);
-                
-                Context.StateStorage.Delete(currentState);
-                Context.StockExchanges.Delete(agent.StockExchange);
-                Context.QNetworks.Delete(agent.QNetwork);
-                Context.Agents.Delete(agent);
+                Context.RemoveAgent(agent);
             }                       
         }
 
