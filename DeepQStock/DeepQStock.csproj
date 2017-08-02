@@ -37,7 +37,7 @@
     <Compile Include="Enums\AgentStatus.cs" />
     <Compile Include="Indicators\TechnicalIndicatorBase.cs" />
     <Compile Include="Stocks\StockExchangeEvents.cs" />
-    <Compile Include="Stocks\RewardCalculators.cs" />
+    <Compile Include="Stocks\RewardCalculator.cs" />
     <Compile Include="Storage\BaseModel.cs" />
     <Compile Include="Storage\OnDayCompleteStorage.cs" />
     <Compile Include="Storage\RedisContext.cs" />

@@ -130,6 +130,7 @@ export class FullLayoutComponent implements OnInit {
       .then(id => {
         this.currentAgent.stockExchangeId = id;
         this.agentService.save(this.currentAgent);
+        this.currentAgent.stockExchange = this.currentStock;
       })
       .then(() => {
         modal.hide();

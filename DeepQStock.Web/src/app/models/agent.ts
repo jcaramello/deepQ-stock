@@ -13,7 +13,7 @@ export class Agent {
 
     // Public properties
     public id: number;
-    public name: string;
+    public name: string;    
     public eGreedyProbability: number;
     public inOutStrategy: number;
     public miniBatchSize: number;

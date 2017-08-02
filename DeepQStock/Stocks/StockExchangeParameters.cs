@@ -41,7 +41,7 @@ namespace DeepQStock.Stocks
         /// Gets or sets the reward calculator.
         /// </summary>
         [JsonIgnore]
-        public Func<StockExchange, double> RewardCalculator { get; set; }
+        public RewardCalculator RewardCalculator { get; set; }
 
         /// <summary>
         /// Gets or sets the indicators.
@@ -96,7 +96,7 @@ namespace DeepQStock.Stocks
             InitialCapital = 100000;
             TransactionCost = 0.01;
             SimulationVelocity = 0;
-            RewardCalculator = RewardCalculators.WinningsOverLoosings;
+            RewardCalculator = RewardCalculator.Use(RewardCalculatorType.WinningsOverLoosings);
             DailyIndicators = new List<TechnicalIndicatorBase>()
             {
                 new SimpleMovingAverage(PeriodType.Day, 8),

@@ -33,7 +33,7 @@
                 <li class="nav-item" *ngFor="let a of agents">
                     <div class="row">
                         <div class="col-7">                        
-                            <a [routerLink]="['/dashboard', a.id]"><i class="fa fa-tag"></i> {{ a.name }}</a>
+                            <a [routerLink]="['/dashboard', a.id]"><i class="fa fa-tag"></i> {{ a.name + ' - (' + a.stockExchange.symbol + ')' }}</a>
                         </div>
                         <div class="col">
                             <span class="agent-ops pull-rigth">

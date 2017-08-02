@@ -160,7 +160,7 @@ namespace DeepQStock.Stocks
         /// <value>
         /// The reward calculator.
         /// </value>
-        public Func<StockExchange, double> RewardCalculator { get; set; }
+        public Stocks.RewardCalculator RewardCalculator { get; set; }
 
         /// <summary>
         /// Gets or sets the storage manager.
@@ -280,7 +280,7 @@ namespace DeepQStock.Stocks
                 agentParameters.QNetwork = Context.QNetworks.GetById(agentParameters.QNetworkId);
 
                 Agent = new DeepRLAgent(agentParameters);
-                RewardCalculator = Stocks.RewardCalculators.WinningsOverLoosings;
+                RewardCalculator = Stocks.RewardCalculator.Use(RewardCalculatorType.WinningsOverLoosings);
                 Parameters = Context.StockExchanges.GetById(agentParameters.StockExchangeId);
 
                 DataProvider = new CsvDataProvider(Parameters.CsvDataFilePath, Parameters.EpisodeLength);
@@ -379,7 +379,7 @@ namespace DeepQStock.Stocks
                 Earnings = position * (CurrentState.Today.Close - CurrentState.Today.Open);
             }
 
-            var reward = RewardCalculator(this);
+            var reward = RewardCalculator.Calculate(this);
             return reward;
         }
 

@@ -53,7 +53,7 @@ namespace DeepQStock.Console
                 stockParameters.InitialCapital = initialCapital;
                 stockParameters.SimulationVelocity = options.Velocity > 0 ? (int)(options.Velocity * 1000.0) : stockParameters.SimulationVelocity;
                 stockParameters.TransactionCost = options.TransactionCost > 0 ? options.TransactionCost : stockParameters.TransactionCost;
-                stockParameters.RewardCalculator = RewardCalculators.WinningsOverLoosings;
+                stockParameters.RewardCalculator = RewardCalculator.Use(RewardCalculatorType.WinningsOverLoosings);
 
                 var stock = new StockExchange(stockParameters, manager, agent, null);
 

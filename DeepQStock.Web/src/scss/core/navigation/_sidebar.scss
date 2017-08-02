@@ -1,7 +1,7 @@
 .sidebar {
   padding: $sidebar-padding;
   color: $sidebar-color;
-  background: $sidebar-bg;
+  background: $sidebar-bg;  
   @include borders($sidebar-borders);
 
   .sidebar-close {
@@ -22,7 +22,7 @@
     }
   }
 
-  .sidebar-nav {
+  .sidebar-nav {    
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
@@ -175,6 +175,7 @@
           > ul, > ol {
             // display: inline;
             max-height: 1000px;
+            
           }
 
           a.nav-link {
