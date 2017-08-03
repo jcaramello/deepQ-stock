@@ -111,10 +111,10 @@ namespace DeepQStock.Agents
             foreach (var sample in trainingSet)
             {
                 var flattenState = sample.Item1.ToArray();
-                var data = new BasicMLData(flattenState);
-                var results = new BasicMLData(sample.Item2);
+                var actuals = new BasicMLData(flattenState);
+                var ideals = new BasicMLData(sample.Item2);
 
-                trainingData.Add(new BasicMLDataPair(data, results));
+                trainingData.Add(new BasicMLDataPair(actuals, ideals));
             }
 
             IMLDataSet dataSet = new BasicMLDataSet(trainingData);

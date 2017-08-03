@@ -86,7 +86,7 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period, bool normalize = true)
         {
             var adx = 0.0;
             var plusDI = 0.0;
@@ -119,7 +119,8 @@ namespace DeepQStock.Indicators
             PreviousPeriod = period;
 
             Value = new double[3] { adx, plusDI, minusDI };
-            return Value;
+            
+            return normalize ? Value.Select(v => Normalizers.DMI.Normalize(v)) : Value;
         }
 
         #endregion     

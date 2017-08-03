@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -69,7 +70,7 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period, bool normalize = true)
         {
             double emaU = UpwardPeriods.Value != null ? UpwardPeriods.Value.First() : 0.0;
             double emaD = DownwardPeriods.Value != null ? DownwardPeriods.Value.First() : 0.0;
@@ -79,11 +80,11 @@ namespace DeepQStock.Indicators
             {
                 if (PreviousPeriod.Close <= period.Close)
                 {
-                    emaU = UpwardPeriods.Update(period).First();
+                    emaU = UpwardPeriods.Update(period, false).First();
                 }
                 else
                 {
-                    emaU = DownwardPeriods.Update(period).First();
+                    emaU = DownwardPeriods.Update(period, false).First();
                 }
 
                 if (emaD > 0.0)
@@ -97,7 +98,7 @@ namespace DeepQStock.Indicators
 
             Value = new double[1] { rsi };
 
-            return Value;
+            return normalize ? Value.Select(v => Normalizers.RSI.Normalize(v)) : Value;
         }
 
         #endregion

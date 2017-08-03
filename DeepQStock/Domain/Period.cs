@@ -1,5 +1,7 @@
 ﻿using DeepQStock.Enums;
 using DeepQStock.Storage;
+using DeepQStock.Utils;
+using Encog.Util.Arrayutil;
 using LINQtoCSV;
 using Newtonsoft.Json;
 using System;
@@ -68,7 +70,7 @@ namespace DeepQStock.Domain
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>
-        public IDictionary<string, IEnumerable<double>> Indicators { get; set; }      
+        public IDictionary<string, IEnumerable<double>> Indicators { get; set; }        
 
         #endregion
 
@@ -80,7 +82,7 @@ namespace DeepQStock.Domain
         public Period()
         {
             Indicators = new Dictionary<string, IEnumerable<double>>();
-            PeriodType = PeriodType.Day;
+            PeriodType = PeriodType.Day;            
         }
 
         #endregion
@@ -106,18 +108,18 @@ namespace DeepQStock.Domain
         {
             var period = new List<double>
             {
-                CurrentCapital,
-                ActualPosition,
-                Open,
-                Close,                
-                High,
-                Low,
-                Volume
+                Normalizers.Capital.Normalize(CurrentCapital),
+                Normalizers.Position.Normalize(ActualPosition),
+                Normalizers.Price.Normalize(Open),
+                Normalizers.Price.Normalize(Close),
+                Normalizers.Price.Normalize(High),
+                Normalizers.Price.Normalize(Low),
+                Normalizers.Volume.Normalize(Volume)
             };
 
             foreach (var pair in Indicators)
             {
-                period.AddRange(pair.Value.Select(v => Math.Round(v, 4)));
+                period.AddRange(pair.Value);
             }
 
             return period;

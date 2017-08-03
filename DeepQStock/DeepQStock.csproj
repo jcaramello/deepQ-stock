@@ -72,6 +72,7 @@
     <Compile Include="Utils\IndicatorUtils.cs" />
     <Compile Include="Utils\LinqExtensions.cs" />
     <Compile Include="Utils\CircularQueue.cs" />
+    <Compile Include="Utils\Normalizers.cs" />
     <Compile Include="Utils\RedisPubSubChannels.cs" />
   </ItemGroup>
   <ItemGroup>

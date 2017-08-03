@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,18 +60,18 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period, bool normalize = true)
         {
-            var ema_12 = EMA_12.Update(period).First();
-            var ema_26 = EMA_12.Update(period).First();
+            var ema_12 = EMA_12.Update(period, false).First();
+            var ema_26 = EMA_12.Update(period, false).First();
 
             var macd_line = ema_12 - ema_26;
-            var signal_line = EMA_9.Update(period).First();
+            var signal_line = EMA_9.Update(period, false).First();
             var macd_histogram = macd_line - signal_line;
 
             Value = new double[3] { macd_line, signal_line, macd_histogram };
 
-            return Value;
+            return normalize ? Value.Select(v => Normalizers.Price.Normalize(v)) : Value;
         }
 
         #endregion

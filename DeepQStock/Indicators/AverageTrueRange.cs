@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,7 +70,7 @@ namespace DeepQStock.Indicators
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        public override IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period, bool normalize = true)
         {
             if (PreviousPeriod != null)
             {
@@ -88,7 +89,8 @@ namespace DeepQStock.Indicators
             PreviousPeriod = period;
 
             Value = new double[1] { PreviousATR };
-            return Value;
+
+            return normalize ? Value.Select(v => Normalizers.Price.Normalize(v)) : Value;
         }
 
         #endregion

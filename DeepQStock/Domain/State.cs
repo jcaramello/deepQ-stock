@@ -76,7 +76,7 @@ namespace DeepQStock.Domain
             {
                 return DayLayer.Concat(WeekLayer).Concat(MonthLayer);
             }
-        }
+        }     
 
         #endregion
 
@@ -86,7 +86,7 @@ namespace DeepQStock.Domain
         /// Initializes a new instance of the <see cref="State"/> class.
         /// </summary>
         public State(int size = 14)
-        {
+        {            
             Size = size;
             DayLayer = new CircularQueue<Period>(size);
             WeekLayer = new CircularQueue<Period>(size);

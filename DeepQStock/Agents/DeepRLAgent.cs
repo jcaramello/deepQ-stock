@@ -282,7 +282,9 @@ namespace DeepQStock.Agents
         /// <returns></returns>
         private double QUpdate(Experience e, ActionType action, double estimated)
         {
-            return e.Action == action ? e.Reward + (_parameters.DiscountFactor * estimated) : estimated;
+            var estimation = e.Action == action ? e.Reward + (_parameters.DiscountFactor * estimated) : estimated;
+
+            return Normalizers.Reward.Normalize(estimation);
         }
 
         /// <summary>
@@ -305,7 +307,7 @@ namespace DeepQStock.Agents
                     p.MaxIterationPerTrainging = _parameters.QNetwork.MaxIterationPerTrainging;
 
                     // Input Layer
-                    p.Layers.Add(new LayerParameters(null, true, inputLength));
+                    p.Layers.Add(new LayerParameters(null, false, inputLength));
 
                     // Hidden Layers
                     for (int i = 0; i < _parameters.QNetwork.HiddenLayersCount; i++)

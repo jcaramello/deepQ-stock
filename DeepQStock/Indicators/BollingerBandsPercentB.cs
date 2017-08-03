@@ -48,16 +48,17 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period, bool normalize = true)
         {
-            var ma_20 = MA_20.Update(period).First();
+            var ma_20 = MA_20.Update(period, false).First();
             var two_std_dev = 2 * IndicatorUtils.StandardDeviation(MA_20.Periods.Select(p => p.Close));
 
             var upperBand = period.Close + two_std_dev;
             var lowerBand = period.Close - two_std_dev;
 
             Value = new double[3] { upperBand, ma_20, lowerBand };
-            return Value;
+
+            return normalize ? Value.Select(v => Normalizers.Price.Normalize(v)) : Value;
         }
 
         #endregion

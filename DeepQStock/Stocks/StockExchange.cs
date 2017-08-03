@@ -36,14 +36,12 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// Gets the agent.
-        /// </summary>        
-        [JsonIgnore]
+        /// </summary>                
         public IAgent Agent { get; set; }
 
         /// <summary>
         /// Gets or sets the data provider.
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
         public IDataProvider DataProvider { get; set; }
 
         /// <summary>
@@ -58,14 +56,12 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// Current State
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
         public State CurrentState { get; set; }
 
         /// <summary>
         /// Gets the annual profits.
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
         public double AnnualProfits
         {
             get { return Profits / TotalOfYears; }
@@ -73,8 +69,7 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// Gets the annual rent.
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
         public double AnnualRent
         {
             get { return AnnualProfits / Parameters.InitialCapital; }
@@ -84,8 +79,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets the profits.
         /// </summary>
-        /// <returns></returns>
-        [JsonIgnore]
+        /// <returns></returns>        
         public double Profits
         {
             get
@@ -96,8 +90,7 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// Net Capital
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
         public double NetCapital
         {
             get { return CurrentState.Today.CurrentCapital + (CurrentState.Today.ActualPosition * CurrentState.Today.Close); }
@@ -120,8 +113,7 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// List of stock exchange  daily indicators used in each state
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
         public IList<TechnicalIndicatorBase> DailyIndicators
         {
             get
@@ -132,8 +124,7 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// List of stock exchange  weekly indicators used in each state
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
         public IList<TechnicalIndicatorBase> WeeklyIndicators
         {
             get
@@ -144,8 +135,7 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// List of stock exchange monthly indicators used in each state
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
         public IList<TechnicalIndicatorBase> MonthlyIndicators
         {
             get
@@ -165,8 +155,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the storage manager.
         /// </summary>      
-        public RedisContext Context { get; set; }
-
+        private RedisContext Context { get; set; }    
 
         #endregion
 
@@ -441,31 +430,31 @@ namespace DeepQStock.Stocks
         /// <param name="Indicators">The indicators.</param>
         private void UpdateLayer(PeriodType type, CircularQueue<Period> layer, Period upcomingDay, IEnumerable<ITechnicalIndicator> indicators)
         {
-            Period current = null;
+            Period currentPeriod = null;
             bool needNewPeriod = type == PeriodType.Week ? upcomingDay.Date.IsStartOfWeek() : upcomingDay.Date.IsStartOfMonth();
 
             if (layer.IsEmpty || needNewPeriod)
             {
-                current = upcomingDay.Clone();
-                current.PeriodType = type;
-                layer.Enqueue(current);
+                currentPeriod = upcomingDay.Clone();
+                currentPeriod.PeriodType = type;
+                layer.Enqueue(currentPeriod);
             }
             else
             {
-                current = layer.Peek();
-                current.Merge(upcomingDay);
+                currentPeriod = layer.Peek();
+                currentPeriod.Merge(upcomingDay);
             }
 
             foreach (var indicator in indicators)
             {
-                var newValues = indicator.Update(current);
-                if (current.Indicators.ContainsKey(indicator.Name))
+                var newValues = indicator.Update(currentPeriod);
+                if (currentPeriod.Indicators.ContainsKey(indicator.Name))
                 {
-                    current.Indicators[indicator.Name] = newValues;
+                    currentPeriod.Indicators[indicator.Name] = newValues;
                 }
                 else
                 {
-                    current.Indicators.Add(indicator.Name, newValues);
+                    currentPeriod.Indicators.Add(indicator.Name, newValues);
                 }
             }
         }

@@ -47,7 +47,7 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public virtual IEnumerable<double> Update(Period period)
+        public virtual IEnumerable<double> Update(Period period, bool normalize = true)
         {
             return null;
         }

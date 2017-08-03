@@ -28,6 +28,6 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<double> Update(Period period);
+        IEnumerable<double> Update(Period period, bool normalize = true);
     }
 }

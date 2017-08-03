@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace DeepQStock.Indicators
         /// Gets the value.
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<double> Update(Period period)
+        public override IEnumerable<double> Update(Period period, bool normalize = true)
         {
             if (Periods.Count == Size)
             {
@@ -64,7 +65,8 @@ namespace DeepQStock.Indicators
             Periods.Enqueue(period);
 
             Value =  new double[1] { AveragePeriods() };
-            return Value;
+
+            return normalize ? Value.Select(v => Normalizers.Price.Normalize(v)) : Value;
         }
 
         #endregion
