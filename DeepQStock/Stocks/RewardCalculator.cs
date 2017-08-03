@@ -35,6 +35,8 @@ namespace DeepQStock.Stocks
         private RewardCalculator(RewardCalculatorType type)
         {
             Type = type;
+            Winnings = new CircularQueue<double>(14);
+            Loosings = new CircularQueue<double>(14);
         }
 
         /// <summary>

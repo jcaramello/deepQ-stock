@@ -156,7 +156,7 @@ namespace DeepQStock.Agents
 
             Q.Save(NetworkPath);
 
-            //Save Memory Replay
+            //TODO: Save Memory Replay
         }
 
         #endregion
@@ -254,22 +254,35 @@ namespace DeepQStock.Agents
         {
             var mini_batch = GenerateMiniBatch();
             var trainingData = new List<Tuple<State, double[]>>();
+            var actions = Enum.GetValues(typeof(ActionType)).Cast<ActionType>();
 
             foreach (var experience in mini_batch)
             {
-                var targetValues = new double[3];
+                var targetValues = new Dictionary<ActionType, double>();
                 var estimatedValues = Q[experience.From];
 
-                targetValues[0] = experience.Reward + (_parameters.DiscountFactor * estimatedValues[ActionType.Buy]);
-                targetValues[1] = experience.Reward + (_parameters.DiscountFactor * estimatedValues[ActionType.Sell]);
-                targetValues[2] = experience.Reward + (_parameters.DiscountFactor * estimatedValues[ActionType.Wait]);
+                foreach (var action in actions)
+                {
+                    targetValues[action] = QUpdate(experience, action, estimatedValues[action]);
+                }                
 
-                trainingData.Add(new Tuple<State, double[]>(experience.From, targetValues));
+                trainingData.Add(new Tuple<State, double[]>(experience.From, targetValues.Values.ToArray()));
             }
 
             Q.Train(trainingData);
-
             OnTrainingComplete?.Invoke(this, new OnTrainingCompleteArgs());
+        }
+
+        /// <summary>
+        /// Calculates the q update.
+        /// </summary>
+        /// <param name="e">The e.</param>
+        /// <param name="action">The action.</param>
+        /// <param name="estimated">The estimated.</param>
+        /// <returns></returns>
+        private double QUpdate(Experience e, ActionType action, double estimated)
+        {
+            return e.Action == action ? e.Reward + (_parameters.DiscountFactor * estimated) : estimated;
         }
 
         /// <summary>
@@ -297,11 +310,11 @@ namespace DeepQStock.Agents
                     // Hidden Layers
                     for (int i = 0; i < _parameters.QNetwork.HiddenLayersCount; i++)
                     {
-                        p.Layers.Add(new LayerParameters(new ActivationSigmoid(), true, _parameters.QNetwork.NeuronCountForHiddenLayers));
+                        p.Layers.Add(new LayerParameters(new ActivationTANH(), true, _parameters.QNetwork.NeuronCountForHiddenLayers));
                     }
 
                     // Output Layer
-                    p.Layers.Add(new LayerParameters(new ActivationSigmoid(), false, 3));
+                    p.Layers.Add(new LayerParameters(new ActivationTANH(), false, 3));
                 });
 
                 Q.OnTrainingEpochComplete += (e, a) => OnTrainingEpochComplete?.Invoke(e, a);
