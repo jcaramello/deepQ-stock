@@ -1,6 +1,8 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Utils;
+using SQLite.Net.Attributes;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +17,22 @@ namespace DeepQStock.Indicators
     /// https://www.tradingview.com/wiki/Moving_Average
     /// </summary>
     public class SimpleMovingAverage : TechnicalIndicatorBase, ITechnicalIndicator
-    {       
+    {
         #region << Public Properties >>
 
         /// <summary>
         /// List of Periods to use for calculate the average
         /// </summary>
+        [Ignore]
         public Queue<Period> Periods { get; set; }
+
+        [OneToMany]
+        public List<Period> InternalPeriods
+        {
+            get { return Periods.ToList(); }
+            set { value.OrderBy(v => v.Date).ToList().ForEach(v => Periods.Enqueue(v)); }
+        }
+
 
         /// <summary>
         /// Set or Get the size of the mobile average
@@ -38,7 +49,7 @@ namespace DeepQStock.Indicators
         /// <param name="size">The number of periods to consider</param>
         public SimpleMovingAverage(PeriodType type, int size) : base(type)
         {
-            Size = size;            
+            Size = size;
             Periods = new Queue<Period>(Size);
         }
 
@@ -49,7 +60,7 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public override string Name { get { return string.Format("SMA({0})", Size);  } }      
+        public override string Name { get { return string.Format("SMA({0})", Size); } }
 
         /// <summary>
         /// Gets the value.
@@ -64,7 +75,7 @@ namespace DeepQStock.Indicators
 
             Periods.Enqueue(period);
 
-            Value =  new double[1] { AveragePeriods() };
+            Value = new double[1] { AveragePeriods() };
 
             return normalize ? Value.Select(v => Normalizers.Price.Normalize(v)) : Value;
         }

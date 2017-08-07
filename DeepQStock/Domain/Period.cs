@@ -1,9 +1,11 @@
 ﻿using DeepQStock.Enums;
+using DeepQStock.Indicators;
 using DeepQStock.Storage;
 using DeepQStock.Utils;
 using Encog.Util.Arrayutil;
 using LINQtoCSV;
 using Newtonsoft.Json;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -70,7 +72,10 @@ namespace DeepQStock.Domain
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>
-        public IDictionary<string, IEnumerable<double>> Indicators { get; set; }        
+        public IDictionary<string, IEnumerable<double>> Indicators { get; set; }
+
+        [ForeignKey(typeof(SimpleMovingAverage))]
+        public long SimpleMovingAverageId { get; set; }
 
         #endregion
 

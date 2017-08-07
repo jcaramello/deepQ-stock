@@ -11,6 +11,7 @@ namespace DeepQStock.Enums
         Running,
         Paused,
         Stoped,
-        Removed
+        Removed,
+        Completed
     }
 }

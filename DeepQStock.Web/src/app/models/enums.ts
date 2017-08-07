@@ -14,5 +14,6 @@ export enum PeriodType {
 export enum AgentStatus {
     Running,
     Paused,
-    Stoped
+    Stoped,
+    Completed
 }

@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Agent } from '../models/agent';
 import { StockExchange } from '../models/stock-exchange';
 import { OnDayComplete } from '../models/on-day-complete';
+import { OnSimulationComplete } from '../models/on-simulation-complete';
+import { OnTrainingEpochComplete } from '../models/on-training-epoch-complete';
 import { AgentService } from '../services/agent-service';
 import { StockExchangeService } from '../services/stock-exchange-service';
 import { NotificationsService } from 'angular2-notifications';
@@ -22,8 +24,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public agent: Agent = new Agent();
   public stock: StockExchange = new StockExchange();
   public today = new OnDayComplete();
+  public training = new OnTrainingEpochComplete();
   public daysCompleted: OnDayComplete[] = [];
-  public days: any[] = [];  
+  public days: any[] = [];
 
   /**
    * Creates an instance of DashboardComponent.
@@ -45,7 +48,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.slimLoadingBarService.start();
-    this.agentService.onDayCompleted.subscribe(this.onDayCompleted.bind(this));    
+    this.agentService.onDayCompleted.subscribe(this.onDayCompleted.bind(this));
+    this.agentService.onSimulationCompleted.subscribe(this.onSimulationCompleted.bind(this));
+    this.agentService.onTrainingEpochCompleted.subscribe(this.onTrainingEpochCompleted.bind(this));
     this.sub = this.route.params.subscribe(params => this.loadData(+params['id']));
   }
 
@@ -61,13 +66,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Load page data
    * @param agentId 
    */
-  public loadData(agentId:number) {    
+  public loadData(agentId: number) {
     return this.agentService
       .getById(agentId)
       .then(a => {
         this.agent = a;
         this.today = _.last(a.decisions) || this.today;
-        if(a.status == AgentStatus.Running){
+        if (a.status == AgentStatus.Running) {
           this.agentService.subscribe(agentId);
         }
         return a;
@@ -88,12 +93,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   /**
+  * Execute when a simulation day is completed
+  * @param args 
+  */
+  public onSimulationCompleted(args: OnSimulationComplete) {
+    if (args.agentId == this.agent.id) {
+      this.agent.status == AgentStatus.Completed;
+    }
+  }
+
+  /**
+   * 
+   * @param args Execute when a training epoch is completed
+   */
+  public onTrainingEpochCompleted(args: OnTrainingEpochComplete) {
+    this.zone.run(() => this.training = args);
+  }
+
+  /**
    * Start the agent simulation 
    * @param {any} event 
    * 
    * @memberof DashboardComponent
    */
-  public play(event) {
+  public play(event, stockChart) {
+    if (this.agent.status == AgentStatus.Completed) {
+      stockChart.clearMarkers();
+    }
     this.agent.status = AgentStatus.Running
     this.notificationService.info("Info", "Simulacion iniciada");
     this.agentService.start(this.agent.id);
@@ -103,10 +129,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Stop the agent simulation
    * @param event 
    */
-  public pause(event, stockChart) {    
+  public pause(event, stockChart) {
     this.agent.status = AgentStatus.Paused
     this.notificationService.info("Info", "Simulacion pausada");
-    this.agentService.pause(this.agent.id);    
+    this.agentService.pause(this.agent.id);
   }
 
   /**

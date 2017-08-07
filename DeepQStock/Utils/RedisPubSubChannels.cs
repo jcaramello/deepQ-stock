@@ -9,5 +9,7 @@ namespace DeepQStock.Utils
     public static class RedisPubSubChannels
     {
         public static string OnDayComplete = "OnDayComplete";
+        public static string OnSimulationComplete = "OnSimulationComplete";
+        public static string OnTrainingEpochComplete = "OnTrainingEpochComplete";
     }
 }

@@ -136,11 +136,11 @@ namespace DeepQStock.Agents
             } while (train.Error > Parameters.TrainingError && epoch < Parameters.MaxIterationPerTrainging);
 
 
-            foreach (var item in dataSet)
-            {
-                var output = NeuralNetwork.Compute(item.Input);
-                Console.WriteLine("output: {0} - {1} - {2} | ideal: {3} - {4} - {5}", output[0], output[1], output[2], item.Ideal[0], item.Ideal[1], item.Ideal[2]);
-            }
+            //foreach (var item in dataSet)
+            //{
+            //    var output = NeuralNetwork.Compute(item.Input);
+            //    Console.WriteLine("output: {0} - {1} - {2} | ideal: {3} - {4} - {5}", output[0], output[1], output[2], item.Ideal[0], item.Ideal[1], item.Ideal[2]);
+            //}
         }
 
         /// <summary>

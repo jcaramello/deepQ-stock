@@ -255,7 +255,7 @@ export class CandlestickComponent {
 
     this.renderComplete = true;
     this.firstDate = moment(this.chart['firstDate']);
-    this.endDate = moment(this.firstDate).add(180, 'days');
+    this.endDate = moment(this.firstDate).add(240, 'days');
     this.data = this.chart.dataSets[0].dataProvider;
 
   }

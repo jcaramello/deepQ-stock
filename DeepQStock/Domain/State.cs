@@ -1,6 +1,8 @@
 ﻿using DeepQStock.Storage;
 using DeepQStock.Utils;
 using Newtonsoft.Json;
+using SQLite.Net.Attributes;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,12 +36,13 @@ namespace DeepQStock.Domain
         /// <value>
         /// The period ids.
         /// </value>
+        [Ignore]
         public IList<long> PeriodIds { get; set; }
 
         /// <summary>
         /// Gets the current period.
         /// </summary>
-        [JsonIgnore]
+        [Ignore]       
         public Period Today
         {
             get
@@ -51,25 +54,25 @@ namespace DeepQStock.Domain
         /// <summary>
         /// Gets or sets the periods.
         /// </summary>
-        [JsonIgnore]
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
         public CircularQueue<Period> DayLayer { get; set; }
 
         /// <summary>
         /// Gets or sets the week layer.
         /// </summary>
-        [JsonIgnore]
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
         public CircularQueue<Period> WeekLayer { get; set; }
 
         /// <summary>
         /// Gets or sets the month layer.
         /// </summary>
-        [JsonIgnore]
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
         public CircularQueue<Period> MonthLayer { get; set; }        
 
         /// <summary>
         /// Gets or sets the period ids.
         /// </summary>
-        [JsonIgnore]
+        [Ignore]
         public IEnumerable<Period> FlattenPeriods
         {
             get

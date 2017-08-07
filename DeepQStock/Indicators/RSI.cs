@@ -1,6 +1,7 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Utils;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,17 +31,29 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Upward Periods used in the calculation
         /// </summary>
+        [OneToOne]
         public ExponentialMovingAverage UpwardPeriods{ get; set; }
+
+        [ForeignKey(typeof(ExponentialMovingAverage))]
+        public long UpwardPeriodsId { get; set; }
 
         /// <summary>
         /// Upward Periods used in the calculation
         /// </summary>
+        [OneToOne]
         public ExponentialMovingAverage DownwardPeriods { get; set; }
+
+        [ForeignKey(typeof(ExponentialMovingAverage))]
+        public long DownwardPeriodsId { get; set; }
 
         /// <summary>
         /// Previous Period
         /// </summary>
+        [OneToOne]
         public Period PreviousPeriod{ get; set; }
+
+        [ForeignKey(typeof(Period))]
+        public long PreviousPeriodId { get; set; }
 
         #endregion
 

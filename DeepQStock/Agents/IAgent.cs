@@ -1,5 +1,7 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Storage;
+using System.Collections.Generic;
 
 namespace DeepQStock.Agents
 {   
@@ -26,6 +28,12 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Saves this instance.
         /// </summary>
-        void Save(); 
+        void Save(RedisContext ctx);
+
+        /// <summary>
+        /// Set pass experiences to the agent
+        /// </summary>
+        /// <param name="experiences"></param>
+        void SetExperiences(IEnumerable<Experience> experiences);
     }
 }

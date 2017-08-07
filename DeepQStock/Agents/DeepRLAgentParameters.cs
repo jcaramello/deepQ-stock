@@ -1,6 +1,7 @@
 ﻿using DeepQStock.Enums;
 using DeepQStock.Stocks;
 using DeepQStock.Storage;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,22 +36,20 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Gets or sets the hidden layers count.
         /// </summary>
-        public QNetworkParameters QNetwork { get; set; }     
-     
-        /// <summary>
-        /// QNetwork parameters id
-        /// </summary>
-        public long QNetworkId { get; set; }
+        [OneToOne]
+        public QNetworkParameters QNetwork { get; set; }
 
-        /// <summary>
-        /// Stock Exchange parameters id
-        /// </summary>
-        public long StockExchangeId { get; set; }
+        [ForeignKey(typeof(QNetworkParameters))]
+        public long QNetworkId { get; set; }
 
         /// <summary>
         /// Gets or sets the stock exchange.
         /// </summary>       
+        [OneToOne(CascadeOperations = CascadeOperation.All)]
         public StockExchangeParameters StockExchange { get; set; }
+
+        [ForeignKey(typeof(StockExchangeParameters))]
+        public long StockExchangeId { get; set; }
 
         /// <summary>
         /// Agent Status
@@ -60,6 +59,7 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Gets or sets my property.
         /// </summary>
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
         public IEnumerable<OnDayComplete> Decisions { get; set; }
 
         #endregion

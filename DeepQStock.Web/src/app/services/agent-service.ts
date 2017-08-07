@@ -2,6 +2,8 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Agent } from '../models/agent';
 import { OnDayComplete } from '../models/on-day-complete';
+import { OnSimulationComplete } from '../models/on-simulation-complete';
+import { OnTrainingEpochComplete } from '../models/on-training-epoch-complete';
 import { BaseService } from './base-service';
 
 /**
@@ -15,6 +17,8 @@ export class AgentService extends BaseService {
 
     // public events    
     public onDayCompleted: EventEmitter<OnDayComplete>;
+    public onSimulationCompleted: EventEmitter<OnSimulationComplete>;
+    public onTrainingEpochCompleted: EventEmitter<OnTrainingEpochComplete>;
     public onCreatedAgent: EventEmitter<Agent>;
 
     /**
@@ -26,10 +30,14 @@ export class AgentService extends BaseService {
         super('agentHub');
 
         this.onDayCompleted = new EventEmitter<OnDayComplete>();
+        this.onSimulationCompleted = new EventEmitter<OnSimulationComplete>();
+        this.onTrainingEpochCompleted = new EventEmitter<OnTrainingEpochComplete>();
         this.onCreatedAgent = new EventEmitter<Agent>();
 
         this.proxy.on('onCreatedAgent', a => this.onCreatedAgent.emit(a));
         this.proxy.on('onDayComplete', a => this.onDayCompleted.emit(a));
+        this.proxy.on('onSimulationComplete', a => this.onSimulationCompleted.emit(a));
+        this.proxy.on('onTrainingEpochCompleted', a => this.onTrainingEpochCompleted.emit(a));
 
         this.init();
     }

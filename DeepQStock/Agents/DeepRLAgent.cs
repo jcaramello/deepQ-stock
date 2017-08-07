@@ -6,6 +6,7 @@ using DeepQStock.Utils;
 using Encog.Engine.Network.Activation;
 using DeepQStock.Domain;
 using System.IO;
+using DeepQStock.Storage;
 
 namespace DeepQStock.Agents
 {
@@ -147,7 +148,7 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Saves the specified path.
         /// </summary>        
-        public void Save()
+        public void Save(RedisContext ctx)
         {
             if (!Directory.Exists(TempFolder))
             {
@@ -155,8 +156,19 @@ namespace DeepQStock.Agents
             }
 
             Q.Save(NetworkPath);
+            MemoryReplay.ToList().ForEach(e => ctx.Experiences.Save(e));                                    
+        }
 
-            //TODO: Save Memory Replay
+        /// <summary>
+        /// Set pass experiences to the agent
+        /// </summary>
+        /// <param name="experiences"></param>
+        public void SetExperiences(IEnumerable<Experience> experiences)
+        {
+            foreach (var e in experiences)
+            {
+                MemoryReplay.Enqueue(e);
+            }
         }
 
         #endregion
@@ -199,6 +211,7 @@ namespace DeepQStock.Agents
         {
             var experience = new Experience()
             {
+                AgentId = Parameters.Id,
                 From = from,
                 Action = CurrentAction,
                 Reward = reward,
@@ -319,7 +332,11 @@ namespace DeepQStock.Agents
                     p.Layers.Add(new LayerParameters(new ActivationTANH(), false, 3));
                 });
 
-                Q.OnTrainingEpochComplete += (e, a) => OnTrainingEpochComplete?.Invoke(e, a);
+                Q.OnTrainingEpochComplete += (e, a) =>
+                {
+                    a.AgentId = this.Parameters.Id;
+                    OnTrainingEpochComplete?.Invoke(e, a);
+                };
             }
         }
 

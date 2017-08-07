@@ -1,6 +1,7 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Utils;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,17 +22,29 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Exponetial moving average of 9 periods
         /// </summary>
-        public ExponentialMovingAverage EMA_9 { get; set; }
+        [OneToOne]
+        public ExponentialMovingAverage Ema9 { get; set; }
+
+        [ForeignKey(typeof(ExponentialMovingAverage))]
+        public long Ema9Id { get; set; }
 
         /// <summary>
         /// Exponetial moving average of 12 periods
         /// </summary>
-        public ExponentialMovingAverage EMA_12 { get; set; }
+        [OneToOne]
+        public ExponentialMovingAverage Ema12 { get; set; }
+
+        [ForeignKey(typeof(ExponentialMovingAverage))]
+        public long Ema12Id { get; set; }
 
         /// <summary>
         /// Exponetial moving average of 26 periods
         /// </summary>
-        public ExponentialMovingAverage EMA_26 { get; set; }
+        [OneToOne]
+        public ExponentialMovingAverage Ema26 { get; set; }
+
+        [ForeignKey(typeof(ExponentialMovingAverage))]
+        public long Ema26Id { get; set; }
 
         #endregion
 
@@ -42,9 +55,9 @@ namespace DeepQStock.Indicators
         /// </summary>
         public MACD(PeriodType type) : base(type)
         {
-            EMA_9 = new ExponentialMovingAverage(type, 9);
-            EMA_12 = new ExponentialMovingAverage(type, 12);
-            EMA_26 = new ExponentialMovingAverage(type, 26);
+            Ema9 = new ExponentialMovingAverage(type, 9);
+            Ema12 = new ExponentialMovingAverage(type, 12);
+            Ema26 = new ExponentialMovingAverage(type, 26);
         }
 
         #endregion
@@ -62,11 +75,11 @@ namespace DeepQStock.Indicators
         /// <returns></returns>
         public override IEnumerable<double> Update(Period period, bool normalize = true)
         {
-            var ema_12 = EMA_12.Update(period, false).First();
-            var ema_26 = EMA_12.Update(period, false).First();
+            var ema_12 = Ema12.Update(period, false).First();
+            var ema_26 = Ema12.Update(period, false).First();
 
             var macd_line = ema_12 - ema_26;
-            var signal_line = EMA_9.Update(period, false).First();
+            var signal_line = Ema9.Update(period, false).First();
             var macd_histogram = macd_line - signal_line;
 
             Value = new double[3] { macd_line, signal_line, macd_histogram };

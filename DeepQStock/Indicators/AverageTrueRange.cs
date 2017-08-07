@@ -1,6 +1,8 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Utils;
+using SQLite.Net.Attributes;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +17,8 @@ namespace DeepQStock.Indicators
     /// Rather, it is a metric used solely to measure volatility, especially volatility caused by price gaps or limit moves.
     /// https://www.tradingview.com/wiki/Average_True_Range_(ATR)
     /// </summary>
-    public class AverageTrueRange : TechnicalIndicatorBase,  ITechnicalIndicator
-    {        
+    public class AverageTrueRange : TechnicalIndicatorBase, ITechnicalIndicator
+    {
         #region << Properties >>
 
         /// <summary>
@@ -27,6 +29,7 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Get the EMA multiplier
         /// </summary>
+        [Ignore]
         private double Multiplier
         {
             get { return (2.0 / (Length + 1.0)); }
@@ -40,8 +43,11 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Get or set the previous period
         /// </summary>
+        [OneToOne]
         public Period PreviousPeriod { get; set; }
 
+        [ForeignKey(typeof(Period))]
+        public long PreviousPeriodId { get; set; }
 
         #endregion
 

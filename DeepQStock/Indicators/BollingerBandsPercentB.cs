@@ -1,6 +1,7 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Utils;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,18 @@ namespace DeepQStock.Indicators
     /// What the %B indicator does is quantify or display where price is in relation to the bands. %B can be useful in identifying trends and trading signals.
     /// https://www.tradingview.com/wiki/Bollinger_Bands_%25B_(%25B)
     /// </summary>
-    public class BollingerBandsPercentB : TechnicalIndicatorBase,  ITechnicalIndicator
+    public class BollingerBandsPercentB : TechnicalIndicatorBase, ITechnicalIndicator
     {
         #region << Properties >>
 
         /// <summary>
         /// Simple moving average of 20 periods
         /// </summary>
-        public SimpleMovingAverage MA_20 { get; set; }
+        [OneToOne]
+        public SimpleMovingAverage Ma20 { get; set; }
+
+        [ForeignKey(typeof(SimpleMovingAverage))]
+        public long Ma20Id { get; set; }
 
         #endregion
 
@@ -32,7 +37,7 @@ namespace DeepQStock.Indicators
         /// </summary>
         public BollingerBandsPercentB(PeriodType type) : base(type)
         {
-            MA_20 = new SimpleMovingAverage(type, 20);
+            Ma20 = new SimpleMovingAverage(type, 20);
         }
 
         #endregion
@@ -50,8 +55,8 @@ namespace DeepQStock.Indicators
         /// <returns></returns>
         public override IEnumerable<double> Update(Period period, bool normalize = true)
         {
-            var ma_20 = MA_20.Update(period, false).First();
-            var two_std_dev = 2 * IndicatorUtils.StandardDeviation(MA_20.Periods.Select(p => p.Close));
+            var ma_20 = Ma20.Update(period, false).First();
+            var two_std_dev = 2 * IndicatorUtils.StandardDeviation(Ma20.Periods.Select(p => p.Close));
 
             var upperBand = period.Close + two_std_dev;
             var lowerBand = period.Close - two_std_dev;

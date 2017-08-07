@@ -1,7 +1,9 @@
-﻿using DeepQStock.Domain;
+﻿using DeepQStock.Agents;
+using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Storage;
 using Newtonsoft.Json;
+using SQLiteNetExtensions.Attributes;
 using System;
 
 namespace DeepQStock.Stocks
@@ -9,13 +11,22 @@ namespace DeepQStock.Stocks
     public class OnEpisodeComplete : BaseModel
     {
         public double Reward { get; set; }
-    }   
+    }
+
+    public class OnSimulationComplete : BaseModel
+    {
+        /// <summary>
+        /// Gets or sets the agent identifier.
+        /// </summary>
+        public long AgentId { get; set; }
+    }
 
     public class OnDayComplete : BaseModel
     {
         /// <summary>
         /// Gets or sets the agent identifier.
         /// </summary>
+        [ForeignKey(typeof(DeepRLAgentParameters))]
         public long AgentId { get; set; }
 
         /// <summary>
@@ -61,11 +72,13 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the actual position.
         /// </summary>               
+        [OneToMany]
         public Period Period { get; set; }
 
         /// <summary>
         /// PeriodId
         /// </summary>
+        [ForeignKey(typeof(Period))]
         public long PeriodId { get; set; }
     }
 }

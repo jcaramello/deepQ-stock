@@ -13,6 +13,11 @@ namespace DeepQStock.Agents
     public class OnTrainingEpochCompleteArgs : EventArgs
     {
         /// <summary>
+        /// Agent Id
+        /// </summary>
+        public long AgentId { get; set; }
+
+        /// <summary>
         /// Gets or sets the epoch.
         /// </summary>
         public int Epoch { get; set; }

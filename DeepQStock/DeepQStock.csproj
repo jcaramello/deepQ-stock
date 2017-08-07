@@ -11,6 +11,8 @@
     <AssemblyName>DeepQStock</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,6 +41,7 @@
     <Compile Include="Stocks\StockExchangeEvents.cs" />
     <Compile Include="Stocks\RewardCalculator.cs" />
     <Compile Include="Storage\BaseModel.cs" />
+    <Compile Include="Storage\ExperienceStorage.cs" />
     <Compile Include="Storage\OnDayCompleteStorage.cs" />
     <Compile Include="Storage\RedisContext.cs" />
     <Compile Include="Storage\TechnicalIndicatorStorage.cs" />
@@ -111,6 +114,22 @@
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SQLite.Net, Version=3.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SQLite.Net-PCL.3.0.5\lib\net40\SQLite.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SQLite.Net.Platform.Generic, Version=3.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SQLite.Net-PCL.3.0.5\lib\net40\SQLite.Net.Platform.Generic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SQLite.Net.Platform.Win32, Version=3.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SQLite.Net-PCL.3.0.5\lib\net4\SQLite.Net.Platform.Win32.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SQLiteNetExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SQLiteNetExtensions.1.3.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\SQLiteNetExtensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="StackExchange.Redis, Version=1.2.4.0, Culture=neutral, processorArchitecture=MSIL">

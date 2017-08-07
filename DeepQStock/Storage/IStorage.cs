@@ -44,6 +44,6 @@ namespace DeepQStock.Storage
         /// Deletes the specified models.
         /// </summary>
         /// <param name="ids">The ids.</param>
-        void DeleteByIds(IEnumerable<long> ids);
+        void Delete(IEnumerable<T> items);
     }
 }

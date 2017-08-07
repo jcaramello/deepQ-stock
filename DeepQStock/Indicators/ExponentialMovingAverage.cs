@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Enums;
 using DeepQStock.Utils;
+using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Get the EMA multiplier
         /// </summary>
+        [Ignore]
         private double Multiplier
         {
             get { return (2.0 / (Size + 1.0)); }

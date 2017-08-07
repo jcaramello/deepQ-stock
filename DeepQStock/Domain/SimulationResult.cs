@@ -9,8 +9,9 @@ namespace DeepQStock.Domain
 {
     public class SimulationResult : BaseModel
     {
-        public long agentId { get; set; }
+        public long AgentId { get; set; }        
         public string Symbol { get; set; }
+        public DateTime CreatedOn { get; set; }
         public double AnnualProfits { get; set; }
         public double AnnualRent { get; set; }
         public double Profits { get; set; }

@@ -1,6 +1,8 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Stocks;
 using DeepQStock.Storage;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,13 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Stock Exchange id
         /// </summary>
+        [ForeignKey(typeof(StockExchangeParameters))]
         public long StockExchangeId { get; set; }
 
         /// <summary>
         /// Gets the value.
         /// </summary>
+        [TextBlob("Value")]
         public double[] Value { get; set; }
 
         /// <summary>

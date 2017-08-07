@@ -47,6 +47,17 @@ namespace DeepQStock.Server.Hubs
             {
                 OnDayComplete(JsonConvert.DeserializeObject<OnDayComplete>(a));
             });
+
+            Context.Subscribe(RedisPubSubChannels.OnSimulationComplete, (c, a) =>
+            {
+                OnDayComplete(JsonConvert.DeserializeObject<OnDayComplete>(a));
+            });
+
+            Context.Subscribe(RedisPubSubChannels.OnTrainingEpochComplete, (c, a) =>
+            {
+                OnTrainingEpochComplete(JsonConvert.DeserializeObject<OnTrainingEpochCompleteArgs>(a));
+            });
+
             AgentListeners = new Dictionary<string, IList<string>>();
         }
 
@@ -103,6 +114,26 @@ namespace DeepQStock.Server.Hubs
         {
             var group = Clients.Group(string.Format(GroupNameTemplate, args.AgentId));
             group?.onDayComplete(args);
+        }
+
+        /// <summary>
+        /// Called when [simulation complete].
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        public void OnSimulationComplete(OnSimulationComplete args)
+        {
+            var group = Clients.Group(string.Format(GroupNameTemplate, args.AgentId));
+            group?.onSimulationCompleted(args);
+        }
+
+        /// <summary>
+        /// On traingin epoch complete
+        /// </summary>
+        /// <param name="args"></param>
+        public void OnTrainingEpochComplete(OnTrainingEpochCompleteArgs args)
+        {
+            var group = Clients.Group(string.Format(GroupNameTemplate, args.AgentId));
+            group?.onTrainingEpochCompleted(args);
         }
 
         /// <summary>

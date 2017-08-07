@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Owin;
 using StackExchange.Redis;
 using System.Linq;
+using System.Threading;
 using System.Web.Http;
 
 namespace DeepQStock.Server
@@ -51,6 +52,10 @@ namespace DeepQStock.Server
             app.UseHangfireServer();
 
             ConfigureService();
+
+            int minWorker, minIOC;            
+            ThreadPool.GetMinThreads(out minWorker, out minIOC);
+            ThreadPool.SetMinThreads(8, 8);
 
         }
 

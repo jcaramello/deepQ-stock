@@ -1,6 +1,8 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Utils;
+using SQLite.Net.Attributes;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +26,11 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Get or set the previous period
         /// </summary>
+        [OneToOne]
         public Period PreviousPeriod { get; set; }
+
+        [ForeignKey(typeof(Period))]
+        public long PreviousPeriodId { get; set; }
 
         /// <summary>
         /// The total of periods used for calculate
@@ -49,11 +55,16 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Average True range
         /// </summary>
-        public AverageTrueRange ATR { get; set; }
+        [OneToOne]
+        public AverageTrueRange Atr { get; set; }
+
+        [ForeignKey(typeof(AverageTrueRange))]
+        public long AtrId { get; set; }
 
         /// <summary>
         /// Get the EMA multiplier
         /// </summary>
+        [Ignore]
         private double Multiplier
         {
             get { return (2.0 / (Length + 1.0)); }
@@ -70,7 +81,7 @@ namespace DeepQStock.Indicators
         public DMI(PeriodType type, int length = 14) : base(type)
         {
             Length = length;
-            ATR = new AverageTrueRange(type, length);        
+            Atr = new AverageTrueRange(type, length);        
         }
 
         #endregion
@@ -100,7 +111,7 @@ namespace DeepQStock.Indicators
                 var plusDM = upMove > downMove && upMove > 0.0 ? upMove : 0.0;
                 var minusDM = downMove > upMove && downMove > 0.0 ? downMove : 0.0;
 
-                var atr = ATR.Update(period).First();
+                var atr = Atr.Update(period).First();
                 var plusDMOverATR = atr != 0.0 ? plusDM / atr : 0.0;
                 var minusDMOverATR =atr != 0.0 ? minusDM / atr : 0.0;
               
