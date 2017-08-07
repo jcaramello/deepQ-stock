@@ -1,6 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { AgentService } from '../services/agent-service';
-import { StockExchangeService } from '../services/stock-exchange-service';
 import { Agent } from '../models/agent';
 import { StockExchange } from '../models/stock-exchange';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
@@ -45,7 +44,6 @@ export class FullLayoutComponent implements OnInit {
    * @memberof FullLayoutComponent
    */
   constructor(private agentService: AgentService,
-    private stockExchangeService: StockExchangeService,
     private slimLoadingBarService: SlimLoadingBarService,
     private notificationService: NotificationsService,
     private zone: NgZone) { }
@@ -126,12 +124,8 @@ export class FullLayoutComponent implements OnInit {
    */
   save(modal) {
     this.slimLoadingBarService.start();
-    this.stockExchangeService.save(this.currentStock)
-      .then(id => {
-        this.currentAgent.stockExchangeId = id;
-        this.agentService.save(this.currentAgent);
-        this.currentAgent.stockExchange = this.currentStock;
-      })
+    this.currentAgent.stockExchange = this.currentStock;
+    this.agentService.save(this.currentAgent)
       .then(() => {
         modal.hide();
         this.slimLoadingBarService.complete();
@@ -155,14 +149,14 @@ export class FullLayoutComponent implements OnInit {
    */
   remove(modal) {
     this.slimLoadingBarService.start();
-    this.agentService.remove(this.agentToRemove.id).then(() =>{
-       this.slimLoadingBarService.complete();
-       this.zone.run(() => {
-          var idx = this.agents.indexOf(this.agentToRemove);
-          this.agents.splice(idx, 1);
-          modal.hide();
-       });       
-    });        
+    this.agentService.remove(this.agentToRemove.id).then(() => {
+      this.slimLoadingBarService.complete();
+      this.zone.run(() => {
+        var idx = this.agents.indexOf(this.agentToRemove);
+        this.agents.splice(idx, 1);
+        modal.hide();
+      });
+    });
   }
 
 }

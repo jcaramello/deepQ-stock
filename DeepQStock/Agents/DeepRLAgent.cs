@@ -148,7 +148,7 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Saves the specified path.
         /// </summary>        
-        public void Save(RedisContext ctx)
+        public void Save(DatabaseContext ctx)
         {
             if (!Directory.Exists(TempFolder))
             {

@@ -41,14 +41,11 @@
     <Compile Include="Stocks\StockExchangeEvents.cs" />
     <Compile Include="Stocks\RewardCalculator.cs" />
     <Compile Include="Storage\BaseModel.cs" />
-    <Compile Include="Storage\ExperienceStorage.cs" />
-    <Compile Include="Storage\OnDayCompleteStorage.cs" />
-    <Compile Include="Storage\RedisContext.cs" />
-    <Compile Include="Storage\TechnicalIndicatorStorage.cs" />
+    <Compile Include="Storage\DatabaseContext.cs" />
+    <Compile Include="Storage\RedisManager.cs" />
     <Compile Include="Utils\CsvDataProvider.cs" />
     <Compile Include="Storage\BaseStorage.cs" />
     <Compile Include="Storage\IStorage.cs" />
-    <Compile Include="Storage\PeriodStorage.cs" />
     <Compile Include="Agents\DeepRLAgent.cs" />
     <Compile Include="Agents\DeepRLAgentParameters.cs" />
     <Compile Include="Stocks\StockExchangeParameters.cs" />
@@ -70,7 +67,6 @@
     <Compile Include="Agents\QNetwork.cs" />
     <Compile Include="Domain\State.cs" />
     <Compile Include="Stocks\StockExchange.cs" />
-    <Compile Include="Storage\StateStorage.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="Utils\IndicatorUtils.cs" />
     <Compile Include="Utils\LinqExtensions.cs" />

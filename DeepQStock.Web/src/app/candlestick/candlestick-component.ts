@@ -1,6 +1,5 @@
 import { Component, HostListener, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { StockExchangeService } from '../services/stock-exchange-service';
 import { Agent } from '../models/agent';
 import { OnDayComplete } from '../models/on-day-complete';
 import { StockExchange } from '../models/stock-exchange';
@@ -48,7 +47,7 @@ export class CandlestickComponent {
    * 
    * @memberof BreadcrumbsComponent
    */
-  constructor(private router: Router, private route: ActivatedRoute, private stockExchangeService: StockExchangeService, private slimLoadingBarService: SlimLoadingBarService) {
+  constructor(private router: Router, private route: ActivatedRoute, private slimLoadingBarService: SlimLoadingBarService) {
     this.data = [];
 
   }

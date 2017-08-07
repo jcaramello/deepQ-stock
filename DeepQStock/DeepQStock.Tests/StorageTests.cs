@@ -1,4 +1,5 @@
-﻿using DeepQStock.Storage;
+﻿using DeepQStock.Domain;
+using DeepQStock.Storage;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StackExchange.Redis;
@@ -11,25 +12,15 @@ namespace DeepQStock.Tests
     {
         #region << Setup >>         
 
-        /// <summary>
-        /// Gets or sets the period storage.
-        /// </summary>
-        public PeriodStorage PeriodStorage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the period storage.
-        /// </summary>
-        public StateStorage StateStorage { get; set; }
+        public DatabaseContext Database { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StorageTests"/> class.
         /// </summary>
         public StorageTests()
         {
-            var redis = ConnectionMultiplexer.Connect("localhost");            
+            Database = new DatabaseContext();
 
-            PeriodStorage = new PeriodStorage(redis);
-            StateStorage = new StateStorage(redis);
         }
 
         #endregion
@@ -44,27 +35,27 @@ namespace DeepQStock.Tests
         {
             var period = DataGenerator.GetCompleteSamplePeriod();
 
-            PeriodStorage.Save(period);
+            Database.Periods.Save(period);
 
             period.Id.Should().BeGreaterThan(0);
 
-            var retreivedPeriod = PeriodStorage.GetById(period.Id);
+            var retreivedPeriod = Database.Periods.GetById(period.Id);
 
             retreivedPeriod.ShouldBeEquivalentTo(period);
 
             retreivedPeriod.Close = period.Close + 1;
-            PeriodStorage.Save(retreivedPeriod);
+            Database.Periods.Save(retreivedPeriod);
 
-            retreivedPeriod = PeriodStorage.GetById(period.Id);
+            retreivedPeriod = Database.Periods.GetById(period.Id);
 
             retreivedPeriod.Close.Should().Be(period.Close + 1);
 
-            var all = PeriodStorage.GetAll();
+            var all = Database.Periods.GetAll();
             all.Count().Should().BeGreaterThan(0);
 
-            PeriodStorage.Delete(retreivedPeriod);
+            Database.Periods.Delete(retreivedPeriod);
 
-            var deletedPeriod = PeriodStorage.GetById(retreivedPeriod.Id);
+            var deletedPeriod = Database.Periods.GetById(retreivedPeriod.Id);
             deletedPeriod.Should().BeNull();
         }
 
@@ -77,28 +68,28 @@ namespace DeepQStock.Tests
         {
             var state = DataGenerator.GetCompleteSampleState();
 
-            StateStorage.Save(state);
+            Database.States.Save(state);
 
             state.Id.Should().BeGreaterThan(0);
 
-            var retreivedState = StateStorage.GetById(state.Id);
+            var retreivedState = Database.States.GetById(state.Id);
 
             retreivedState.ShouldBeEquivalentTo(state);
             retreivedState.Today.Date.Should().Be(state.Today.Date);
 
             retreivedState.Size = state.Size + 1;
-            StateStorage.Save(retreivedState);
+            Database.States.Save(retreivedState);
 
-            retreivedState = StateStorage.GetById(state.Id);
+            retreivedState = Database.States.GetById(state.Id);
 
             retreivedState.Size.Should().Be(state.Size + 1);
 
-            var all = StateStorage.GetAll();
+            var all = Database.States.GetAll();
             all.Count().Should().BeGreaterThan(0);
 
-            StateStorage.Delete(retreivedState);
+            Database.States.Delete(retreivedState);
 
-            var deleteState = StateStorage.GetById(retreivedState.Id);
+            var deleteState = Database.States.GetById(retreivedState.Id);
             deleteState.Should().BeNull();
         }
 

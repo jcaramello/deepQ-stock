@@ -41,6 +41,11 @@ namespace DeepQStock.Indicators
         public virtual string Name { get; }
 
 
+        public TechnicalIndicatorBase()
+        {
+            Type = PeriodType.Day;
+        }
+
         public TechnicalIndicatorBase(PeriodType type)
         {
             ClassType = GetType().FullName;

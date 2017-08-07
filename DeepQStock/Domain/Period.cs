@@ -2,15 +2,12 @@
 using DeepQStock.Indicators;
 using DeepQStock.Storage;
 using DeepQStock.Utils;
-using Encog.Util.Arrayutil;
 using LINQtoCSV;
-using Newtonsoft.Json;
 using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DeepQStock.Domain
 {
@@ -74,8 +71,17 @@ namespace DeepQStock.Domain
         /// </summary>
         public IDictionary<string, IEnumerable<double>> Indicators { get; set; }
 
+        /// <summary>
+        /// Gets or sets the simple moving average identifier.
+        /// </summary>
         [ForeignKey(typeof(SimpleMovingAverage))]
-        public long SimpleMovingAverageId { get; set; }
+        public long? SimpleMovingAverageId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the state identifier.
+        /// </summary>
+        [ManyToMany(typeof(State))]
+        public List<State> States { get; set; }
 
         #endregion
 

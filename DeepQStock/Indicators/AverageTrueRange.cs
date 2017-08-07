@@ -46,12 +46,20 @@ namespace DeepQStock.Indicators
         [OneToOne]
         public Period PreviousPeriod { get; set; }
 
+        /// <summary>
+        /// Gets or sets the previous period identifier.
+        /// </summary>
         [ForeignKey(typeof(Period))]
         public long PreviousPeriodId { get; set; }
 
         #endregion
 
         #region << Constructor >> 
+
+        public AverageTrueRange() : base(PeriodType.Day)
+        {
+            Length = 14;
+        }
 
         /// <summary>
         /// Default Constructor

@@ -66,7 +66,8 @@ namespace DeepQStock.Server
         public void ConfigureService()
         {
             var redis = ConnectionMultiplexer.Connect(Settings.RedisConnectionString);            
-            var manager = new RedisContext(redis);
+            var manager = new RedisManager(redis);
+            var ctx = new DatabaseContext();
 
             var settings = new JsonSerializerSettings();
             settings.ContractResolver = new SignalRContractResolver();
@@ -74,13 +75,11 @@ namespace DeepQStock.Server
 
             GlobalHost.DependencyResolver.Register(typeof(JsonSerializer), () => serializer);
 
-            var agentHub = new AgentHub(manager);
-            var stockExchangeHub = new StockExchangeHub(manager);
+            var agentHub = new AgentHub(manager);            
 
             //Register Hubs
-            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => agentHub);
-            GlobalHost.DependencyResolver.Register(typeof(StockExchangeHub), () => stockExchangeHub);
-            GlobalHost.DependencyResolver.Register(typeof(StockExchange), () => new StockExchange(manager));
+            GlobalHost.DependencyResolver.Register(typeof(AgentHub), () => agentHub);            
+            GlobalHost.DependencyResolver.Register(typeof(StockExchange), () => new StockExchange(ctx, manager));
 
         }
     }

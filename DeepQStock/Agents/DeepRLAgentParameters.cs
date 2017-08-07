@@ -36,9 +36,12 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Gets or sets the hidden layers count.
         /// </summary>
-        [OneToOne]
+        [OneToOne(CascadeOperations = CascadeOperation.All)]
         public QNetworkParameters QNetwork { get; set; }
 
+        /// <summary>
+        /// Gets or sets the q network identifier.
+        /// </summary>
         [ForeignKey(typeof(QNetworkParameters))]
         public long QNetworkId { get; set; }
 
@@ -48,6 +51,9 @@ namespace DeepQStock.Agents
         [OneToOne(CascadeOperations = CascadeOperation.All)]
         public StockExchangeParameters StockExchange { get; set; }
 
+        /// <summary>
+        /// Gets or sets the stock exchange identifier.
+        /// </summary>
         [ForeignKey(typeof(StockExchangeParameters))]
         public long StockExchangeId { get; set; }
 

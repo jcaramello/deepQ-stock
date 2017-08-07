@@ -6,7 +6,6 @@ import { OnDayComplete } from '../models/on-day-complete';
 import { OnSimulationComplete } from '../models/on-simulation-complete';
 import { OnTrainingEpochComplete } from '../models/on-training-epoch-complete';
 import { AgentService } from '../services/agent-service';
-import { StockExchangeService } from '../services/stock-exchange-service';
 import { NotificationsService } from 'angular2-notifications';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 import { ActionType, AgentStatus } from '../models/enums';
@@ -35,8 +34,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @memberof DashboardComponent
    */
   constructor(private route: ActivatedRoute,
-    private agentService: AgentService,
-    private stockExchangeService: StockExchangeService,
+    private agentService: AgentService,    
     private notificationService: NotificationsService,
     private slimLoadingBarService: SlimLoadingBarService,
     private zone: NgZone) { }
@@ -75,10 +73,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (a.status == AgentStatus.Running) {
           this.agentService.subscribe(agentId);
         }
+        this.stock = a.stockExchange;
         return a;
-      })
-      .then(a => this.stockExchangeService.getById(this.agent.stockExchangeId))
-      .then(s => this.stock = s)
+      })            
   }
 
   /**

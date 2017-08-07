@@ -1,5 +1,7 @@
 ﻿using DeepQStock.Storage;
 using Encog.Engine.Network.Activation;
+using SQLite.Net.Attributes;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +44,7 @@ namespace DeepQStock.Agents
 
         /// <summary>
         /// Gets or sets the activation function.
-        /// </summary>
+        /// </summary>        
         public IActivationFunction ActivationFunction { get; set; }
 
         #endregion
@@ -71,7 +73,8 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Gets or sets the layers.
         /// </summary>
-        public IList<LayerParameters> Layers { get; set; }
+        [Ignore]
+        public List<LayerParameters> Layers { get; set; }
 
         /// <summary>
         /// Gets or sets the training error.

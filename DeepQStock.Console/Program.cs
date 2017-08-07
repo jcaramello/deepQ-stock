@@ -33,7 +33,8 @@ namespace DeepQStock.Console
                 var status = "";
                 var episodeLength = 5;
                 var redis = ConnectionMultiplexer.Connect("localhost:6379");
-                var context = new RedisContext(redis);
+                var manager = new RedisManager(redis);
+                var context = new DatabaseContext();
                 var initialCapital = 100000;
                 var dayNumber = 0;
                 int totalTrainingDays = 0;
@@ -55,9 +56,9 @@ namespace DeepQStock.Console
                 stockParameters.TransactionCost = options.TransactionCost > 0 ? options.TransactionCost : stockParameters.TransactionCost;
                 stockParameters.RewardCalculator = RewardCalculator.Use(RewardCalculatorType.WinningsOverLoosings);
 
-                var stock = new StockExchange(stockParameters, context, agent, null);
+                var stock = new StockExchange(stockParameters, context, manager, agent, null);
 
-                context.Subscribe(RedisPubSubChannels.OnDayComplete, (channel, msg)=>
+                manager.Subscribe(RedisPubSubChannels.OnDayComplete, (channel, msg)=>
                 {
                     var a = JsonConvert.DeserializeObject<OnDayComplete>(msg);
                     dayNumber = a.DayNumber - totalTrainingDays;

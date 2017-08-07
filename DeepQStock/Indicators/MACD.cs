@@ -22,33 +22,49 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Exponetial moving average of 9 periods
         /// </summary>
-        [OneToOne]
+        [OneToOne(CascadeOperations = CascadeOperation.All)]
         public ExponentialMovingAverage Ema9 { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ema9 identifier.
+        /// </summary>
         [ForeignKey(typeof(ExponentialMovingAverage))]
         public long Ema9Id { get; set; }
 
         /// <summary>
         /// Exponetial moving average of 12 periods
         /// </summary>
-        [OneToOne]
+        [OneToOne(CascadeOperations = CascadeOperation.All)]
         public ExponentialMovingAverage Ema12 { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ema12 identifier.
+        /// </summary>
         [ForeignKey(typeof(ExponentialMovingAverage))]
         public long Ema12Id { get; set; }
 
         /// <summary>
         /// Exponetial moving average of 26 periods
         /// </summary>
-        [OneToOne]
+        [OneToOne(CascadeOperations = CascadeOperation.All)]
         public ExponentialMovingAverage Ema26 { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ema26 identifier.
+        /// </summary>
         [ForeignKey(typeof(ExponentialMovingAverage))]
         public long Ema26Id { get; set; }
 
         #endregion
 
         #region << Constructor >>
+
+        public MACD() : base(PeriodType.Day)
+        {
+            Ema9 = new ExponentialMovingAverage(Type, 9);
+            Ema12 = new ExponentialMovingAverage(Type, 12);
+            Ema26 = new ExponentialMovingAverage(Type, 26);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MACD"/> class.

@@ -1,29 +1,30 @@
 ﻿using SQLite.Net;
+using SQLite.Net.Interop;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace DeepQStock.Storage
 {
-    public class BaseStorage<T> : IStorage<T> where T : BaseModel, new()
+    public class BaseStorage<T> : TableQuery<T>, IStorage<T> where T : BaseModel, new()
     {
         #region << Protected Properties >>  
 
         /// <summary>
         /// Gets or sets the redis manager.
         /// </summary>
-        protected SQLiteConnection Database { get; set; }        
+        protected SQLiteConnection Database { get; set; }
 
         #endregion
 
         #region << Constructor >>
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PeriodStorage" /> class.
+        /// Initializes a new instance of the <see cref="BaseStorage{T}"/> class.
         /// </summary>
-        /// <param name="redis">The redis.</param>
-        public BaseStorage(SQLiteConnection db)
+        /// <param name="conn">The database.</param>
+        public BaseStorage(ISQLitePlatform platform, SQLiteConnection conn)  : base(platform, conn)
         {
-            Database = db;            
+            Database = conn;            
         }
 
         #endregion       

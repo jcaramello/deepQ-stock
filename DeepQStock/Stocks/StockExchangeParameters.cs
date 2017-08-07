@@ -2,6 +2,7 @@
 using DeepQStock.Indicators;
 using DeepQStock.Storage;
 using Newtonsoft.Json;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 
@@ -45,21 +46,21 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// Gets or sets the indicators.
-        /// </summary>
-        [JsonIgnore]
-        public IList<TechnicalIndicatorBase> DailyIndicators { get; set; }
+        /// </summary>        
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+        public List<TechnicalIndicatorBase> DailyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the weekly indicators.
-        /// </summary>
-        [JsonIgnore]
-        public IList<TechnicalIndicatorBase> WeeklyIndicators { get; set; }
+        /// </summary>        
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+        public List<TechnicalIndicatorBase> WeeklyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the monthly indicators.
         /// </summary>
-        [JsonIgnore]
-        public IList<TechnicalIndicatorBase> MonthlyIndicators { get; set; }
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+        public List<TechnicalIndicatorBase> MonthlyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the transaction cost.

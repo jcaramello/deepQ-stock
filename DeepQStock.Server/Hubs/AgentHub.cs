@@ -21,7 +21,12 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Gets or sets the client.
         /// </summary>
-        public RedisContext Context { get; set; }
+        public RedisManager RedisManager { get; set; }
+
+        /// <summary>
+        /// Provides information about the calling client.
+        /// </summary>
+        public DatabaseContext Context { get; set; }
 
         /// <summary>
         /// Gets or sets the agent listeners.
@@ -40,20 +45,20 @@ namespace DeepQStock.Server.Hubs
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public AgentHub(RedisContext ctx)
+        public AgentHub(RedisManager ctx)
         {
-            Context = ctx;
-            Context.Subscribe(RedisPubSubChannels.OnDayComplete, (c, a) =>
+            RedisManager = ctx;
+            RedisManager.Subscribe(RedisPubSubChannels.OnDayComplete, (c, a) =>
             {
                 OnDayComplete(JsonConvert.DeserializeObject<OnDayComplete>(a));
             });
 
-            Context.Subscribe(RedisPubSubChannels.OnSimulationComplete, (c, a) =>
+            RedisManager.Subscribe(RedisPubSubChannels.OnSimulationComplete, (c, a) =>
             {
                 OnDayComplete(JsonConvert.DeserializeObject<OnDayComplete>(a));
             });
 
-            Context.Subscribe(RedisPubSubChannels.OnTrainingEpochComplete, (c, a) =>
+            RedisManager.Subscribe(RedisPubSubChannels.OnTrainingEpochComplete, (c, a) =>
             {
                 OnTrainingEpochComplete(JsonConvert.DeserializeObject<OnTrainingEpochCompleteArgs>(a));
             });
@@ -69,17 +74,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public IEnumerable<DeepRLAgentParameters> GetAll()
         {
-            var agents = Context.Agents.GetAll();
-            var stocks = Context.StockExchanges.GetByIds(agents.Select(a => a.StockExchangeId));
-            var networks = Context.QNetworks.GetByIds(agents.Select(a => a.QNetworkId));
-
-            foreach (var a in agents)
-            {
-                a.StockExchange = stocks.Single(s => s.Id == a.StockExchangeId);
-                a.QNetwork = networks.Single(n => n.Id == a.QNetworkId);
-            }
-
-            return agents;
+            return Context.Agents.GetAll();                       
         }
 
         /// <summary>
@@ -88,12 +83,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public DeepRLAgentParameters GetById(long id)
         {
-            var agent = Context.Agents.GetById(id);
-            agent.Decisions = GetDecisions(id);
-            agent.QNetwork = Context.QNetworks.GetById(agent.QNetworkId);
-            agent.StockExchange = Context.StockExchanges.GetById(agent.StockExchangeId);
-
-            return agent;
+            return Context.Agents.GetById(id);                        
         }
 
         /// <summary>
@@ -103,7 +93,7 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public IEnumerable<OnDayComplete> GetDecisions(long id)
         {
-            return Context.OnDayCompleted.GetAll().Where(d => d.AgentId == id).OrderBy(d => d.Date);
+            return Context.OnDaysCompleted.Where(d => d.AgentId == id).OrderBy(d => d.Date);
         }
 
         /// <summary>
@@ -172,12 +162,7 @@ namespace DeepQStock.Server.Hubs
         /// <param name="agent"></param>
         /// <returns></returns>
         public long Save(DeepRLAgentParameters agent)
-        {
-            var qNetwork = agent.QNetwork;
-            Context.QNetworks.Save(qNetwork);
-            agent.QNetworkId = qNetwork.Id;
-            agent.QNetwork = null;
-
+        {            
             Context.Agents.Save(agent);
 
             Clients.All.onCreatedAgent(agent);
@@ -255,7 +240,7 @@ namespace DeepQStock.Server.Hubs
             string jobId = null;
             ActiveAgents.TryRemove(id, out jobId);
 
-            var agent = GetById(id);
+            var agent = Context.Agents.GetById(id);
 
             // Here we have two posible situations, one is if the agent is running, in this case we cannot remove the agent immediately, 
             // we need mark the agent as removed and stop the agent's job. The remove process will be handle in the shutdown process.

@@ -29,6 +29,9 @@ namespace DeepQStock.Indicators
         [OneToOne]
         public Period PreviousPeriod { get; set; }
 
+        /// <summary>
+        /// Gets or sets the previous period identifier.
+        /// </summary>
         [ForeignKey(typeof(Period))]
         public long PreviousPeriodId { get; set; }
 
@@ -55,9 +58,15 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Average True range
         /// </summary>
-        [OneToOne]
+        [OneToOne(CascadeOperations = CascadeOperation.All)]
         public AverageTrueRange Atr { get; set; }
 
+        /// <summary>
+        /// Gets or sets the atr identifier.
+        /// </summary>
+        /// <value>
+        /// The atr identifier.
+        /// </value>
         [ForeignKey(typeof(AverageTrueRange))]
         public long AtrId { get; set; }
 
@@ -73,6 +82,11 @@ namespace DeepQStock.Indicators
         #endregion
 
         #region << Constructor >>
+
+        public DMI() : base(PeriodType.Day)
+        {
+            Length = 14;
+        }
 
         /// <summary>
         /// Default Constructor

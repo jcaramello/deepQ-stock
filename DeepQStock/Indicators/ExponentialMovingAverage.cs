@@ -43,6 +43,12 @@ namespace DeepQStock.Indicators
 
         #region << Constructor >>
 
+
+        public ExponentialMovingAverage() : base(PeriodType.Day, 8)
+        {
+
+        }
+
         /// <summary>
         /// Default Constructor
         /// </summary>

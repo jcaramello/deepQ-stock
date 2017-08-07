@@ -26,6 +26,9 @@ namespace DeepQStock.Indicators
         [Ignore]
         public Queue<Period> Periods { get; set; }
 
+        /// <summary>
+        /// Gets or sets the internal periods.
+        /// </summary>
         [OneToMany]
         public List<Period> InternalPeriods
         {
@@ -42,6 +45,13 @@ namespace DeepQStock.Indicators
         #endregion
 
         #region << Constructor >>
+
+
+        public SimpleMovingAverage() : base(PeriodType.Day)
+        {
+            Size = 8;
+            Periods = new Queue<Period>(Size);
+        }
 
         /// <summary>
         /// Default Constructor

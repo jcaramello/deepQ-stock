@@ -28,7 +28,7 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Saves this instance.
         /// </summary>
-        void Save(RedisContext ctx);
+        void Save(DatabaseContext ctx);
 
         /// <summary>
         /// Set pass experiences to the agent

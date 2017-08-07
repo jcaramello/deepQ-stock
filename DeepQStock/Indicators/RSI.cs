@@ -31,33 +31,49 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Upward Periods used in the calculation
         /// </summary>
-        [OneToOne]
+        [OneToOne(CascadeOperations = CascadeOperation.All)]
         public ExponentialMovingAverage UpwardPeriods{ get; set; }
 
+        /// <summary>
+        /// Gets or sets the upward periods identifier.
+        /// </summary>
         [ForeignKey(typeof(ExponentialMovingAverage))]
         public long UpwardPeriodsId { get; set; }
 
         /// <summary>
         /// Upward Periods used in the calculation
         /// </summary>
-        [OneToOne]
+        [OneToOne(CascadeOperations = CascadeOperation.All)]
         public ExponentialMovingAverage DownwardPeriods { get; set; }
 
+        /// <summary>
+        /// Gets or sets the downward periods identifier.
+        /// </summary>
         [ForeignKey(typeof(ExponentialMovingAverage))]
         public long DownwardPeriodsId { get; set; }
 
         /// <summary>
         /// Previous Period
         /// </summary>
-        [OneToOne]
+        [OneToOne(CascadeOperations = CascadeOperation.All)]
         public Period PreviousPeriod{ get; set; }
 
+        /// <summary>
+        /// Gets or sets the previous period identifier.
+        /// </summary>
         [ForeignKey(typeof(Period))]
         public long PreviousPeriodId { get; set; }
 
         #endregion
 
         #region << Constructor >> 
+
+        public RSI() : base(PeriodType.Day)
+        {
+            Length = 14;
+            UpwardPeriods = new ExponentialMovingAverage(Type, Length);
+            DownwardPeriods = new ExponentialMovingAverage(Type, Length);
+        }
 
         /// <summary>
         /// Default Constructor

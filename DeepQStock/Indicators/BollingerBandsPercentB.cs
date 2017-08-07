@@ -22,15 +22,26 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Simple moving average of 20 periods
         /// </summary>
-        [OneToOne]
+        [OneToOne(CascadeOperations = CascadeOperation.All)]
         public SimpleMovingAverage Ma20 { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ma20 identifier.
+        /// </summary>
+        /// <value>
+        /// The ma20 identifier.
+        /// </value>
         [ForeignKey(typeof(SimpleMovingAverage))]
         public long Ma20Id { get; set; }
 
         #endregion
 
         #region << Constructor >>
+
+        public BollingerBandsPercentB(): base(PeriodType.Day)
+        {
+            Ma20 = new SimpleMovingAverage(PeriodType.Day, 20);
+        }
 
         /// <summary>
         /// Default Constructor
