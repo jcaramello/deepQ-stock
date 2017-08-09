@@ -3,9 +3,9 @@ using DeepQStock.Indicators;
 using DeepQStock.Storage;
 using DeepQStock.Utils;
 using LINQtoCSV;
-using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
 
@@ -14,11 +14,11 @@ namespace DeepQStock.Domain
     public class Period : BaseModel
     {
         #region << Public Properties >>            
-     
+
         /// <summary>
         /// Period Type
         /// </summary>
-        public PeriodType  PeriodType{ get; set; }
+        public PeriodType PeriodType { get; set; }
 
         /// <summary>
         /// Gets or sets the start date.
@@ -69,19 +69,13 @@ namespace DeepQStock.Domain
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>
-        public IDictionary<string, IEnumerable<double>> Indicators { get; set; }
-
-        /// <summary>
-        /// Gets or sets the simple moving average identifier.
-        /// </summary>
-        [ForeignKey(typeof(SimpleMovingAverage))]
-        public long? SimpleMovingAverageId { get; set; }
+        [NotMapped]
+        public IDictionary<string, IEnumerable<double>> Indicators { get; set; }              
 
         /// <summary>
         /// Gets or sets the state identifier.
-        /// </summary>
-        [ManyToMany(typeof(State))]
-        public List<State> States { get; set; }
+        /// </summary>        
+        public ICollection<State> States { get; set; }
 
         #endregion
 
@@ -93,7 +87,7 @@ namespace DeepQStock.Domain
         public Period()
         {
             Indicators = new Dictionary<string, IEnumerable<double>>();
-            PeriodType = PeriodType.Day;            
+            PeriodType = PeriodType.Day;
         }
 
         #endregion

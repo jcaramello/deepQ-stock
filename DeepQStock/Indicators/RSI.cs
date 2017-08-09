@@ -1,7 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Utils;
-using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,39 +29,18 @@ namespace DeepQStock.Indicators
 
         /// <summary>
         /// Upward Periods used in the calculation
-        /// </summary>
-        [OneToOne(CascadeOperations = CascadeOperation.All)]
-        public ExponentialMovingAverage UpwardPeriods{ get; set; }
-
-        /// <summary>
-        /// Gets or sets the upward periods identifier.
-        /// </summary>
-        [ForeignKey(typeof(ExponentialMovingAverage))]
-        public long UpwardPeriodsId { get; set; }
+        /// </summary>        
+        public ExponentialMovingAverage UpwardPeriods{ get; set; }      
 
         /// <summary>
         /// Upward Periods used in the calculation
-        /// </summary>
-        [OneToOne(CascadeOperations = CascadeOperation.All)]
-        public ExponentialMovingAverage DownwardPeriods { get; set; }
-
-        /// <summary>
-        /// Gets or sets the downward periods identifier.
-        /// </summary>
-        [ForeignKey(typeof(ExponentialMovingAverage))]
-        public long DownwardPeriodsId { get; set; }
+        /// </summary>        
+        public ExponentialMovingAverage DownwardPeriods { get; set; }       
 
         /// <summary>
         /// Previous Period
-        /// </summary>
-        [OneToOne(CascadeOperations = CascadeOperation.All)]
-        public Period PreviousPeriod{ get; set; }
-
-        /// <summary>
-        /// Gets or sets the previous period identifier.
-        /// </summary>
-        [ForeignKey(typeof(Period))]
-        public long PreviousPeriodId { get; set; }
+        /// </summary>        
+        public Period PreviousPeriod{ get; set; }        
 
         #endregion
 

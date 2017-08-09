@@ -3,7 +3,6 @@ using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Storage;
 using Newtonsoft.Json;
-using SQLiteNetExtensions.Attributes;
 using System;
 
 namespace DeepQStock.Stocks
@@ -25,8 +24,7 @@ namespace DeepQStock.Stocks
     {
         /// <summary>
         /// Gets or sets the agent identifier.
-        /// </summary>
-        [ForeignKey(typeof(DeepRLAgentParameters))]
+        /// </summary>        
         public long AgentId { get; set; }
 
         /// <summary>
@@ -71,14 +69,7 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// Gets or sets the actual position.
-        /// </summary>               
-        [OneToMany]
-        public Period Period { get; set; }
-
-        /// <summary>
-        /// PeriodId
-        /// </summary>
-        [ForeignKey(typeof(Period))]
-        public long PeriodId { get; set; }
+        /// </summary>                       
+        public Period Period { get; set; }        
     }
 }

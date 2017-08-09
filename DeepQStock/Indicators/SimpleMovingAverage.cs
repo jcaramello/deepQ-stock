@@ -1,10 +1,9 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Utils;
-using SQLite.Net.Attributes;
-using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,14 +22,13 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// List of Periods to use for calculate the average
         /// </summary>
-        [Ignore]
+        [NotMapped]
         public Queue<Period> Periods { get; set; }
 
         /// <summary>
         /// Gets or sets the internal periods.
-        /// </summary>
-        [OneToMany]
-        public List<Period> InternalPeriods
+        /// </summary>        
+        public ICollection<Period> InternalPeriods
         {
             get { return Periods.ToList(); }
             set { value.OrderBy(v => v.Date).ToList().ForEach(v => Periods.Enqueue(v)); }

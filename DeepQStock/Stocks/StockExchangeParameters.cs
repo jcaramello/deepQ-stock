@@ -2,9 +2,9 @@
 using DeepQStock.Indicators;
 using DeepQStock.Storage;
 using Newtonsoft.Json;
-using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DeepQStock.Stocks
 {
@@ -24,8 +24,8 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// Gets or sets the period types.
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
+        [NotMapped]
         public PeriodType[] PeriodTypes { get; set; }
 
         /// <summary>
@@ -41,37 +41,32 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the reward calculator.
         /// </summary>
-        [Ignore]
+        [NotMapped]
         public RewardCalculator RewardCalculator { get; set; }
 
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>
-        [JsonIgnore]
+        [NotMapped]
         public IList<TechnicalIndicatorBase> DailyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the weekly indicators.
         /// </summary>
-        [JsonIgnore]
+        [NotMapped]
         public IList<TechnicalIndicatorBase> WeeklyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the monthly indicators.
         /// </summary>
-        [JsonIgnore]
+        [NotMapped]
         public IList<TechnicalIndicatorBase> MonthlyIndicators { get; set; }
 
         /// <summary>
         /// Gets or sets the transaction cost.
         /// </summary>
         public double TransactionCost { get; set; }
-
-        /// <summary>
-        /// Current State Id
-        /// </summary>
-        public long CurrentStateId { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the simulation velocity in miliseconds.
         /// </summary>

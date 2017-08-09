@@ -2,9 +2,9 @@
 using DeepQStock.Enums;
 using DeepQStock.Stocks;
 using DeepQStock.Storage;
-using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,15 +20,30 @@ namespace DeepQStock.Indicators
 
         /// <summary>
         /// Stock Exchange id
-        /// </summary>
-        [ForeignKey(typeof(StockExchangeParameters))]
+        /// </summary>        
         public long StockExchangeId { get; set; }
 
         /// <summary>
         /// Gets the value.
-        /// </summary>
-        [TextBlob("Value")]
-        public double[] Value { get; set; }
+        /// </summary>        
+        [NotMapped]
+        public double[] Value
+        {
+            get
+            {
+              return Array.ConvertAll(InternalValue.Split(';'), Double.Parse);
+            }
+            set
+            {
+                
+                InternalValue = String.Join(";", value.Select(p => p.ToString()).ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the internal value.
+        /// </summary>       
+        public string InternalValue { get; set; }
 
         /// <summary>
         /// Indicator Type

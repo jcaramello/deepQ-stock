@@ -1,10 +1,9 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Utils;
-using SQLite.Net.Attributes;
-using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +28,7 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Get the EMA multiplier
         /// </summary>
-        [Ignore]
+        [NotMapped]
         private double Multiplier
         {
             get { return (2.0 / (Length + 1.0)); }
@@ -42,15 +41,8 @@ namespace DeepQStock.Indicators
 
         /// <summary>
         /// Get or set the previous period
-        /// </summary>
-        [OneToOne]
+        /// </summary>        
         public Period PreviousPeriod { get; set; }
-
-        /// <summary>
-        /// Gets or sets the previous period identifier.
-        /// </summary>
-        [ForeignKey(typeof(Period))]
-        public long PreviousPeriodId { get; set; }
 
         #endregion
 

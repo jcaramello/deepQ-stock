@@ -1,7 +1,6 @@
 ﻿using DeepQStock.Enums;
 using DeepQStock.Storage;
 using Newtonsoft.Json;
-using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 namespace DeepQStock.Domain
 {
     public class Experience : BaseModel
-    {
+    {        
         /// <summary>
         /// Agent Id
         /// </summary>
@@ -19,15 +18,8 @@ namespace DeepQStock.Domain
 
         /// <summary>
         /// Gets or sets from.
-        /// </summary>
-        [OneToMany]
-        public State From { get; set; }
-
-        /// <summary>
-        /// State From id
-        /// </summary>
-        [ForeignKey(typeof(State))]
-        public long FromId { get; set; }
+        /// </summary>        
+        public State From { get; set; }        
 
         /// <summary>
         /// Gets or sets the action.
@@ -41,14 +33,7 @@ namespace DeepQStock.Domain
 
         /// <summary>
         /// Gets or sets to.
-        /// </summary>
-        [OneToMany]
-        public State To { get; set; }
-
-        /// <summary>
-        /// State To Id
-        /// </summary>
-        [ForeignKey(typeof(State))]
-        public long ToId { get; set; }
+        /// </summary>      
+        public State To { get; set; }        
     }
 }

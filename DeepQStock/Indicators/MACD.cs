@@ -1,7 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
 using DeepQStock.Utils;
-using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,40 +20,19 @@ namespace DeepQStock.Indicators
 
         /// <summary>
         /// Exponetial moving average of 9 periods
-        /// </summary>
-        [OneToOne(CascadeOperations = CascadeOperation.All)]
+        /// </summary>        
         public ExponentialMovingAverage Ema9 { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ema9 identifier.
-        /// </summary>
-        [ForeignKey(typeof(ExponentialMovingAverage))]
-        public long Ema9Id { get; set; }
-
+       
         /// <summary>
         /// Exponetial moving average of 12 periods
-        /// </summary>
-        [OneToOne(CascadeOperations = CascadeOperation.All)]
-        public ExponentialMovingAverage Ema12 { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ema12 identifier.
-        /// </summary>
-        [ForeignKey(typeof(ExponentialMovingAverage))]
-        public long Ema12Id { get; set; }
+        /// </summary>        
+        public ExponentialMovingAverage Ema12 { get; set; }        
 
         /// <summary>
         /// Exponetial moving average of 26 periods
-        /// </summary>
-        [OneToOne(CascadeOperations = CascadeOperation.All)]
+        /// </summary>        
         public ExponentialMovingAverage Ema26 { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ema26 identifier.
-        /// </summary>
-        [ForeignKey(typeof(ExponentialMovingAverage))]
-        public long Ema26Id { get; set; }
-
+      
         #endregion
 
         #region << Constructor >>

@@ -1,9 +1,8 @@
 ﻿using DeepQStock.Storage;
 using Encog.Engine.Network.Activation;
-using SQLite.Net.Attributes;
-using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,7 +72,7 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Gets or sets the layers.
         /// </summary>
-        [Ignore]
+        [NotMapped]
         public List<LayerParameters> Layers { get; set; }
 
         /// <summary>

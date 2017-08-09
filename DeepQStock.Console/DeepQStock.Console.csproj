@@ -57,6 +57,14 @@
       <HintPath>..\DeepQStock\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\DeepQStock\packages\EntityFramework.6.2.0-beta1\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\DeepQStock\packages\EntityFramework.6.2.0-beta1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Hangfire.Core, Version=1.6.14.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\DeepQStock\packages\Hangfire.Core.1.6.14\lib\net45\Hangfire.Core.dll</HintPath>
       <Private>True</Private>
@@ -87,21 +95,22 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) ..\..\..\Data</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\DeepQStock\packages\Fody.2.0.6\build\dotnet\Fody.targets" Condition="Exists('..\DeepQStock\packages\Fody.2.0.6\build\dotnet\Fody.targets')" />
+  <Import Project="..\DeepQStock\packages\Costura.Fody.1.5.0\build\dotnet\Costura.Fody.targets" Condition="Exists('..\DeepQStock\packages\Costura.Fody.1.5.0\build\dotnet\Costura.Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\DeepQStock\packages\Fody.2.0.6\build\dotnet\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\DeepQStock\packages\Fody.2.0.6\build\dotnet\Fody.targets'))" />
     <Error Condition="!Exists('..\DeepQStock\packages\Costura.Fody.1.5.0\build\dotnet\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\DeepQStock\packages\Costura.Fody.1.5.0\build\dotnet\Costura.Fody.targets'))" />
+    <Error Condition="!Exists('..\DeepQStock\packages\Fody.2.0.6\build\dotnet\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\DeepQStock\packages\Fody.2.0.6\build\dotnet\Fody.targets'))" />
   </Target>
-  <Import Project="..\DeepQStock\packages\Costura.Fody.1.5.0\build\dotnet\Costura.Fody.targets" Condition="Exists('..\DeepQStock\packages\Costura.Fody.1.5.0\build\dotnet\Costura.Fody.targets')" />
+  <Import Project="..\DeepQStock\packages\Fody.2.0.6\build\dotnet\Fody.targets" Condition="Exists('..\DeepQStock\packages\Fody.2.0.6\build\dotnet\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

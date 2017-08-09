@@ -148,7 +148,7 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Saves the specified path.
         /// </summary>        
-        public void Save(DatabaseContext ctx)
+        public void Save(DeepQStockContext ctx)
         {
             if (!Directory.Exists(TempFolder))
             {
@@ -156,7 +156,16 @@ namespace DeepQStock.Agents
             }
 
             Q.Save(NetworkPath);
-            MemoryReplay.ToList().ForEach(e => ctx.Experiences.Save(e));                                    
+
+            foreach (var e in MemoryReplay)
+            {
+                if (e.Id == 0)
+                {
+                    ctx.Experiences.Add(e);
+                }
+            }
+            
+            ctx.SaveChanges();
         }
 
         /// <summary>

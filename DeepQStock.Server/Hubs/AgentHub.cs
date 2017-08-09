@@ -22,12 +22,7 @@ namespace DeepQStock.Server.Hubs
         /// Gets or sets the client.
         /// </summary>
         public RedisManager RedisManager { get; set; }
-
-        /// <summary>
-        /// Provides information about the calling client.
-        /// </summary>
-        public DatabaseContext Context { get; set; }
-
+               
         /// <summary>
         /// Gets or sets the agent listeners.
         /// </summary>        
@@ -74,7 +69,13 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public IEnumerable<DeepRLAgentParameters> GetAll()
         {
-            return Context.Agents.GetAll();                       
+            var agents = new List<DeepRLAgentParameters>();
+            using (var ctx = new DeepQStockContext())
+            {
+                agents = ctx.Agents.ToList();
+            }
+
+            return agents;
         }
 
         /// <summary>
@@ -83,7 +84,13 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public DeepRLAgentParameters GetById(long id)
         {
-            return Context.Agents.GetById(id);                        
+            DeepRLAgentParameters agent = null;
+            using (var ctx = new DeepQStockContext())
+            {
+                agent = ctx.Agents.SingleOrDefault(a => a.Id == id);
+            }
+
+            return agent;
         }
 
         /// <summary>
@@ -93,7 +100,13 @@ namespace DeepQStock.Server.Hubs
         /// <returns></returns>
         public IEnumerable<OnDayComplete> GetDecisions(long id)
         {
-            return Context.OnDaysCompleted.Where(d => d.AgentId == id).OrderBy(d => d.Date);
+            var decisions = new List<OnDayComplete>();
+            using (var ctx = new DeepQStockContext())
+            {
+                decisions = ctx.OnDaysCompleted.Where(d => d.AgentId == id).OrderBy(d => d.Date).ToList();
+            }
+
+            return decisions;
         }
 
         /// <summary>
@@ -162,11 +175,14 @@ namespace DeepQStock.Server.Hubs
         /// <param name="agent"></param>
         /// <returns></returns>
         public long Save(DeepRLAgentParameters agent)
-        {            
-            Context.Agents.Save(agent);
+        {
+            using (var ctx = new DeepQStockContext())
+            {
+                ctx.Agents.Add(agent);
+                ctx.SaveChanges();
+            }
 
             Clients.All.onCreatedAgent(agent);
-
             return agent.Id;
         }
 
@@ -180,6 +196,7 @@ namespace DeepQStock.Server.Hubs
 
             ActiveAgents.TryAdd(id, jobId);
             Subscribe(id);
+
             return jobId;
         }
 
@@ -189,17 +206,20 @@ namespace DeepQStock.Server.Hubs
         /// <param name="id"></param>
         public void Pause(long id)
         {
-            var agent = Context.Agents.GetById(id);
-            agent.Status = AgentStatus.Paused;
-
-            Context.Agents.Save(agent);
-
-            string jobId = null;
-            ActiveAgents.TryRemove(id, out jobId);
-
-            if (!string.IsNullOrEmpty(jobId))
+            using (var ctx = new DeepQStockContext())
             {
-                BackgroundJob.Delete(jobId);
+                var agent = ctx.Agents.Single(a => a.Id == id);
+                agent.Status = AgentStatus.Paused;                
+
+                string jobId = null;
+                ActiveAgents.TryRemove(id, out jobId);
+
+                if (!string.IsNullOrEmpty(jobId))
+                {
+                    BackgroundJob.Delete(jobId);
+                }
+
+                ctx.SaveChanges();
             }
         }
 
@@ -209,16 +229,20 @@ namespace DeepQStock.Server.Hubs
         /// <param name="id"></param>
         public void Stop(long id)
         {
-            string jobId = null;
-            ActiveAgents.TryRemove(id, out jobId);
-
-            var agent = Context.Agents.GetById(id);
-            agent.Status = AgentStatus.Stoped;
-            Context.Agents.Save(agent);
-
-            if (!string.IsNullOrEmpty(jobId))
+            using (var ctx = new DeepQStockContext())
             {
-                BackgroundJob.Delete(jobId);
+                string jobId = null;
+                ActiveAgents.TryRemove(id, out jobId);
+                var agent = ctx.Agents.Single(a => a.Id == id);
+
+                agent.Status = AgentStatus.Stoped;
+
+                if (!string.IsNullOrEmpty(jobId))
+                {
+                    BackgroundJob.Delete(jobId);
+                }
+
+                ctx.SaveChanges();
             }
         }
 
@@ -237,28 +261,31 @@ namespace DeepQStock.Server.Hubs
         /// <param name="id">The identifier.</param>
         public void Remove(long id)
         {
-            string jobId = null;
-            ActiveAgents.TryRemove(id, out jobId);
-
-            var agent = Context.Agents.GetById(id);
-
-            // Here we have two posible situations, one is if the agent is running, in this case we cannot remove the agent immediately, 
-            // we need mark the agent as removed and stop the agent's job. The remove process will be handle in the shutdown process.
-            // And the other situation is when the agent is not running, in that case, we can remove immediately.
-            if (agent.Status == AgentStatus.Running)
+            using (var ctx = new DeepQStockContext())
             {
-                agent.Status = AgentStatus.Removed;
-                Context.Agents.Save(agent);
+                string jobId = null;
+                ActiveAgents.TryRemove(id, out jobId);
+                var agent = ctx.Agents.Single(a => a.Id == id);
 
-                if (!string.IsNullOrEmpty(jobId))
+                // Here we have two posible situations, one is if the agent is running, in this case we cannot remove the agent immediately, 
+                // we need mark the agent as removed and stop the agent's job. The remove process will be handle in the shutdown process.
+                // And the other situation is when the agent is not running, in that case, we can remove immediately.
+                if (agent.Status == AgentStatus.Running)
                 {
-                    BackgroundJob.Delete(jobId);
+                    agent.Status = AgentStatus.Removed;                    
+
+                    if (!string.IsNullOrEmpty(jobId))
+                    {
+                        BackgroundJob.Delete(jobId);
+                    }
                 }
+                else
+                {
+                    ctx.Agents.Remove(agent);                   
+                }
+
+                ctx.SaveChanges();
             }
-            else
-            {
-                Context.RemoveAgent(agent);
-            }                       
         }
 
     }

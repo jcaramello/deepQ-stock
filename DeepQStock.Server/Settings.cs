@@ -29,5 +29,16 @@ namespace DeepQStock.Server
                 return ConfigurationManager.AppSettings["CsvDataDirectory"];
             }
         }
+
+        /// <summary>
+        /// Gets the database path.
+        /// </summary>
+        public static string DatabasePath
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DatabasePath"];
+            }
+        }
     }
 }

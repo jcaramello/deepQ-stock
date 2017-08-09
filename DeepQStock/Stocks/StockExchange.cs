@@ -146,21 +146,18 @@ namespace DeepQStock.Stocks
 
         /// <summary>
         /// Gets or sets the reward calculator.
-        /// </summary>
-        /// <value>
-        /// The reward calculator.
-        /// </value>
-        public Stocks.RewardCalculator RewardCalculator { get; set; }
-
-        /// <summary>
-        /// Gets or sets the storage manager.
-        /// </summary>      
-        private DatabaseContext Context { get; set; }
-
+        /// </summary>        
+        public RewardCalculator RewardCalculator { get; set; }
+       
         /// <summary>
         /// Gets or sets the redis manager.
         /// </summary>
         private RedisManager RedisManager { get; set; }
+
+        /// <summary>
+        /// Gets or sets the database context.
+        /// </summary>
+        private DeepQStockContext DbContext { get; set; }
 
         #endregion
 
@@ -169,24 +166,21 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// We Need this constructor for hangfire
         /// </summary>
-        public StockExchange(DatabaseContext ctx, RedisManager manager)
-        {
-            Context = ctx;
+        public StockExchange(RedisManager manager)
+        {         
             RedisManager = manager;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StockExchange" /> class.
         /// </summary>
-        /// <param name="parameters">The parameters.</param>
-        /// <param name="ctx">The CTX.</param>
+        /// <param name="parameters">The parameters.</param>       
         /// <param name="manager">The manager.</param>
         /// <param name="agent">The agent.</param>
         /// <param name="provider">The provider.</param>
         /// <exception cref="System.Exception">You must pass a csv file path for load the simulated data</exception>
-        public StockExchange(StockExchangeParameters parameters, DatabaseContext ctx, RedisManager manager, IAgent agent, IDataProvider provider)
-        {
-            Context = ctx;
+        public StockExchange(StockExchangeParameters parameters, RedisManager manager, IAgent agent, IDataProvider provider)
+        {            
             RedisManager = manager;
             Agent = agent;
             DataProvider = provider;
@@ -204,22 +198,27 @@ namespace DeepQStock.Stocks
         /// <param name="token"></param>
         /// <param name="agentId"></param>
         public void Run(IJobCancellationToken token, long? agentId = null)
-        {
-            Initialize(agentId);
-
-            if (Agent == null)
-                return;
-
+        {          
             try
             {
-                Simulate(token);
-                var agentParameters = Context.Agents.GetById(agentId.Value);
-                agentParameters.Status = AgentStatus.Completed;
-                Context.Agents.Save(agentParameters);
-                SaveResults();
-                RedisManager.Publish(RedisPubSubChannels.OnSimulationComplete, JsonConvert.SerializeObject(new OnSimulationComplete() { AgentId = agentParameters.Id }));
+                using (var ctx = new DeepQStockContext())
+                {
+                    Initialize(agentId);
+
+                    if (Agent == null)
+                        return;
+
+                    Simulate(token);
+                    var agentParameters = ctx.Agents.Single(a => a.Id == agentId.Value);
+                    agentParameters.Status = AgentStatus.Completed;
+
+                    SaveResults();
+                    RedisManager.Publish(RedisPubSubChannels.OnSimulationComplete, JsonConvert.SerializeObject(new OnSimulationComplete() { AgentId = agentParameters.Id }));
+
+                    ctx.SaveChanges();
+                }
             }
-            catch (JobAbortedException e)
+            catch (JobAbortedException)
             {
 
             }
@@ -286,22 +285,21 @@ namespace DeepQStock.Stocks
         {
             if (agentId.HasValue)
             {
-                var agentParameters = Context.Agents.GetById(agentId.Value);
-                agentParameters.QNetwork = Context.QNetworks.GetById(agentParameters.QNetworkId);
-
+                var agentParameters = DbContext.Agents.Single(a => a.Id == agentId.Value);                
                 Agent = new DeepRLAgent(agentParameters);
-                RewardCalculator = RewardCalculator.Use(RewardCalculatorType.WinningsOverLoosings);
-                Parameters = Context.Stocks.GetById(agentParameters.StockExchangeId);
+
+                RewardCalculator = RewardCalculator.Use(RewardCalculatorType.WinningsOverLoosings);                
                 ((DeepRLAgent)Agent).OnTrainingEpochComplete += (e, args) => RedisManager.Publish(RedisPubSubChannels.OnTrainingEpochComplete, JsonConvert.SerializeObject(args)); 
 
-                var experiences = Context.Experiences.GetAll().Where(e => e.AgentId == agentParameters.Id);
+                var experiences = DbContext.Experiences.Where(e => e.AgentId == agentParameters.Id);
                 Agent.SetExperiences(experiences);
 
+                Parameters = agentParameters.StockExchange;                
                 DataProvider = new CsvDataProvider(Parameters.CsvDataFilePath, Parameters.EpisodeLength);
 
                 if (agentParameters.Status == AgentStatus.Paused)
                 {
-                    CurrentState = Context.States.GetById(Parameters.CurrentStateId);                    
+                    CurrentState = DbContext.States.Single(s => s.StockExchangeId == Parameters.Id);
                     DataProvider.Seek(CurrentState.Today.Date.AddDays(1));                    
                 }
 
@@ -311,7 +309,7 @@ namespace DeepQStock.Stocks
                 }
 
                 agentParameters.Status = AgentStatus.Running;
-                Context.Agents.Save(agentParameters);
+                DbContext.SaveChanges();
             }
         }
 
@@ -320,24 +318,14 @@ namespace DeepQStock.Stocks
         /// </summary>
         public void Shutdown()
         {
-            var agent = Context.Agents.GetById(Agent.Parameters.Id);
-
-            if (agent.Status == AgentStatus.Paused)
-            {
-                Context.States.Save(CurrentState);                
-                Context.Stocks.Save(Parameters);                
-                Agent.Save(Context);
-            }
+            var agent = DbContext.Agents.Single(a => a.Id == Agent.Parameters.Id);
 
             if (agent.Status == AgentStatus.Removed)
             {
-                Context.RemoveAgent(agent);
+                DbContext.Agents.Remove(agent);                
             }
 
-            if (agent.Status == AgentStatus.Completed)
-            {
-                Agent.Save(Context);
-            }
+            DbContext.SaveChanges();
         }
 
         #endregion
@@ -504,7 +492,7 @@ namespace DeepQStock.Stocks
                 Period = CurrentState.Today
             };
 
-            Context.OnDaysCompleted.Save(dayCompleted);
+            DbContext.OnDaysCompleted.Add(dayCompleted);
             RedisManager.Publish(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(dayCompleted));
         }       
 
@@ -526,7 +514,7 @@ namespace DeepQStock.Stocks
                 TransactionCost = TransactionCost
             };
 
-            Context.SimulationResults.Save(result);
+            DbContext.SimulationResults.Add(result);
 
         }      
 
@@ -535,8 +523,9 @@ namespace DeepQStock.Stocks
         /// </summary>
         private void ClearDesicions()
         {
-            var decisions = Context.OnDaysCompleted.Where(d => d.AgentId == Agent.Parameters.Id);
-            Context.OnDaysCompleted.Delete(decisions);
+            var decisions = DbContext.OnDaysCompleted.Where(d => d.AgentId == Agent.Parameters.Id);
+            DbContext.OnDaysCompleted.RemoveRange(decisions);
+            DbContext.SaveChanges();
         }
         #endregion
 
