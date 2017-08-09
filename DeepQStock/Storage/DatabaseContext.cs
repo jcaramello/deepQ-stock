@@ -45,7 +45,7 @@ namespace DeepQStock.Storage
         public DatabaseContext()
         {
             var platform = new SQLite.Net.Platform.Generic.SQLitePlatformGeneric();
-            Connection = new SQLiteConnection(platform, "deppQStock");
+            Connection = new SQLiteConnection(platform, "deepQStock");
                         
             Connection.CreateTable<DeepRLAgentParameters>();
             Connection.CreateTable<QNetworkParameters>();
