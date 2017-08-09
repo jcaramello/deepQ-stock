@@ -39,6 +39,7 @@
     <Compile Include="Domain\SimulationResult.cs" />
     <Compile Include="Enums\AgentStatus.cs" />
     <Compile Include="Indicators\TechnicalIndicatorBase.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Stocks\StockExchangeEvents.cs" />
     <Compile Include="Stocks\RewardCalculator.cs" />
     <Compile Include="Storage\BaseModel.cs" />
