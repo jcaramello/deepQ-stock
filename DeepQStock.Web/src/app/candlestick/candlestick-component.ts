@@ -65,7 +65,7 @@ export class CandlestickComponent {
    * Trigger when inputs changes
    */
   ngOnChanges(changes: SimpleChanges): void {
-    var currentAgent = changes['agent'] && changes['agent'].currentValue;    
+    var currentAgent = changes['agent'] && changes['agent'].currentValue;
     var day = <OnDayComplete>(changes['day'] && changes['day'].currentValue);
     var newEvent = false;
 
@@ -74,7 +74,7 @@ export class CandlestickComponent {
       this.agent = currentAgent;
       this.initialized = true;
       this.initForAgent = this.agent.id;
-      
+
     } else if (this.renderComplete) {
 
       if (day && day.selectedAction != ActionType.Wait) {
@@ -184,6 +184,10 @@ export class CandlestickComponent {
     priceGraph.negativeLineColor = "#595959";
     pricePanel.addStockGraph(priceGraph);
 
+    if (!this.agent.decisions) {
+      this.agent.decisions = [];
+    }
+
     dataSet.stockEvents = this.stockEvents = this.agent.decisions.map(d => {
       return <any>{
         date: new Date(d.date),
@@ -194,6 +198,7 @@ export class CandlestickComponent {
         description: ""
       };
     });
+
 
     var volGraph = new AmCharts.StockGraph();
     volGraph.valueField = "volume";

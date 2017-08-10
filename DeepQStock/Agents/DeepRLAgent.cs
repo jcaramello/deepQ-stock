@@ -17,12 +17,7 @@ namespace DeepQStock.Agents
     /// </summary>
     public class DeepRLAgent : IAgent
     {
-        #region << Private Properties >> 
-
-        /// <summary>
-        /// Gets or sets the agent's parameters.
-        /// </summary>
-        private DeepRLAgentParameters _parameters;
+        #region << Private Properties >>        
 
         /// <summary>
         /// Gets or sets the current state st
@@ -89,10 +84,7 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Base params
         /// </summary>
-        public BaseAgentParameters Parameters
-        {
-            get { return this._parameters; }
-        }
+        public DeepRLAgentParameters Parameters { get; set; }        
 
         #endregion
 
@@ -104,9 +96,9 @@ namespace DeepQStock.Agents
         /// <param name="initializer">The initializer.</param>
         public DeepRLAgent(DeepRLAgentParameters parameters = null)
         {
-            _parameters = parameters ?? new DeepRLAgentParameters();
+            Parameters = parameters ?? new DeepRLAgentParameters();
             RandomGenerator = new Random();
-            MemoryReplay = new CircularQueue<Experience>(_parameters.MemoryReplaySize);
+            MemoryReplay = new CircularQueue<Experience>(Parameters.MemoryReplaySize);
         }
 
         #endregion
@@ -195,7 +187,7 @@ namespace DeepQStock.Agents
             var validActions = GetActions();
             var maxAction = Q[CurrentState].Where(i => validActions.Contains(i.Key)).MaxBy(i => i.Value).Key;
 
-            if (probability <= _parameters.eGreedyProbability)
+            if (probability <= Parameters.eGreedyProbability)
             {
                 var randomActions = validActions.Where(a => a != maxAction).ToList();
                 var randomIndex = RandomGenerator.Next(randomActions.Count);
@@ -236,7 +228,7 @@ namespace DeepQStock.Agents
         /// <returns></returns>
         private IList<Experience> GenerateMiniBatch()
         {
-            if (MemoryReplay.Count <= _parameters.MiniBatchSize)
+            if (MemoryReplay.Count <= Parameters.MiniBatchSize)
             {
                 return MemoryReplay.ToList();
             }
@@ -254,7 +246,7 @@ namespace DeepQStock.Agents
         private IList<ActionType> GetActions()
         {
             var actions = new List<ActionType>() { ActionType.Wait };
-            var avaliableCapital = CurrentState.Today.CurrentCapital * _parameters.InOutStrategy;
+            var avaliableCapital = CurrentState.Today.CurrentCapital * Parameters.InOutStrategy;
 
             if (avaliableCapital >= CurrentState.Today.Close)
             {
@@ -304,7 +296,7 @@ namespace DeepQStock.Agents
         /// <returns></returns>
         private double QUpdate(Experience e, ActionType action, double estimated)
         {
-            var estimation = e.Action == action ? e.Reward + (_parameters.DiscountFactor * estimated) : estimated;
+            var estimation = e.Action == action ? e.Reward + (Parameters.DiscountFactor * estimated) : estimated;
 
             return Normalizers.Reward.Normalize(estimation);
         }
@@ -325,16 +317,16 @@ namespace DeepQStock.Agents
 
                 Q = new QNetwork(p =>
                 {
-                    p.TrainingError = _parameters.QNetwork.TrainingError;
-                    p.MaxIterationPerTrainging = _parameters.QNetwork.MaxIterationPerTrainging;
+                    p.TrainingError = Parameters.QNetwork.TrainingError;
+                    p.MaxIterationPerTrainging = Parameters.QNetwork.MaxIterationPerTrainging;
 
                     // Input Layer
                     p.Layers.Add(new LayerParameters(null, false, inputLength));
 
                     // Hidden Layers
-                    for (int i = 0; i < _parameters.QNetwork.HiddenLayersCount; i++)
+                    for (int i = 0; i < Parameters.QNetwork.HiddenLayersCount; i++)
                     {
-                        p.Layers.Add(new LayerParameters(new ActivationTANH(), true, _parameters.QNetwork.NeuronCountForHiddenLayers));
+                        p.Layers.Add(new LayerParameters(new ActivationTANH(), true, Parameters.QNetwork.NeuronCountForHiddenLayers));
                     }
 
                     // Output Layer

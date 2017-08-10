@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Storage;
 using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
@@ -33,11 +34,6 @@ namespace DeepQStock.Indicators
             }
             set
             {
-                if (Periods == null)
-                {
-                    Periods = new Queue<Period>(Size);
-                }
-
                 value.OrderBy(p => p.Date).ToList().ForEach(p => Periods.Enqueue(p));
             }
         }       
@@ -51,18 +47,13 @@ namespace DeepQStock.Indicators
 
         #region << Constructor >>
 
-
-        public SimpleMovingAverage() : base(PeriodType.Day)
-        {
-            Size = 8;
-            Periods = new Queue<Period>(Size);
-        }
+        public SimpleMovingAverage() : this(PeriodType.Day, 0, 8) { }
 
         /// <summary>
         /// Default Constructor
         /// </summary>
         /// <param name="size">The number of periods to consider</param>
-        public SimpleMovingAverage(PeriodType type, int size) : base(type)
+        public SimpleMovingAverage(PeriodType type = PeriodType.Day, long stockExchangeId = 0, int size = 8) : base(type, stockExchangeId)
         {
             Size = size;
             Periods = new Queue<Period>(Size);
@@ -85,18 +76,15 @@ namespace DeepQStock.Indicators
         {
             if (Periods.Count == Size)
             {
-                var periodDequeued = Periods.Dequeue();
-                var periodToRemove = InternalPeriods.Single(p => p.Id == periodDequeued.Id);
-                InternalPeriods.Remove(periodToRemove);
+                Periods.Dequeue();                
             }
 
-            Periods.Enqueue(period);
-            InternalPeriods.Add(period);
+            Periods.Enqueue(period);            
 
             Value = new double[1] { AveragePeriods() };
 
             return normalize ? Value.Select(v => Normalizers.Price.Normalize(v)) : Value;
-        }
+        }        
 
         #endregion
 

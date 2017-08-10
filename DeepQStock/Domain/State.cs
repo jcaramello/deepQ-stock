@@ -86,10 +86,7 @@ namespace DeepQStock.Domain
 
         #region << Constructor >> 
 
-        public State()
-        {
-            Size = 14;
-        }
+        public State() : this(14){ }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="State"/> class.

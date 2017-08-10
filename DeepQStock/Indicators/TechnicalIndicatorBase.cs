@@ -16,6 +16,7 @@ namespace DeepQStock.Indicators
     /// </summary>
     public class TechnicalIndicatorBase : BaseModel, ITechnicalIndicator
     {
+        
         public string ClassType { get; set; }
 
         /// <summary>
@@ -25,25 +26,23 @@ namespace DeepQStock.Indicators
 
         /// <summary>
         /// Gets the value.
-        /// </summary>        
-        [NotMapped]
-        public double[] Value
+        /// </summary>                
+        public string InternalValue
         {
             get
             {
-              return Array.ConvertAll(InternalValue.Split(';'), Double.Parse);
+                return Value != null ? string.Join(";", Value.Select(p => p.ToString())) : null;                
             }
             set
             {
-                
-                InternalValue = String.Join(";", value.Select(p => p.ToString()).ToArray());
+                Value = value != null ? Array.ConvertAll(value.Split(';'), double.Parse) : null;                
             }
         }
 
         /// <summary>
         /// Gets or sets the internal value.
         /// </summary>       
-        public string InternalValue { get; set; }
+        public double[]  Value { get; set; }
 
         /// <summary>
         /// Indicator Type
@@ -55,16 +54,13 @@ namespace DeepQStock.Indicators
         /// </summary>
         public virtual string Name { get; }
 
+        public TechnicalIndicatorBase() : this(PeriodType.Day, 0) { }
 
-        public TechnicalIndicatorBase()
-        {
-            Type = PeriodType.Day;
-        }
-
-        public TechnicalIndicatorBase(PeriodType type)
+        public TechnicalIndicatorBase(PeriodType type = PeriodType.Day, long stockExchangeId = 0)
         {
             ClassType = GetType().FullName;
             Type = type;
+            StockExchangeId = stockExchangeId;
         }
 
         /// <summary>

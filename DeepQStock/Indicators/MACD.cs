@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Storage;
 using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
@@ -22,36 +23,31 @@ namespace DeepQStock.Indicators
         /// Exponetial moving average of 9 periods
         /// </summary>        
         public ExponentialMovingAverage Ema9 { get; set; }
-       
+
         /// <summary>
         /// Exponetial moving average of 12 periods
         /// </summary>        
-        public ExponentialMovingAverage Ema12 { get; set; }        
+        public ExponentialMovingAverage Ema12 { get; set; }
 
         /// <summary>
         /// Exponetial moving average of 26 periods
         /// </summary>        
         public ExponentialMovingAverage Ema26 { get; set; }
-      
+
         #endregion
 
         #region << Constructor >>
 
-        public MACD() : base(PeriodType.Day)
-        {
-            Ema9 = new ExponentialMovingAverage(Type, 9);
-            Ema12 = new ExponentialMovingAverage(Type, 12);
-            Ema26 = new ExponentialMovingAverage(Type, 26);
-        }
+        public MACD() : this(PeriodType.Day, 0) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MACD"/> class.
         /// </summary>
-        public MACD(PeriodType type) : base(type)
+        public MACD(PeriodType type = PeriodType.Day, long stockExchangeId = 0) : base(type, stockExchangeId)
         {
-            Ema9 = new ExponentialMovingAverage(type, 9);
-            Ema12 = new ExponentialMovingAverage(type, 12);
-            Ema26 = new ExponentialMovingAverage(type, 26);
+            Ema9 = new ExponentialMovingAverage(type, stockExchangeId, 9);
+            Ema12 = new ExponentialMovingAverage(type, stockExchangeId, 12);
+            Ema26 = new ExponentialMovingAverage(type, stockExchangeId, 26);
         }
 
         #endregion
@@ -62,7 +58,7 @@ namespace DeepQStock.Indicators
         /// Gets the name.
         /// </summary>
         public override string Name { get { return "MACD"; } }
-      
+
         /// <summary>
         /// Gets the value.
         /// </summary>

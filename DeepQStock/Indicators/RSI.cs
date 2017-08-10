@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Storage;
 using DeepQStock.Utils;
 using System;
 using System.Collections;
@@ -30,38 +31,33 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Upward Periods used in the calculation
         /// </summary>        
-        public ExponentialMovingAverage UpwardPeriods{ get; set; }      
+        public ExponentialMovingAverage UpwardPeriods { get; set; }
 
         /// <summary>
         /// Upward Periods used in the calculation
         /// </summary>        
-        public ExponentialMovingAverage DownwardPeriods { get; set; }       
+        public ExponentialMovingAverage DownwardPeriods { get; set; }
 
         /// <summary>
         /// Previous Period
         /// </summary>        
-        public Period PreviousPeriod{ get; set; }        
+        public Period PreviousPeriod { get; set; }
 
         #endregion
 
         #region << Constructor >> 
 
-        public RSI() : base(PeriodType.Day)
-        {
-            Length = 14;
-            UpwardPeriods = new ExponentialMovingAverage(Type, Length);
-            DownwardPeriods = new ExponentialMovingAverage(Type, Length);
-        }
+        public RSI() : this(PeriodType.Day, 0, 14) { }
 
         /// <summary>
         /// Default Constructor
         /// </summary>
         /// <param name="size"></param>
-        public RSI(PeriodType type, int length = 14): base(type)
+        public RSI(PeriodType type = PeriodType.Day, long stockExchangeId = 0, int length = 14) : base(type, stockExchangeId)
         {
             Length = length;
-            UpwardPeriods = new ExponentialMovingAverage(type, Length);
-            DownwardPeriods = new ExponentialMovingAverage(type, Length);
+            UpwardPeriods = new ExponentialMovingAverage(type, stockExchangeId, Length);
+            DownwardPeriods = new ExponentialMovingAverage(type, stockExchangeId, Length);
         }
 
         #endregion
@@ -71,7 +67,7 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public override string Name { get { return "RSI"; } }       
+        public override string Name { get { return "RSI"; } }
 
         /// <summary>
         /// Gets the value.
@@ -81,7 +77,7 @@ namespace DeepQStock.Indicators
         {
             double emaU = UpwardPeriods.Value != null ? UpwardPeriods.Value.First() : 0.0;
             double emaD = DownwardPeriods.Value != null ? DownwardPeriods.Value.First() : 0.0;
-            double rsi = 0.0;            
+            double rsi = 0.0;
 
             if (PreviousPeriod != null)
             {
@@ -98,7 +94,7 @@ namespace DeepQStock.Indicators
                 {
                     var rs = emaU / emaD;
                     rsi = 100.0 - (100.0 / (1.0 + rs));
-                }                
+                }
             }
 
             PreviousPeriod = period;

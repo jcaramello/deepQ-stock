@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Storage;
 using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
@@ -63,21 +64,18 @@ namespace DeepQStock.Indicators
 
         #endregion
 
-        #region << Constructor >>
+        #region << Constructor >>    
 
-        public DMI() : base(PeriodType.Day)
-        {
-            Length = 14;
-        }
+        public DMI() : this(PeriodType.Day, 0, 14) { }
 
         /// <summary>
         /// Default Constructor
         /// </summary>
         /// <param name="length"></param>
-        public DMI(PeriodType type, int length = 14) : base(type)
+        public DMI(PeriodType type = PeriodType.Day, long stockExchangeId = 0, int length = 14) : base(type, stockExchangeId)
         {
             Length = length;
-            Atr = new AverageTrueRange(type, length);        
+            Atr = new AverageTrueRange(type, stockExchangeId, length);        
         }
 
         #endregion
@@ -128,7 +126,7 @@ namespace DeepQStock.Indicators
             Value = new double[3] { adx, plusDI, minusDI };
             
             return normalize ? Value.Select(v => Normalizers.DMI.Normalize(v)) : Value;
-        }
+        }      
 
         #endregion     
     }

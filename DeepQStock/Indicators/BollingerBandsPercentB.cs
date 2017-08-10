@@ -1,5 +1,6 @@
 ﻿using DeepQStock.Domain;
 using DeepQStock.Enums;
+using DeepQStock.Storage;
 using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
@@ -21,23 +22,20 @@ namespace DeepQStock.Indicators
         /// <summary>
         /// Simple moving average of 20 periods
         /// </summary>        
-        public SimpleMovingAverage Ma20 { get; set; }        
+        public SimpleMovingAverage Ma20 { get; set; }
 
         #endregion
 
-        #region << Constructor >>
+        #region << Constructor >>    
 
-        public BollingerBandsPercentB(): base(PeriodType.Day)
-        {
-            Ma20 = new SimpleMovingAverage(PeriodType.Day, 20);
-        }
+        public BollingerBandsPercentB() : this(PeriodType.Day, 0) { }
 
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public BollingerBandsPercentB(PeriodType type) : base(type)
+        public BollingerBandsPercentB(PeriodType type = PeriodType.Day, long stockExchangeId = 0) : base(type, stockExchangeId)
         {
-            Ma20 = new SimpleMovingAverage(type, 20);
+            Ma20 = new SimpleMovingAverage(type, stockExchangeId, 20);
         }
 
         #endregion
@@ -65,7 +63,7 @@ namespace DeepQStock.Indicators
 
             return normalize ? Value.Select(v => Normalizers.Price.Normalize(v)) : Value;
         }
-
+        
         #endregion
     }
 }

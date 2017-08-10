@@ -12,22 +12,22 @@ namespace DeepQStock.Storage
     {
         #region << Public Properties >> 
 
-        public DbSet<DeepRLAgentParameters> Agents { get; set; }
-        public DbSet<QNetworkParameters> QNetworks { get; set; }
-        public DbSet<StockExchangeParameters> Stocks{ get; set; }        
+        public DbSet<DeepRLAgentParameters> DeepRLAgentParameters { get; set; }
+        public DbSet<QNetworkParameters> QNetworkParameters { get; set; }
+        public DbSet<StockExchangeParameters> StockExchangeParameters{ get; set; }        
         public DbSet<Experience> Experiences { get; set; }
         public DbSet<Period> Periods{ get; set; }
         public DbSet<State> States{ get; set; }
         public DbSet<SimulationResult> SimulationResults{ get; set; }
-        public DbSet<OnDayComplete> OnDaysCompleted { get; set; }
+        public DbSet<OnDayComplete> OnDaysCompletes { get; set; }
 
-        public DbSet<AverageTrueRange> AverageTrueRange { get; set; }
-        public DbSet<BollingerBandsPercentB> BollingerBandsPercentB { get; set; }
-        public DbSet<DMI> DMI{ get; set; }
-        public DbSet<SimpleMovingAverage> SimpleMovingAverage { get; set; }
-        public DbSet<ExponentialMovingAverage> ExponentialMovingAverage { get; set; }
-        public DbSet<MACD> MACD { get; set; }
-        public DbSet<RSI> RSI{ get; set; }
+        public DbSet<AverageTrueRange> AverageTrueRanges { get; set; }
+        public DbSet<BollingerBandsPercentB> BollingerBandsPercentBs { get; set; }
+        public DbSet<DMI> DMIs{ get; set; }
+        public DbSet<SimpleMovingAverage> SimpleMovingAverages { get; set; }
+        public DbSet<ExponentialMovingAverage> ExponentialMovingAverages { get; set; }
+        public DbSet<MACD> MACDs { get; set; }
+        public DbSet<RSI> RSIs{ get; set; }
 
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Enums;
+using DeepQStock.Storage;
 using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
@@ -41,19 +42,15 @@ namespace DeepQStock.Indicators
 
         #endregion
 
-        #region << Constructor >>
+        #region << Constructor >>    
 
-
-        public ExponentialMovingAverage() : base(PeriodType.Day, 8)
-        {
-
-        }
+        public ExponentialMovingAverage() : this(PeriodType.Day, 0, 20) { }
 
         /// <summary>
         /// Default Constructor
         /// </summary>
         /// <param name="size"></param>
-        public ExponentialMovingAverage(PeriodType type, int size) : base(type, size)
+        public ExponentialMovingAverage(PeriodType type = PeriodType.Day, long stockExchangeId = 0, int size = 20) : base(type, stockExchangeId, size)
         {            
         }
 
@@ -87,7 +84,7 @@ namespace DeepQStock.Indicators
             PreviousEMA = IndicatorUtils.EMA(period.Close, PreviousEMA, Multiplier);
 
             return PreviousEMA;
-        }
+        }     
 
         #endregion
     }

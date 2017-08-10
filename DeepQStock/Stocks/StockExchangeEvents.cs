@@ -4,6 +4,7 @@ using DeepQStock.Enums;
 using DeepQStock.Storage;
 using Newtonsoft.Json;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DeepQStock.Stocks
 {
@@ -25,6 +26,14 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the agent identifier.
         /// </summary>        
+        [Index]
+        [JsonIgnore]
+        public DeepRLAgentParameters Agent { get; set; }
+
+        /// <summary>
+        /// Agent Id
+        /// </summary>
+        [NotMapped]
         public long AgentId { get; set; }
 
         /// <summary>

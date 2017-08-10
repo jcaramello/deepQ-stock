@@ -36,12 +36,7 @@ namespace DeepQStock.Agents
         /// Gets or sets the hidden layers count.
         /// </summary>        
         public QNetworkParameters QNetwork { get; set; }   
-
-        /// <summary>
-        /// Gets or sets the stock exchange.
-        /// </summary>               
-        public StockExchangeParameters StockExchange { get; set; }     
-
+        
         /// <summary>
         /// Agent Status
         /// </summary>
@@ -66,7 +61,8 @@ namespace DeepQStock.Agents
             MiniBatchSize = 50;
             DiscountFactor = 0.8;
             MemoryReplaySize = 500;
-            QNetwork = new QNetworkParameters();       
+            QNetwork = new QNetworkParameters();
+            Decisions = new List<OnDayComplete>();
         }
 
         #endregion

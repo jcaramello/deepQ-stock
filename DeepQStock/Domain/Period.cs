@@ -69,7 +69,17 @@ namespace DeepQStock.Domain
         /// <summary>
         /// Gets or sets the indicators.
         /// </summary>    
-        public ICollection<IndicatorValue> Indicators { get; set; }       
+        public ICollection<IndicatorValue> Indicators { get; set; }
+
+        /// <summary>
+        /// States
+        /// </summary>
+        public ICollection<State> States { get; set; }
+
+        /// <summary>
+        /// Averages
+        /// </summary>
+        public ICollection<SimpleMovingAverage> Averages { get; set; }
 
         #endregion
 

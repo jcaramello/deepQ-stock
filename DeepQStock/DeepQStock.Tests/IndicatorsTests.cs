@@ -14,8 +14,8 @@ namespace DeepQStock.Tests
         [TestMethod]
         public void MovingAverage_Test()
         {
-            var sma = new SimpleMovingAverage(PeriodType.Day, 10);
-            var ema = new ExponentialMovingAverage(PeriodType.Day, 10);
+            var sma = new SimpleMovingAverage(PeriodType.Day, 1, 10);
+            var ema = new ExponentialMovingAverage(PeriodType.Day, 1, 10);
             var periods = DataGenerator.GetSamplePeriodsWithCloseValue();
             var sma_value = 0.0;
             var ema_value = 0.0;

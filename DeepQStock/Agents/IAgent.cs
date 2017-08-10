@@ -10,7 +10,7 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Base Parameters
         /// </summary>
-        BaseAgentParameters Parameters { get; }
+        DeepRLAgentParameters Parameters { get; }
 
         /// <summary>
         /// Decides the next action to execute

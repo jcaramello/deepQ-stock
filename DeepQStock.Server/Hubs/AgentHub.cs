@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using System.Linq;
 using DeepQStock.Enums;
 using System.Collections.Concurrent;
+using System.Data.Entity;
+using System.IO;
 
 namespace DeepQStock.Server.Hubs
 {
@@ -72,7 +74,10 @@ namespace DeepQStock.Server.Hubs
             var agents = new List<DeepRLAgentParameters>();
             using (var ctx = new DeepQStockContext())
             {
-                agents = ctx.Agents.ToList();
+                agents = ctx.DeepRLAgentParameters
+                            .Include(a => a.StockExchange)
+                            .Include(a => a.QNetwork)
+                            .ToList();
             }
 
             return agents;
@@ -87,7 +92,10 @@ namespace DeepQStock.Server.Hubs
             DeepRLAgentParameters agent = null;
             using (var ctx = new DeepQStockContext())
             {
-                agent = ctx.Agents.SingleOrDefault(a => a.Id == id);
+                agent = ctx.DeepRLAgentParameters
+                           .Include(a => a.StockExchange)
+                           .Include(a => a.QNetwork)
+                           .SingleOrDefault(a => a.Id == id);
             }
 
             return agent;
@@ -103,7 +111,7 @@ namespace DeepQStock.Server.Hubs
             var decisions = new List<OnDayComplete>();
             using (var ctx = new DeepQStockContext())
             {
-                decisions = ctx.OnDaysCompleted.Where(d => d.AgentId == id).OrderBy(d => d.Date).ToList();
+                decisions = ctx.OnDaysCompletes.Where(d => d.Agent.Id == id).OrderBy(d => d.Date).ToList();
             }
 
             return decisions;
@@ -178,7 +186,8 @@ namespace DeepQStock.Server.Hubs
         {
             using (var ctx = new DeepQStockContext())
             {
-                ctx.Agents.Add(agent);
+                agent.StockExchange.CsvDataFilePath = Path.Combine(Settings.CsvDataDirectory, string.Format("{0}.csv", agent.StockExchange.Symbol));
+                ctx.DeepRLAgentParameters.Add(agent);
                 ctx.SaveChanges();
             }
 
@@ -208,8 +217,9 @@ namespace DeepQStock.Server.Hubs
         {
             using (var ctx = new DeepQStockContext())
             {
-                var agent = ctx.Agents.Single(a => a.Id == id);
-                agent.Status = AgentStatus.Paused;                
+                var agent = ctx.DeepRLAgentParameters.Single(a => a.Id == id);
+                agent.Status = AgentStatus.Paused;
+                ctx.SaveChanges();
 
                 string jobId = null;
                 ActiveAgents.TryRemove(id, out jobId);
@@ -218,8 +228,6 @@ namespace DeepQStock.Server.Hubs
                 {
                     BackgroundJob.Delete(jobId);
                 }
-
-                ctx.SaveChanges();
             }
         }
 
@@ -233,16 +241,15 @@ namespace DeepQStock.Server.Hubs
             {
                 string jobId = null;
                 ActiveAgents.TryRemove(id, out jobId);
-                var agent = ctx.Agents.Single(a => a.Id == id);
 
+                var agent = ctx.DeepRLAgentParameters.Single(a => a.Id == id);
                 agent.Status = AgentStatus.Stoped;
+                ctx.SaveChanges();
 
                 if (!string.IsNullOrEmpty(jobId))
                 {
                     BackgroundJob.Delete(jobId);
-                }
-
-                ctx.SaveChanges();
+                }                
             }
         }
 
@@ -265,7 +272,7 @@ namespace DeepQStock.Server.Hubs
             {
                 string jobId = null;
                 ActiveAgents.TryRemove(id, out jobId);
-                var agent = ctx.Agents.Single(a => a.Id == id);
+                var agent = ctx.DeepRLAgentParameters.Single(a => a.Id == id);
 
                 // Here we have two posible situations, one is if the agent is running, in this case we cannot remove the agent immediately, 
                 // we need mark the agent as removed and stop the agent's job. The remove process will be handle in the shutdown process.
@@ -281,7 +288,7 @@ namespace DeepQStock.Server.Hubs
                 }
                 else
                 {
-                    ctx.Agents.Remove(agent);                   
+                    ctx.DeepRLAgentParameters.Remove(agent);                   
                 }
 
                 ctx.SaveChanges();
