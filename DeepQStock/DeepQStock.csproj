@@ -36,6 +36,7 @@
     <Compile Include="Agents\BaseAgentParameters.cs" />
     <Compile Include="Agents\DeepRLAgentEvents.cs" />
     <Compile Include="Agents\QNetworkParameters.cs" />
+    <Compile Include="Domain\IndicatorValue.cs" />
     <Compile Include="Domain\SimulationResult.cs" />
     <Compile Include="Enums\AgentStatus.cs" />
     <Compile Include="Indicators\TechnicalIndicatorBase.cs" />

@@ -421,8 +421,8 @@ namespace DeepQStock.Stocks
 
             foreach (var indicator in DailyIndicators)
             {
-                var values = indicator.Update(upcomingDay);
-                upcomingDay.Indicators.Add(indicator.Name, values);
+                var values = indicator.Update(upcomingDay);                
+                upcomingDay.Indicators.Add(new IndicatorValue(indicator.Name, values));
             }
 
             state.DayLayer.Enqueue(upcomingDay);
@@ -459,13 +459,14 @@ namespace DeepQStock.Stocks
             foreach (var indicator in indicators)
             {
                 var newValues = indicator.Update(currentPeriod);
-                if (currentPeriod.Indicators.ContainsKey(indicator.Name))
+                var periodIndicator = currentPeriod.Indicators.SingleOrDefault(i => i.Name == indicator.Name);
+                if (periodIndicator != null)
                 {
-                    currentPeriod.Indicators[indicator.Name] = newValues;
+                    periodIndicator.Values = newValues;
                 }
                 else
                 {
-                    currentPeriod.Indicators.Add(indicator.Name, newValues);
+                    currentPeriod.Indicators.Add(new IndicatorValue(indicator.Name, newValues));
                 }
             }
         }

@@ -67,14 +67,13 @@ namespace DeepQStock.Domain
 
         /// <summary>
         /// Gets or sets the period ids.
-        /// </summary>        
+        /// </summary>                
         public ICollection<Period> FlattenPeriods
         {
             get
             {
                 return DayLayer.Concat(WeekLayer).Concat(MonthLayer).ToList();
             }
-
             set
             {
                 InitializeLayer(DayLayer, value.Where(p => p.PeriodType == PeriodType.Day));
@@ -145,7 +144,7 @@ namespace DeepQStock.Domain
         #endregion
 
         #region << Private Methods >>
-
+       
         /// <summary>
         /// Flattens the layer.
         /// </summary>

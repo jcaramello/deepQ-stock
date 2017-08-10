@@ -49,11 +49,11 @@ namespace DeepQStock.Tests
                 Open = 9.5,
                 PeriodType = type,
                 Volume = 1000000.0,
-                Indicators = new Dictionary<string, IEnumerable<double>>
+                Indicators = new List<IndicatorValue>()
                 {
-                    { "Indicator1", new double[] { 1, 2} },
-                    { "Indicator2", new double[] { 0.5 } },
-                    { "Indicator3", new double[] { 1, 2, 3} },
+                    new IndicatorValue("Indicator1", new double[] { 1, 2}) ,
+                    new IndicatorValue( "Indicator2", new double[] { 0.5 } ),
+                    new IndicatorValue( "Indicator3", new double[] { 1, 2, 3}) ,
                 }
             };
         }

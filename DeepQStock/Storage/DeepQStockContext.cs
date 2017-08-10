@@ -39,7 +39,7 @@ namespace DeepQStock.Storage
 
         #region << Constructor >> 
         
-        public DeepQStockContext(): base()
+        public DeepQStockContext(): base("DeepQStockDB")
         {
 
         }

@@ -68,14 +68,8 @@ namespace DeepQStock.Domain
 
         /// <summary>
         /// Gets or sets the indicators.
-        /// </summary>
-        [NotMapped]
-        public IDictionary<string, IEnumerable<double>> Indicators { get; set; }              
-
-        /// <summary>
-        /// Gets or sets the state identifier.
-        /// </summary>        
-        public ICollection<State> States { get; set; }
+        /// </summary>    
+        public ICollection<IndicatorValue> Indicators { get; set; }       
 
         #endregion
 
@@ -86,7 +80,7 @@ namespace DeepQStock.Domain
         /// </summary>
         public Period()
         {
-            Indicators = new Dictionary<string, IEnumerable<double>>();
+            Indicators = new List<IndicatorValue>();
             PeriodType = PeriodType.Day;
         }
 
@@ -122,9 +116,9 @@ namespace DeepQStock.Domain
                 Normalizers.Volume.Normalize(Volume)
             };
 
-            foreach (var pair in Indicators)
+            foreach (var i in Indicators)
             {
-                period.AddRange(pair.Value);
+                period.AddRange(i.Values);
             }
 
             return period;
@@ -138,7 +132,7 @@ namespace DeepQStock.Domain
         /// </returns>
         public override string ToString()
         {
-            var values = Indicators.Select(p => string.Format("{0}:[{1}]", p.Key, string.Join(",", p.Value.Select(v => v.ToString("N4", CultureInfo.InvariantCulture)))));
+            var values = Indicators.Select(p => string.Format("{0}:[{1}]", p.Name, string.Join(",", p.Values.Select(v => v.ToString("N4", CultureInfo.InvariantCulture)))));
             return string.Join(" | ", values);
         }
 

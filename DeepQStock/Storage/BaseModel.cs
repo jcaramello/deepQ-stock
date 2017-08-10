@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 namespace DeepQStock.Storage
 {
     public class BaseModel
-    {
-        [Key]
+    {        
         public long Id { get; set; }
     }
 }

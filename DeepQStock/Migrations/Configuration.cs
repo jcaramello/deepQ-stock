@@ -10,6 +10,7 @@ namespace DeepQStock.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
             ContextKey = "DeepQStock.Storage.DeepQStockContext";
         }
 

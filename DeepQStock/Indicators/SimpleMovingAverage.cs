@@ -19,21 +19,28 @@ namespace DeepQStock.Indicators
     {
         #region << Public Properties >>
 
-        /// <summary>
-        /// List of Periods to use for calculate the average
-        /// </summary>
         [NotMapped]
         public Queue<Period> Periods { get; set; }
 
         /// <summary>
-        /// Gets or sets the internal periods.
-        /// </summary>        
+        /// List of Periods to use for calculate the average
+        /// </summary>
         public ICollection<Period> InternalPeriods
         {
-            get { return Periods.ToList(); }
-            set { value.OrderBy(v => v.Date).ToList().ForEach(v => Periods.Enqueue(v)); }
-        }
+            get
+            {
+               return Periods.ToList();
+            }
+            set
+            {
+                if (Periods == null)
+                {
+                    Periods = new Queue<Period>(Size);
+                }
 
+                value.OrderBy(p => p.Date).ToList().ForEach(p => Periods.Enqueue(p));
+            }
+        }       
 
         /// <summary>
         /// Set or Get the size of the mobile average
@@ -78,10 +85,13 @@ namespace DeepQStock.Indicators
         {
             if (Periods.Count == Size)
             {
-                Periods.Dequeue();
+                var periodDequeued = Periods.Dequeue();
+                var periodToRemove = InternalPeriods.Single(p => p.Id == periodDequeued.Id);
+                InternalPeriods.Remove(periodToRemove);
             }
 
             Periods.Enqueue(period);
+            InternalPeriods.Add(period);
 
             Value = new double[1] { AveragePeriods() };
 

@@ -44,6 +44,7 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Gets or sets the activation function.
         /// </summary>        
+        [NotMapped]
         public IActivationFunction ActivationFunction { get; set; }
 
         #endregion
@@ -52,7 +53,6 @@ namespace DeepQStock.Agents
 
     public class QNetworkParameters : BaseModel
     {
-
         #region << Constructor >>
 
         public QNetworkParameters()
@@ -66,14 +66,13 @@ namespace DeepQStock.Agents
 
         #endregion
 
-
         #region << Public Properties >>
 
         /// <summary>
         /// Gets or sets the layers.
         /// </summary>
         [NotMapped]
-        public List<LayerParameters> Layers { get; set; }
+        public ICollection<LayerParameters> Layers { get; set; }
 
         /// <summary>
         /// Gets or sets the training error.
