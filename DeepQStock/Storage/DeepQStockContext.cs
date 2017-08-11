@@ -2,6 +2,7 @@
 using DeepQStock.Domain;
 using DeepQStock.Indicators;
 using DeepQStock.Stocks;
+using System;
 using System.Data.Entity;
 using System.IO;
 
@@ -42,9 +43,7 @@ namespace DeepQStock.Storage
         public DeepQStockContext(): base("DeepQStockDB")
         {
 
-        }
-
-
+        }      
        
         #endregion
     }

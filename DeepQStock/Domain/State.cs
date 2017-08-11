@@ -38,7 +38,7 @@ namespace DeepQStock.Domain
         /// <summary>
         /// Gets the current period.
         /// </summary>
-        [NotMapped]       
+        [NotMapped]
         public Period Today
         {
             get
@@ -51,52 +51,93 @@ namespace DeepQStock.Domain
         /// Gets or sets the periods.
         /// </summary>
         [NotMapped]
-        public CircularQueue<Period> DayLayer { get; set; }
+        public CircularQueue<Period> DayLayer
+        {
+            get
+            {
+                if (_dayLayer.Count == 0)
+                {
+                    InitializeLayer(_dayLayer, InternalPeriods.Where(p => p.PeriodType == PeriodType.Day));
+                }
+
+                return _dayLayer;
+            }
+            set
+            {
+                _dayLayer = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the week layer.
         /// </summary>
         [NotMapped]
-        public CircularQueue<Period> WeekLayer { get; set; }
+        public CircularQueue<Period> WeekLayer
+        {
+            get
+            {
+                if (_weekLayer.Count == 0)
+                {
+                    InitializeLayer(_weekLayer, InternalPeriods.Where(p => p.PeriodType == PeriodType.Week));
+                }
+
+                return _weekLayer;
+            }
+            set
+            {
+                _weekLayer = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the month layer.
         /// </summary>
         [NotMapped]
-        public CircularQueue<Period> MonthLayer { get; set; }
-
-        /// <summary>
-        /// Gets or sets the period ids.
-        /// </summary>                
-        public ICollection<Period> FlattenPeriods
+        public CircularQueue<Period> MonthLayer
         {
             get
             {
-                return DayLayer.Concat(WeekLayer).Concat(MonthLayer).ToList();
+                if (_monthLayer.Count == 0)
+                {
+                    InitializeLayer(_monthLayer, InternalPeriods.Where(p => p.PeriodType == PeriodType.Month));
+                }
+
+                return _monthLayer;
             }
             set
             {
-                InitializeLayer(DayLayer, value.Where(p => p.PeriodType == PeriodType.Day));
-                InitializeLayer(WeekLayer, value.Where(p => p.PeriodType == PeriodType.Week));
-                InitializeLayer(MonthLayer, value.Where(p => p.PeriodType == PeriodType.Month));
+                _monthLayer = value;
             }
         }
+
+        /// <summary>
+        /// Internal Periods
+        /// </summary>
+        public ICollection<Period> InternalPeriods { get; set; }
+
+        private CircularQueue<Period> _dayLayer;
+        private CircularQueue<Period> _weekLayer;
+        private CircularQueue<Period> _monthLayer;
 
         #endregion
 
         #region << Constructor >> 
 
-        public State() : this(14){ }
+        public State() : this(14) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="State"/> class.
         /// </summary>
         public State(int size = 14)
-        {            
+        {
             Size = size;
             DayLayer = new CircularQueue<Period>(size);
             WeekLayer = new CircularQueue<Period>(size);
-            MonthLayer = new CircularQueue<Period>(size);            
+            MonthLayer = new CircularQueue<Period>(size);
+            _dayLayer = new CircularQueue<Period>(Size);
+            _weekLayer = new CircularQueue<Period>(Size);
+            _monthLayer = new CircularQueue<Period>(Size);
+            InternalPeriods = new List<Period>();
         }
 
         #endregion
@@ -117,7 +158,7 @@ namespace DeepQStock.Domain
 
             return flattedPeriods.ToArray();
         }
-        
+
         #endregion
 
         #region << ICloneable Members >>
@@ -131,9 +172,7 @@ namespace DeepQStock.Domain
             var clone = new State(Size);
 
             clone.Id = Id;
-            DayLayer?.ToList().ForEach(p => clone.DayLayer.Enqueue(p));
-            WeekLayer?.ToList().ForEach(p => clone.WeekLayer.Enqueue(p));
-            MonthLayer?.ToList().ForEach(p => clone.MonthLayer.Enqueue(p));            
+            InternalPeriods?.ToList().ForEach(p => clone.InternalPeriods.Add(p));
 
             return clone;
         }
@@ -141,7 +180,7 @@ namespace DeepQStock.Domain
         #endregion
 
         #region << Private Methods >>
-       
+
         /// <summary>
         /// Flattens the layer.
         /// </summary>

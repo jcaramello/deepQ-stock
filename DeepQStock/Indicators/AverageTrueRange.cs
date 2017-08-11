@@ -5,6 +5,7 @@ using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,7 +96,29 @@ namespace DeepQStock.Indicators
             Value = new double[1] { PreviousATR };
 
             return normalize ? Value.Select(v => Normalizers.Price.Normalize(v)) : Value;
-        }       
+        }
+
+        /// <summary>
+        /// Save the indicator
+        /// </summary>
+        /// <param name="ctx"></param>
+        public override void Save(DeepQStockContext ctx)
+        {            
+            var dbObj = ctx.AverageTrueRanges.Find(Id);
+
+            if (dbObj == null)
+            {
+                ctx.AverageTrueRanges.Add(this);
+            }
+            else
+            {
+                ctx.Entry(dbObj).CurrentValues.SetValues(this);
+                ctx.Entry(dbObj).State = EntityState.Modified;
+
+                dbObj.PreviousPeriod = PreviousPeriod;
+
+            }
+        }
 
         #endregion
     }

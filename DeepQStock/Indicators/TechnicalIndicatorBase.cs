@@ -5,9 +5,11 @@ using DeepQStock.Storage;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System;
 
 namespace DeepQStock.Indicators
 {
@@ -16,7 +18,7 @@ namespace DeepQStock.Indicators
     /// </summary>
     public class TechnicalIndicatorBase : BaseModel, ITechnicalIndicator
     {
-        
+
         public string ClassType { get; set; }
 
         /// <summary>
@@ -31,18 +33,18 @@ namespace DeepQStock.Indicators
         {
             get
             {
-                return Value != null ? string.Join(";", Value.Select(p => p.ToString())) : null;                
+                return Value != null ? string.Join(";", Value.Select(p => p.ToString())) : null;
             }
             set
             {
-                Value = value != null ? Array.ConvertAll(value.Split(';'), double.Parse) : null;                
+                Value = value != null ? Array.ConvertAll(value.Split(';'), double.Parse) : null;
             }
         }
 
         /// <summary>
         /// Gets or sets the internal value.
         /// </summary>       
-        public double[]  Value { get; set; }
+        public double[] Value { get; set; }
 
         /// <summary>
         /// Indicator Type
@@ -70,6 +72,26 @@ namespace DeepQStock.Indicators
         public virtual IEnumerable<double> Update(Period period, bool normalize = true)
         {
             return null;
+        }
+
+        /// <summary>
+        /// Save the indicator
+        /// </summary>
+        /// <param name="ctx"></param>
+        public virtual void Save(DeepQStockContext ctx)
+        {
+            var set = ctx.Set(System.Type.GetType(ClassType));
+            var dbObj = set.Find(Id);
+
+            if (dbObj == null)
+            {
+                set.Add(this);
+            }
+            else
+            {
+                ctx.Entry(dbObj).CurrentValues.SetValues(this);
+                ctx.Entry(dbObj).State = EntityState.Modified;
+            }            
         }
     }
 }

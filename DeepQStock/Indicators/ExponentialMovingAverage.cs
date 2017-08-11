@@ -4,6 +4,7 @@ using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -84,7 +85,7 @@ namespace DeepQStock.Indicators
             PreviousEMA = IndicatorUtils.EMA(period.Close, PreviousEMA, Multiplier);
 
             return PreviousEMA;
-        }     
+        }       
 
         #endregion
     }

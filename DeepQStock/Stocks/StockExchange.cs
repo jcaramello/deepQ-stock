@@ -13,7 +13,7 @@ using Hangfire;
 using Hangfire.Server;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
-using System.Linq;
+using System.Data.Entity;
 
 namespace DeepQStock.Stocks
 {
@@ -206,7 +206,7 @@ namespace DeepQStock.Stocks
                         TransactionCost = TransactionCost
                     };
 
-                    DbContext.SimulationResults.Add(result);                    
+                    DbContext.SimulationResults.Add(result);
                     DbContext.SaveChanges();
 
                     RedisManager.Publish(RedisPubSubChannels.OnSimulationComplete, JsonConvert.SerializeObject(new OnSimulationComplete() { AgentId = agentParameters.Id }));
@@ -305,7 +305,10 @@ namespace DeepQStock.Stocks
 
                     if (agentParameters.Status == AgentStatus.Paused)
                     {
-                        CurrentState = DbContext.States.Single(s => s.StockExchangeId == Parameters.Id);
+                        CurrentState = DbContext.States
+                                                .Include(s => s.InternalPeriods)
+                                                .Single(s => s.StockExchangeId == Parameters.Id);                        
+
                         DataProvider.Seek(CurrentState.Today.Date.AddDays(1));
                     }
 
@@ -338,13 +341,14 @@ namespace DeepQStock.Stocks
                     CurrentState.StockExchangeId = Parameters.Id;
                     DbContext.States.AddOrUpdate(CurrentState);
 
+                    foreach (var p in CurrentState.InternalPeriods)
+                    {
+                        DbContext.Periods.AddOrUpdate(p);
+                    }  
+
                     foreach (var indicator in DailyIndicators.Concat(WeeklyIndicators).Concat(MonthlyIndicators))
                     {
-                        var set = DbContext.Set(Type.GetType(indicator.ClassType));
-
-                        var dbObj = set.Find(indicator.Id);
-                        DbContext.Entry(dbObj).CurrentValues.SetValues(indicator);                        
-                        DbContext.Entry(dbObj).State = EntityState.Modified;                        
+                        indicator.Save(DbContext);                        
                     }
                 }
 
@@ -470,7 +474,7 @@ namespace DeepQStock.Stocks
             {
                 currentPeriod = upcomingDay.Clone();
                 currentPeriod.PeriodType = type;
-                layer.Enqueue(currentPeriod);
+                layer.Enqueue(currentPeriod);                
             }
             else
             {
@@ -515,30 +519,25 @@ namespace DeepQStock.Stocks
                 TotalOfYears = TotalOfYears,
                 Period = CurrentState.Today
             };
-            
+
 
             using (var DbContext = new DeepQStockContext())
             {
+                DbContext.DeepRLAgentParameters.Attach(Agent.Parameters);
                 DbContext.OnDaysCompletes.Add(dayCompleted);
-                Agent.Parameters.Decisions.Add(dayCompleted);
-
-                var agent  = DbContext.DeepRLAgentParameters.Single(a => a.Id == Agent.Parameters.Id);
-                DbContext.Entry(agent).CurrentValues.SetValues(Agent.Parameters);
-                DbContext.Entry(agent).State = EntityState.Modified;
-
                 DbContext.SaveChanges();
             }
 
             RedisManager.Publish(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(dayCompleted));
         }
-      
+
         /// <summary>
         /// Clears the desicions.
         /// </summary>
         private void ClearDesicions()
         {
             using (var DbContext = new DeepQStockContext())
-            {                
+            {
                 DbContext.OnDaysCompletes.RemoveRange(Agent.Parameters.Decisions);
                 DbContext.SaveChanges();
             }
@@ -594,7 +593,7 @@ namespace DeepQStock.Stocks
             var dmi = DbContext.DMIs.SingleOrDefault(a => a.StockExchangeId == Parameters.Id && a.Type == type);
             if (dmi == null)
             {
-                dmi = new DMI(type, Parameters.Id);
+                dmi = new DMI(type, Parameters.Id, atr: atr);
                 DbContext.DMIs.Add(dmi);
             }
 

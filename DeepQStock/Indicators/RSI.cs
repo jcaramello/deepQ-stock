@@ -5,6 +5,7 @@ using DeepQStock.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -102,6 +103,28 @@ namespace DeepQStock.Indicators
             Value = new double[1] { rsi };
 
             return normalize ? Value.Select(v => Normalizers.RSI.Normalize(v)) : Value;
+        }
+
+        /// <summary>
+        /// Save the indicator
+        /// </summary>
+        /// <param name="ctx"></param>
+        public override void Save(DeepQStockContext ctx)
+        {
+            var dbObj = ctx.RSIs.Find(Id);
+
+            if (dbObj == null)
+            {
+                ctx.RSIs.Add(this);
+            }
+            else
+            {
+                ctx.Entry(dbObj).CurrentValues.SetValues(this);
+                ctx.Entry(dbObj).State = EntityState.Modified;
+
+                dbObj.PreviousPeriod = PreviousPeriod;
+
+            }
         }
 
         #endregion

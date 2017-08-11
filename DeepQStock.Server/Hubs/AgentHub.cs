@@ -95,27 +95,13 @@ namespace DeepQStock.Server.Hubs
                 agent = ctx.DeepRLAgentParameters
                            .Include(a => a.StockExchange)
                            .Include(a => a.QNetwork)
+                           .Include(a => a.Decisions)
+                           .Include(a => a.Decisions.Select(d => d.Period))
                            .SingleOrDefault(a => a.Id == id);
             }
 
             return agent;
-        }
-
-        /// <summary>
-        /// Gets the decisions.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <returns></returns>
-        public IEnumerable<OnDayComplete> GetDecisions(long id)
-        {
-            var decisions = new List<OnDayComplete>();
-            using (var ctx = new DeepQStockContext())
-            {
-                decisions = ctx.OnDaysCompletes.Where(d => d.Agent.Id == id).OrderBy(d => d.Date).ToList();
-            }
-
-            return decisions;
-        }
+        }        
 
         /// <summary>
         /// Called when [day complete].

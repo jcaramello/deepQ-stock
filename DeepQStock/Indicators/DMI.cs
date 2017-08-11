@@ -5,6 +5,7 @@ using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -72,10 +73,10 @@ namespace DeepQStock.Indicators
         /// Default Constructor
         /// </summary>
         /// <param name="length"></param>
-        public DMI(PeriodType type = PeriodType.Day, long stockExchangeId = 0, int length = 14) : base(type, stockExchangeId)
+        public DMI(PeriodType type = PeriodType.Day, long stockExchangeId = 0, int length = 14, AverageTrueRange atr = null) : base(type, stockExchangeId)
         {
             Length = length;
-            Atr = new AverageTrueRange(type, stockExchangeId, length);        
+            Atr = atr ?? new AverageTrueRange(type, stockExchangeId, length);        
         }
 
         #endregion
@@ -126,8 +127,30 @@ namespace DeepQStock.Indicators
             Value = new double[3] { adx, plusDI, minusDI };
             
             return normalize ? Value.Select(v => Normalizers.DMI.Normalize(v)) : Value;
-        }      
+        }
 
-        #endregion     
+        /// <summary>
+        /// Save the indicator
+        /// </summary>
+        /// <param name="ctx"></param>
+        public override void Save(DeepQStockContext ctx)
+        {
+            var dbObj = ctx.DMIs.Find(Id);
+
+            if (dbObj == null)
+            {
+                ctx.DMIs.Add(this);
+            }
+            else
+            {
+                ctx.Entry(dbObj).CurrentValues.SetValues(this);
+                ctx.Entry(dbObj).State = EntityState.Modified;
+
+                dbObj.PreviousPeriod = PreviousPeriod;
+
+            }
+        }
+
+        #endregion
     }
 }

@@ -34,7 +34,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @memberof DashboardComponent
    */
   constructor(private route: ActivatedRoute,
-    private agentService: AgentService,    
+    private agentService: AgentService,
     private notificationService: NotificationsService,
     private slimLoadingBarService: SlimLoadingBarService,
     private zone: NgZone) { }
@@ -69,13 +69,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .getById(agentId)
       .then(a => {
         this.agent = a;
-        this.today = _.last(a.decisions) || this.today;
+        this.zone.run(() => this.today = _.last(a.decisions) || this.today);
         if (a.status == AgentStatus.Running) {
           this.agentService.subscribe(agentId);
         }
         this.stock = a.stockExchange;
         return a;
-      })            
+      })
   }
 
   /**

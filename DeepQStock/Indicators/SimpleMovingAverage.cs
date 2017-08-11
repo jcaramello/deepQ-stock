@@ -5,6 +5,7 @@ using DeepQStock.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -84,8 +85,8 @@ namespace DeepQStock.Indicators
             Value = new double[1] { AveragePeriods() };
 
             return normalize ? Value.Select(v => Normalizers.Price.Normalize(v)) : Value;
-        }        
-
+        }
+       
         #endregion
 
         #region << Private Methods >>
