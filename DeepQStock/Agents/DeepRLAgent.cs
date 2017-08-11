@@ -15,7 +15,7 @@ namespace DeepQStock.Agents
     /// The agent use the Q-Learning algorithim with experience replay 
     /// Also use a neural network for implement a Q state-action value function aproximator
     /// </summary>
-    public class DeepRLAgent : IAgent
+    public class DeepRLAgent 
     {
         #region << Private Properties >>        
 
@@ -73,7 +73,7 @@ namespace DeepQStock.Agents
         {
             get
             {
-                return string.Format(@"{0}\Agent-{1}",  TempFolder, Parameters.Id);
+                return string.Format(@"{0}\Agent-{1}", TempFolder, Parameters.Id);
             }
         }
 
@@ -84,7 +84,7 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Base params
         /// </summary>
-        public DeepRLAgentParameters Parameters { get; set; }        
+        public DeepRLAgentParameters Parameters { get; set; }
 
         #endregion
 
@@ -122,7 +122,7 @@ namespace DeepQStock.Agents
 
             if (previuosState != null)
             {
-                SaveExperience(previuosState, CurrentAction, reward, CurrentState);
+                AddExperience(previuosState, CurrentAction, reward, CurrentState);
             }
 
             return PolicyPi();
@@ -140,24 +140,14 @@ namespace DeepQStock.Agents
         /// <summary>
         /// Saves the specified path.
         /// </summary>        
-        public void Save(DeepQStockContext ctx)
+        public void SaveQNetwork()
         {
             if (!Directory.Exists(TempFolder))
             {
                 Directory.CreateDirectory(TempFolder);
             }
 
-            Q.Save(NetworkPath);
-
-            foreach (var e in MemoryReplay)
-            {
-                if (e.Id == 0)
-                {
-                    ctx.Experiences.Add(e);
-                }
-            }
-            
-            ctx.SaveChanges();
+            Q.Save(NetworkPath);           
         }
 
         /// <summary>
@@ -208,7 +198,7 @@ namespace DeepQStock.Agents
         /// <param name="action">At.</param>
         /// <param name="reward">The rt_plus_1.</param>
         /// <param name="nextState">The st_plus_1.</param>
-        private void SaveExperience(State from, ActionType action, double reward, State to)
+        private void AddExperience(State from, ActionType action, double reward, State to)
         {
             var experience = new Experience()
             {
@@ -228,15 +218,40 @@ namespace DeepQStock.Agents
         /// <returns></returns>
         private IList<Experience> GenerateMiniBatch()
         {
+            var experiences = new List<Experience>();
+
             if (MemoryReplay.Count <= Parameters.MiniBatchSize)
             {
-                return MemoryReplay.ToList();
+                experiences = MemoryReplay.ToList();
             }
             else
             {
                 var indexes = Enumerable.Range(0, MemoryReplay.Count - 1).OrderBy(x => RandomGenerator.Next());
-                return MemoryReplay.Where((e, i) => indexes.Contains(i)).ToList();
+                experiences = MemoryReplay.Where((e, i) => indexes.Contains(i)).ToList();
             }
+
+            using (var ctx = new DeepQStockContext())
+            {
+                foreach (var experience in experiences)
+                {
+                    if (experience.Id > 0 && !ctx.Set<Experience>().Local.Any(e => e.Id == experience.Id))
+                    {
+                        ctx.Experiences.Attach(experience);
+                    }                    
+
+                    if (experience.From == null)
+                    {
+                        ctx.Entry(experience).Reference(e => e.From).Load();
+                    }
+
+                    if (experience.To == null)
+                    {
+                        ctx.Entry(experience).Reference(e => e.To).Load();
+                    }
+                }
+            }
+
+            return experiences.ToList();            
         }
 
         /// <summary>
@@ -278,7 +293,7 @@ namespace DeepQStock.Agents
                 foreach (var action in actions)
                 {
                     targetValues[action] = QUpdate(experience, action, estimatedValues[action]);
-                }                
+                }
 
                 trainingData.Add(new Tuple<State, double[]>(experience.From, targetValues.Values.ToArray()));
             }
@@ -306,7 +321,7 @@ namespace DeepQStock.Agents
         /// </summary>
         /// <param name="state">The state.</param>
         private void InitializeQNetwork(State state)
-        {            
+        {
             if (File.Exists(NetworkPath))
             {
                 Q = new QNetwork(NetworkPath);

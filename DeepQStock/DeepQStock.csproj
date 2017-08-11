@@ -55,7 +55,6 @@
     <Compile Include="Enums\ActionType.cs" />
     <Compile Include="Enums\PeriodType.cs" />
     <Compile Include="Domain\Experience.cs" />
-    <Compile Include="Agents\IAgent.cs" />
     <Compile Include="IDataProvider.cs" />
     <Compile Include="Indicators\AverageTrueRange.cs" />
     <Compile Include="Indicators\BollingerBandsPercentB.cs" />

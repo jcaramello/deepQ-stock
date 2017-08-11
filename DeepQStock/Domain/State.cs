@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Enums;
+using DeepQStock.Indicators;
 using DeepQStock.Storage;
 using DeepQStock.Utils;
 using Newtonsoft.Json;
@@ -51,7 +52,7 @@ namespace DeepQStock.Domain
         /// Gets or sets the periods.
         /// </summary>
         [NotMapped]
-        public CircularQueue<Period> DayLayer
+        private CircularQueue<Period> DayLayer
         {
             get
             {
@@ -72,7 +73,7 @@ namespace DeepQStock.Domain
         /// Gets or sets the week layer.
         /// </summary>
         [NotMapped]
-        public CircularQueue<Period> WeekLayer
+        private CircularQueue<Period> WeekLayer
         {
             get
             {
@@ -93,7 +94,7 @@ namespace DeepQStock.Domain
         /// Gets or sets the month layer.
         /// </summary>
         [NotMapped]
-        public CircularQueue<Period> MonthLayer
+        private CircularQueue<Period> MonthLayer
         {
             get
             {
@@ -113,10 +114,15 @@ namespace DeepQStock.Domain
         /// <summary>
         /// Internal Periods
         /// </summary>
-        public ICollection<Period> InternalPeriods { get; set; }
+        public virtual ICollection<Period> InternalPeriods { get; set; }
 
+        [NotMapped]
         private CircularQueue<Period> _dayLayer;
+
+        [NotMapped]
         private CircularQueue<Period> _weekLayer;
+
+        [NotMapped]
         private CircularQueue<Period> _monthLayer;
 
         #endregion
@@ -158,6 +164,31 @@ namespace DeepQStock.Domain
 
             return flattedPeriods.ToArray();
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="upcomingDay"></param>
+        /// <param name="dailyIndicators"></param>
+        /// <param name="weeklyIndicators"></param>
+        /// <param name="monthlyIndicators"></param>
+        public void UpdateLayers(Period upcomingDay, IEnumerable<ITechnicalIndicator> dailyIndicators, IEnumerable<ITechnicalIndicator> weeklyIndicators, IEnumerable<ITechnicalIndicator> monthlyIndicators)
+        {
+            foreach (var indicator in dailyIndicators)
+            {
+                var values = indicator.Update(upcomingDay);
+                upcomingDay.AddIndicator(new IndicatorValue(indicator.Name, values));
+            }
+
+            DayLayer.Enqueue(upcomingDay);            
+
+            UpdateLayer(PeriodType.Day, DayLayer, upcomingDay, dailyIndicators);
+            UpdateLayer(PeriodType.Week, WeekLayer, upcomingDay, weeklyIndicators);
+            UpdateLayer(PeriodType.Month, MonthLayer, upcomingDay, monthlyIndicators);
+
+            InternalPeriods = DayLayer.Concat(WeekLayer).Concat(MonthLayer).ToList();
+        }       
 
         #endregion
 
@@ -215,6 +246,44 @@ namespace DeepQStock.Domain
             foreach (var p in periods.OrderBy(p => p.Date))
             {
                 layer.Enqueue(p);
+            }
+        }
+
+        /// <summary>
+        /// Updates a layer of the state.
+        /// </summary>
+        /// <param name="layer">The layer.</param>
+        /// <param name="upcomingDay">The upcoming day.</param>
+        /// <param name="Indicators">The indicators.</param>
+        private void UpdateLayer(PeriodType type, CircularQueue<Period> layer, Period upcomingDay, IEnumerable<ITechnicalIndicator> indicators)
+        {           
+            Period currentPeriod = null;
+            bool needNewPeriod = type == PeriodType.Week ? upcomingDay.Date.IsStartOfWeek() : upcomingDay.Date.IsStartOfMonth();
+
+            if (layer.IsEmpty || needNewPeriod)
+            {
+                currentPeriod = upcomingDay.Clone();
+                currentPeriod.PeriodType = type;
+                layer.Enqueue(currentPeriod);
+            }
+            else
+            {
+                currentPeriod = layer.Peek();
+                currentPeriod.Merge(upcomingDay);
+            }
+
+            foreach (var indicator in indicators)
+            {
+                var newValues = indicator.Update(currentPeriod);
+                var periodIndicator = currentPeriod.Indicators.SingleOrDefault(i => i.Name == indicator.Name);
+                if (periodIndicator != null)
+                {
+                    periodIndicator.Values = newValues;
+                }
+                else
+                {
+                    currentPeriod.AddIndicator(new IndicatorValue(indicator.Name, newValues));
+                }
             }
         }
 

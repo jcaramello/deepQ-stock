@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
+using System.Data.Entity;
 
 namespace DeepQStock.Domain
 {
@@ -68,8 +69,28 @@ namespace DeepQStock.Domain
 
         /// <summary>
         /// Gets or sets the indicators.
-        /// </summary>    
-        public ICollection<IndicatorValue> Indicators { get; set; }
+        /// </summary>            
+        [NotMapped]
+        public virtual IReadOnlyCollection<IndicatorValue> Indicators
+        {
+            get
+            {                
+                if (Id > 0 && InternalIndicators.Count == 0)
+                {
+                    using (var ctx = new DeepQStockContext())
+                    {
+                        ctx.Configuration.LazyLoadingEnabled = false;
+                        ctx.Configuration.ProxyCreationEnabled = false;
+
+                        InternalIndicators = ctx.Periods.Include(p => p.InternalIndicators).Single(p => p.Id == Id).InternalIndicators;                        
+                    }
+                }
+
+                return InternalIndicators.ToList().AsReadOnly();
+            }
+        }
+
+        public ICollection<IndicatorValue> InternalIndicators { get; set; }
 
         /// <summary>
         /// States
@@ -89,8 +110,8 @@ namespace DeepQStock.Domain
         /// Default Constructor
         /// </summary>
         public Period()
-        {
-            Indicators = new List<IndicatorValue>();
+        {            
+            InternalIndicators = new List<IndicatorValue>();
             PeriodType = PeriodType.Day;
         }
 
@@ -124,7 +145,7 @@ namespace DeepQStock.Domain
                 Normalizers.Price.Normalize(High),
                 Normalizers.Price.Normalize(Low),
                 Normalizers.Volume.Normalize(Volume)
-            };
+            };           
 
             foreach (var i in Indicators)
             {
@@ -132,6 +153,15 @@ namespace DeepQStock.Domain
             }
 
             return period;
+        }
+
+        /// <summary>
+        /// Adds the indicator.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        public void AddIndicator(IndicatorValue value)
+        {
+            InternalIndicators.Add(value);
         }
 
         /// <summary>

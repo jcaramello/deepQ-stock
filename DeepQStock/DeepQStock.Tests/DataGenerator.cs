@@ -49,12 +49,12 @@ namespace DeepQStock.Tests
                 Open = 9.5,
                 PeriodType = type,
                 Volume = 1000000.0,
-                Indicators = new List<IndicatorValue>()
-                {
-                    new IndicatorValue("Indicator1", new double[] { 1, 2}) ,
-                    new IndicatorValue( "Indicator2", new double[] { 0.5 } ),
-                    new IndicatorValue( "Indicator3", new double[] { 1, 2, 3}) ,
-                }
+                //InternalIndicators = new List<IndicatorValue>()
+                //{
+                //    new IndicatorValue("Indicator1", new double[] { 1, 2}) ,
+                //    new IndicatorValue( "Indicator2", new double[] { 0.5 } ),
+                //    new IndicatorValue( "Indicator3", new double[] { 1, 2, 3}) ,
+                //}
             };
         }
 
@@ -66,9 +66,9 @@ namespace DeepQStock.Tests
         {
             var state = new State(1);
 
-            state.DayLayer.Enqueue(GetCompleteSamplePeriod(PeriodType.Day));
-            state.WeekLayer.Enqueue(GetCompleteSamplePeriod(PeriodType.Week));
-            state.MonthLayer.Enqueue(GetCompleteSamplePeriod(PeriodType.Month));
+            //state.DayLayer.Enqueue(GetCompleteSamplePeriod(PeriodType.Day));
+            //state.WeekLayer.Enqueue(GetCompleteSamplePeriod(PeriodType.Week));
+            //state.MonthLayer.Enqueue(GetCompleteSamplePeriod(PeriodType.Month));
 
             return state;
         }

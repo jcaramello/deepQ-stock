@@ -42,7 +42,6 @@ namespace DeepQStock.Storage
         
         public DeepQStockContext(): base("DeepQStockDB")
         {
-
         }      
        
         #endregion

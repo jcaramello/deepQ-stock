@@ -92,13 +92,22 @@ namespace DeepQStock.Server.Hubs
             DeepRLAgentParameters agent = null;
             using (var ctx = new DeepQStockContext())
             {
-                agent = ctx.DeepRLAgentParameters
-                           .Include(a => a.StockExchange)
-                           .Include(a => a.QNetwork)
-                           .Include(a => a.Decisions)
-                           .Include(a => a.Decisions.Select(d => d.Period))
-                           .SingleOrDefault(a => a.Id == id);
-            }
+                ctx.Configuration.LazyLoadingEnabled = false;
+                ctx.Configuration.ProxyCreationEnabled = false;
+
+                agent = ctx.DeepRLAgentParameters.SingleOrDefault(a => a.Id == id);
+
+                ctx.Entry(agent).Reference(a => a.QNetwork).Load();
+                ctx.Entry(agent).Reference(a => a.StockExchange).Load();
+                ctx.Entry(agent).Collection(a => a.Decisions).Load();
+
+                var lastDecision = agent.Decisions.LastOrDefault();
+
+                if (lastDecision != null)
+                {
+                    ctx.Entry(lastDecision).Reference(d => d.Period).Load();
+                }                                
+            }           
 
             return agent;
         }        

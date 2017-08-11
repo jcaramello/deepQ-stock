@@ -40,7 +40,7 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets the agent.
         /// </summary>                
-        public IAgent Agent { get; set; }
+        public DeepRLAgent Agent { get; set; }
 
         /// <summary>
         /// Gets or sets the data provider.
@@ -159,7 +159,7 @@ namespace DeepQStock.Stocks
         /// <param name="agent">The agent.</param>
         /// <param name="provider">The provider.</param>
         /// <exception cref="System.Exception">You must pass a csv file path for load the simulated data</exception>
-        public StockExchange(StockExchangeParameters parameters, RedisManager manager, IAgent agent, IDataProvider provider)
+        public StockExchange(StockExchangeParameters parameters, RedisManager manager, DeepRLAgent agent, IDataProvider provider)
         {
             RedisManager = manager;
             Agent = agent;
@@ -279,7 +279,7 @@ namespace DeepQStock.Stocks
         protected void Initialize(long? agentId)
         {
             using (var DbContext = new DeepQStockContext())
-            {
+            {                
                 if (agentId.HasValue)
                 {
                     var agentParameters = DbContext.DeepRLAgentParameters
@@ -299,8 +299,7 @@ namespace DeepQStock.Stocks
                     ((DeepRLAgent)Agent).OnTrainingEpochComplete += (e, args) => RedisManager.Publish(RedisPubSubChannels.OnTrainingEpochComplete, JsonConvert.SerializeObject(args));
 
                     var experiences = DbContext.Experiences.Where(e => e.AgentId == agentParameters.Id).ToList();
-                    Agent.SetExperiences(experiences);
-
+                    
                     DataProvider = new CsvDataProvider(Parameters.CsvDataFilePath, Parameters.EpisodeLength);
 
                     if (agentParameters.Status == AgentStatus.Paused)
@@ -338,6 +337,8 @@ namespace DeepQStock.Stocks
                 }
                 else if (agent.Status == AgentStatus.Paused)
                 {
+                    Agent.SaveQNetwork();
+
                     CurrentState.StockExchangeId = Parameters.Id;
                     DbContext.States.AddOrUpdate(CurrentState);
 
@@ -445,58 +446,10 @@ namespace DeepQStock.Stocks
         {
             var state = CurrentState != null ? CurrentState.Clone() : new State();
 
-            foreach (var indicator in DailyIndicators)
-            {
-                var values = indicator.Update(upcomingDay);
-                upcomingDay.Indicators.Add(new IndicatorValue(indicator.Name, values));
-            }
-
-            state.DayLayer.Enqueue(upcomingDay);
-
-            UpdateLayer(PeriodType.Week, state.WeekLayer, upcomingDay, WeeklyIndicators);
-            UpdateLayer(PeriodType.Month, state.MonthLayer, upcomingDay, MonthlyIndicators);
+            state.UpdateLayers(upcomingDay, DailyIndicators, WeeklyIndicators, MonthlyIndicators);
 
             return state;
-        }
-
-        /// <summary>
-        /// Updates a layer of the state.
-        /// </summary>
-        /// <param name="layer">The layer.</param>
-        /// <param name="upcomingDay">The upcoming day.</param>
-        /// <param name="Indicators">The indicators.</param>
-        private void UpdateLayer(PeriodType type, CircularQueue<Period> layer, Period upcomingDay, IEnumerable<ITechnicalIndicator> indicators)
-        {
-            Period currentPeriod = null;
-            bool needNewPeriod = type == PeriodType.Week ? upcomingDay.Date.IsStartOfWeek() : upcomingDay.Date.IsStartOfMonth();
-
-            if (layer.IsEmpty || needNewPeriod)
-            {
-                currentPeriod = upcomingDay.Clone();
-                currentPeriod.PeriodType = type;
-                layer.Enqueue(currentPeriod);                
-            }
-            else
-            {
-                currentPeriod = layer.Peek();
-                currentPeriod.Merge(upcomingDay);
-            }
-
-            foreach (var indicator in indicators)
-            {
-                var newValues = indicator.Update(currentPeriod);
-                var periodIndicator = currentPeriod.Indicators.SingleOrDefault(i => i.Name == indicator.Name);
-                if (periodIndicator != null)
-                {
-                    periodIndicator.Values = newValues;
-                }
-                else
-                {
-                    currentPeriod.Indicators.Add(new IndicatorValue(indicator.Name, newValues));
-                }
-            }
-        }
-
+        }       
 
         /// <summary>
         /// Triggers the on day completed event.

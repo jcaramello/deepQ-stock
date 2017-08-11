@@ -1,16 +1,17 @@
 namespace DeepQStock.Migrations
 {
+    using Storage;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<DeepQStock.Storage.DeepQStockContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<DeepQStockContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = true;
+            AutomaticMigrationDataLossAllowed = true;            
             ContextKey = "DeepQStock.Storage.DeepQStockContext";
         }
 
