@@ -243,7 +243,10 @@ namespace DeepQStock.Stocks
             {
                 foreach (var state in episode)
                 {
+                    var oldState = CurrentState;
                     CurrentState = state;
+                    RemoveState(oldState);
+
                     action = Agent.Decide(state, reward);
                     reward = Execute(action, Agent.Parameters.InOutStrategy);
                     DaysSimulated++;
@@ -279,7 +282,7 @@ namespace DeepQStock.Stocks
         protected void Initialize(long? agentId)
         {
             using (var DbContext = new DeepQStockContext())
-            {                
+            {
                 if (agentId.HasValue)
                 {
                     var agentParameters = DbContext.DeepRLAgentParameters
@@ -288,26 +291,23 @@ namespace DeepQStock.Stocks
                                                    .Single(a => a.Id == agentId.Value);
 
                     Parameters = agentParameters.StockExchange;
+                    RewardCalculator = RewardCalculator.Use(RewardCalculatorType.WinningsOverLoosings);
 
                     DailyIndicators = InitializeIndicators(DbContext, PeriodType.Day);
                     WeeklyIndicators = InitializeIndicators(DbContext, PeriodType.Week);
                     MonthlyIndicators = InitializeIndicators(DbContext, PeriodType.Month);
 
                     Agent = new DeepRLAgent(agentParameters);
-
-                    RewardCalculator = RewardCalculator.Use(RewardCalculatorType.WinningsOverLoosings);
-                    ((DeepRLAgent)Agent).OnTrainingEpochComplete += (e, args) => RedisManager.Publish(RedisPubSubChannels.OnTrainingEpochComplete, JsonConvert.SerializeObject(args));
+                    Agent.OnTrainingEpochComplete += (e, args) => RedisManager.Publish(RedisPubSubChannels.OnTrainingEpochComplete, JsonConvert.SerializeObject(args));
 
                     var experiences = DbContext.Experiences.Where(e => e.AgentId == agentParameters.Id).ToList();
-                    
+                    Agent.SetExperiences(experiences);
+
                     DataProvider = new CsvDataProvider(Parameters.CsvDataFilePath, Parameters.EpisodeLength);
 
                     if (agentParameters.Status == AgentStatus.Paused)
                     {
-                        CurrentState = DbContext.States
-                                                .Include(s => s.InternalPeriods)
-                                                .Single(s => s.StockExchangeId == Parameters.Id);                        
-
+                        CurrentState = DbContext.States.Include(s => s.InternalPeriods).Single(s => s.StockExchangeId == Parameters.Id);
                         DataProvider.Seek(CurrentState.Today.Date.AddDays(1));
                     }
 
@@ -333,23 +333,38 @@ namespace DeepQStock.Stocks
 
                 if (agent.Status == AgentStatus.Removed)
                 {
-                    DbContext.DeepRLAgentParameters.Remove(agent);
+                    DbContext.RemoveAgent(agent);
                 }
                 else if (agent.Status == AgentStatus.Paused)
                 {
                     Agent.SaveQNetwork();
-
                     CurrentState.StockExchangeId = Parameters.Id;
-                    DbContext.States.AddOrUpdate(CurrentState);
+
+                    if (CurrentState.Id > 0)
+                    {
+                        var currentStateInDb = DbContext.States.Single(s => s.Id == CurrentState.Id);
+                        DbContext.Entry(currentStateInDb).CurrentValues.SetValues(CurrentState);
+                        DbContext.Entry(currentStateInDb).State = EntityState.Modified;
+                    }
+                    else
+                    {
+                        var oldState = DbContext.States.SingleOrDefault(s => s.StockExchangeId == Parameters.Id);
+                        if (oldState != null)
+                        {
+                            DbContext.States.Remove(oldState);
+                        }
+
+                        DbContext.States.Add(CurrentState);
+                    }
 
                     foreach (var p in CurrentState.InternalPeriods)
                     {
                         DbContext.Periods.AddOrUpdate(p);
-                    }  
+                    }
 
                     foreach (var indicator in DailyIndicators.Concat(WeeklyIndicators).Concat(MonthlyIndicators))
                     {
-                        indicator.Save(DbContext);                        
+                        indicator.Save(DbContext);
                     }
                 }
 
@@ -418,38 +433,53 @@ namespace DeepQStock.Stocks
         {
             var upcomingDays = DataProvider.NextDays();
             var episode = new List<State>();
-
+            State seedState = new State();            
+           
             foreach (var upcomingDay in upcomingDays)
             {
-                if (CurrentState != null && CurrentState.Today != null)
+                upcomingDay.StockExchangeId = Parameters.Id;
+                seedState = CurrentState != null ? CurrentState.Clone() : new State();
+
+                if (seedState.Today != null)
                 {
-                    upcomingDay.ActualPosition = CurrentState.Today.ActualPosition;
-                    upcomingDay.CurrentCapital = CurrentState.Today.CurrentCapital;
+                    upcomingDay.ActualPosition = seedState.Today.ActualPosition;
+                    upcomingDay.CurrentCapital = seedState.Today.CurrentCapital;
                 }
                 else
                 {
                     upcomingDay.CurrentCapital = Parameters.InitialCapital;
                 }
 
-                episode.Add(GenerateState(upcomingDay));
+                seedState.UpdateLayers(upcomingDay, DailyIndicators, WeeklyIndicators, MonthlyIndicators);
+                episode.Add(seedState);
             }
 
             return episode;
         }
 
         /// <summary>
-        /// Generates the state.
+        /// Remove an state if exists
         /// </summary>
-        /// <param name="period">The period.</param>
-        /// <returns></returns>
-        private State GenerateState(Period upcomingDay)
+        /// <param name="state"></param>
+        public void RemoveState(State state)
         {
-            var state = CurrentState != null ? CurrentState.Clone() : new State();
+            if (state != null)
+            {
+                if (state.Id > 0)
+                {
+                    using (var ctx = new DeepQStockContext())
+                    {
+                        if (!ctx.IsAttached(state))
+                        {
+                            ctx.States.Attach(state);
+                        }
 
-            state.UpdateLayers(upcomingDay, DailyIndicators, WeeklyIndicators, MonthlyIndicators);
-
-            return state;
-        }       
+                        ctx.Entry(state).State = EntityState.Deleted;
+                        ctx.SaveChanges();
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Triggers the on day completed event.

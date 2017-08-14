@@ -213,6 +213,12 @@ namespace DeepQStock.Server.Hubs
             using (var ctx = new DeepQStockContext())
             {
                 var agent = ctx.DeepRLAgentParameters.Single(a => a.Id == id);
+
+                if (agent.Status != AgentStatus.Running)
+                {
+                    return;
+                }
+
                 agent.Status = AgentStatus.Paused;
                 ctx.SaveChanges();
 
@@ -224,29 +230,7 @@ namespace DeepQStock.Server.Hubs
                     BackgroundJob.Delete(jobId);
                 }
             }
-        }
-
-        /// <summary>
-        /// Start the simulation of the agent agentId
-        /// </summary>
-        /// <param name="id"></param>
-        public void Stop(long id)
-        {
-            using (var ctx = new DeepQStockContext())
-            {
-                string jobId = null;
-                ActiveAgents.TryRemove(id, out jobId);
-
-                var agent = ctx.DeepRLAgentParameters.Single(a => a.Id == id);
-                agent.Status = AgentStatus.Stoped;
-                ctx.SaveChanges();
-
-                if (!string.IsNullOrEmpty(jobId))
-                {
-                    BackgroundJob.Delete(jobId);
-                }                
-            }
-        }
+        }      
 
         /// <summary>
         /// Start the simulation of the agent agentId
@@ -267,7 +251,8 @@ namespace DeepQStock.Server.Hubs
             {
                 string jobId = null;
                 ActiveAgents.TryRemove(id, out jobId);
-                var agent = ctx.DeepRLAgentParameters.Single(a => a.Id == id);
+
+                var agent = ctx.DeepRLAgentParameters.Single(a => a.Id == id);                
 
                 // Here we have two posible situations, one is if the agent is running, in this case we cannot remove the agent immediately, 
                 // we need mark the agent as removed and stop the agent's job. The remove process will be handle in the shutdown process.
@@ -283,7 +268,7 @@ namespace DeepQStock.Server.Hubs
                 }
                 else
                 {
-                    ctx.DeepRLAgentParameters.Remove(agent);                   
+                    ctx.RemoveAgent(agent);                   
                 }
 
                 ctx.SaveChanges();

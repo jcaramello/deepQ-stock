@@ -34,7 +34,7 @@ namespace DeepQStock.Agents
 
         /// <summary>
         /// Gets or sets the hidden layers count.
-        /// </summary>        
+        /// </summary>               
         public QNetworkParameters QNetwork { get; set; }   
         
         /// <summary>

@@ -68,6 +68,11 @@ namespace DeepQStock.Domain
         public int ActualPosition { get; set; }
 
         /// <summary>
+        /// Stock Exchange
+        /// </summary>
+        public long StockExchangeId { get; set; }
+
+        /// <summary>
         /// Gets or sets the indicators.
         /// </summary>            
         [NotMapped]
@@ -89,7 +94,7 @@ namespace DeepQStock.Domain
                 return InternalIndicators.ToList().AsReadOnly();
             }
         }
-
+        
         public ICollection<IndicatorValue> InternalIndicators { get; set; }
 
         /// <summary>
@@ -191,7 +196,8 @@ namespace DeepQStock.Domain
                 Close = Close,
                 High = High,
                 Low = Low,
-                Volume = Volume
+                Volume = Volume,
+                StockExchangeId = StockExchangeId
             };
 
         }

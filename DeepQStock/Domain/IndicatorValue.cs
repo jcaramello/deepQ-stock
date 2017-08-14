@@ -1,4 +1,5 @@
 ﻿using DeepQStock.Storage;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,6 +16,9 @@ namespace DeepQStock.Domain
         public string Name { get; set; }
 
         public string ValuesString { get; set; }
+
+        [JsonIgnore]
+        public Period Period { get; set; }
 
         [NotMapped]
         public IEnumerable<double> Values

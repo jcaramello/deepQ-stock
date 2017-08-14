@@ -131,26 +131,4 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.notificationService.info("Info", "Simulacion pausada");
     this.agentService.pause(this.agent.id);
   }
-
-  /**
-  * Stop the agent simulation
-  * @param event 
-  */
-  public stop(event, stockChart) {
-    this.agent.status = AgentStatus.Stoped
-    this.notificationService.info("Info", "Simulacion detenida");
-    this.agentService.stop(this.agent.id);
-    stockChart.clearMarkers();
-    this.today = new OnDayComplete();
-  }
-
-  /**
-   * Reset the agent 
-   * @param event 
-   */
-  public reset(event, stockChart) {
-    this.stop(event, stockChart)
-    this.notificationService.info("Info", "El agente fue reseteado.");
-    this.agentService.reset(this.agent.id);
-  }
 }

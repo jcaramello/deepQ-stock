@@ -234,7 +234,7 @@ namespace DeepQStock.Agents
             {
                 foreach (var experience in experiences)
                 {
-                    if (experience.Id > 0 && !ctx.Set<Experience>().Local.Any(e => e.Id == experience.Id))
+                    if (experience.Id > 0 && !ctx.IsAttached(experience))
                     {
                         ctx.Experiences.Attach(experience);
                     }                    

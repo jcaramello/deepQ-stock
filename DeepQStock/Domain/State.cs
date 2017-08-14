@@ -44,7 +44,7 @@ namespace DeepQStock.Domain
         {
             get
             {
-                return DayLayer.Last();
+                return DayLayer.LastOrDefault();
             }
         }
 
@@ -201,8 +201,7 @@ namespace DeepQStock.Domain
         public State Clone()
         {
             var clone = new State(Size);
-
-            clone.Id = Id;
+           
             InternalPeriods?.ToList().ForEach(p => clone.InternalPeriods.Add(p));
 
             return clone;
