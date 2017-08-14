@@ -45,7 +45,9 @@ namespace DeepQStock.Server
 
             app.MapSignalR(hubConfiguration);
 
-            GlobalConfiguration.Configuration.UseRedisStorage(Settings.RedisConnectionString);
+            var connString = new System.Data.Entity.Infrastructure.SqlConnectionFactory();
+
+            GlobalConfiguration.Configuration.UseSqlServerStorage(@"Server=.\sqlexpress; Database=DeepQStockDB; Integrated Security=SSPI;");
             GlobalConfiguration.Configuration.UseActivator(new DependencyResolverJobActivator(GlobalHost.DependencyResolver));
 
             app.UseHangfireDashboard();
