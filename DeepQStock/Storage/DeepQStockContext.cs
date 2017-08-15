@@ -67,6 +67,16 @@ namespace DeepQStock.Storage
         /// <param name="agent"></param>
         public void RemoveAgent(DeepRLAgentParameters agent)
         {
+            ClearAgent(agent);
+            DeepRLAgentParameters.Remove(agent);
+        }
+
+        /// <summary>
+        /// Clear Agent
+        /// </summary>
+        /// <param name="agent"></param>
+        public void ClearAgent(DeepRLAgentParameters agent)
+        {
             Entry(agent).Reference(a => a.StockExchange).Load();
             var stockId = agent.StockExchange.Id;
 
@@ -79,7 +89,7 @@ namespace DeepQStock.Storage
             ExponentialMovingAverages.RemoveRange(ExponentialMovingAverages.Where(a => a.StockExchangeId == stockId));
             MACDs.RemoveRange(MACDs.Where(a => a.StockExchangeId == stockId));
             RSIs.RemoveRange(RSIs.Where(a => a.StockExchangeId == stockId));
-            SimpleMovingAverages.RemoveRange(SimpleMovingAverages.Where(a => a.StockExchangeId == stockId));          
+            SimpleMovingAverages.RemoveRange(SimpleMovingAverages.Where(a => a.StockExchangeId == stockId));
 
             var periodsToDelete = Periods.Where(p => p.StockExchangeId == stockId);
             IndicatorValues.RemoveRange(IndicatorValues.Where(i => i.Period.StockExchangeId == stockId));
@@ -87,8 +97,6 @@ namespace DeepQStock.Storage
 
             States.RemoveRange(States.Where(e => e.StockExchangeId == stockId));
             OnDaysCompletes.RemoveRange(OnDaysCompletes.Where(e => e.Agent.Id == agent.Id));
-
-            DeepRLAgentParameters.Remove(agent);
         }
 
         #endregion

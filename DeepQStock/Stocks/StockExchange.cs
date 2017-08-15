@@ -63,6 +63,11 @@ namespace DeepQStock.Stocks
         public State CurrentState { get; set; }
 
         /// <summary>
+        /// Current State
+        /// </summary>        
+        public State PreviousState { get; set; }
+
+        /// <summary>
         /// Gets the annual profits.
         /// </summary>        
         public double AnnualProfits
@@ -113,6 +118,11 @@ namespace DeepQStock.Stocks
         /// Gets or sets the total of years.
         /// </summary>
         public int TotalOfYears { get; set; }
+
+        /// <summary>
+        /// Get or set the number of actions buyed or selled in the last day
+        /// </summary>
+        public int VolumeOperated { get; set; }
 
         /// <summary>
         /// List of stock exchange  daily indicators used in each state
@@ -220,7 +230,6 @@ namespace DeepQStock.Stocks
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                ClearDesicions();
             }
             finally
             {
@@ -232,22 +241,18 @@ namespace DeepQStock.Stocks
         /// Simulate the enviroment and the agent integration
         /// </summary>
         protected void Simulate(IJobCancellationToken token)
-        {
-            IEnumerable<State> episode = null;
+        {            
             var action = ActionType.Wait;
             double reward = 0.0;
             int? currentYear = null;
-            episode = NextEpisode();
+            PreviousState = null;
+            CurrentState = GenerateState();            
 
             do
             {
-                foreach (var state in episode)
-                {
-                    var oldState = CurrentState;
-                    CurrentState = state;
-                    RemoveState(oldState);
-
-                    action = Agent.Decide(state, reward);
+                for (int i = 0; i < Parameters.EpisodeLength - 1; i++)
+                {                  
+                    action = Agent.Decide(CurrentState, reward);
                     reward = Execute(action, Agent.Parameters.InOutStrategy);
                     DaysSimulated++;
 
@@ -259,19 +264,26 @@ namespace DeepQStock.Stocks
 
                     DayCompleted(action, reward);
 
+                    token.ThrowIfCancellationRequested();
                     if (Parameters.SimulationVelocity > 0)
                     {
                         Thread.Sleep(Parameters.SimulationVelocity);
                     }
+                 
+                    PreviousState = CurrentState;
+                    CurrentState = GenerateState();
+                    RemoveState(PreviousState);
+
+                    if (CurrentState == null)
+                    {
+                        break;
+                    }                  
                 }
 
                 Agent.OnEpisodeComplete();
-                EpisodeSimulated++;
+                EpisodeSimulated++;               
 
-                token.ThrowIfCancellationRequested();
-                episode = NextEpisode();
-
-            } while (episode.Count() > 0);
+            } while (CurrentState != null);
         }
 
 
@@ -289,6 +301,12 @@ namespace DeepQStock.Stocks
                                                    .Include(a => a.QNetwork)
                                                    .Include(a => a.StockExchange)
                                                    .Single(a => a.Id == agentId.Value);
+
+                    if (agentParameters.Status == AgentStatus.Completed)
+                    {
+                        DbContext.ClearAgent(agentParameters);
+                        DbContext.SaveChanges();
+                    }
 
                     Parameters = agentParameters.StockExchange;
                     RewardCalculator = RewardCalculator.Use(RewardCalculatorType.WinningsOverLoosings);
@@ -313,7 +331,7 @@ namespace DeepQStock.Stocks
 
                     if (agentParameters.Status == AgentStatus.Completed)
                     {
-                        ClearDesicions();
+                        DbContext.ClearAgent(agentParameters);
                     }
 
                     agentParameters.Status = AgentStatus.Running;
@@ -335,7 +353,7 @@ namespace DeepQStock.Stocks
                 {
                     DbContext.RemoveAgent(agent);
                 }
-                else if (agent.Status == AgentStatus.Paused)
+                else if (agent.Status == AgentStatus.Paused || agent.Status == AgentStatus.Completed)
                 {
                     Agent.SaveQNetwork();
                     CurrentState.StockExchangeId = Parameters.Id;
@@ -387,74 +405,85 @@ namespace DeepQStock.Stocks
             var capital = CurrentState.Today.CurrentCapital;
             var position = CurrentState.Today.ActualPosition;
 
+            if (position > 0)
+            {
+                // We need to calculate Earnings first before update the current position
+                Earnings = position * (CurrentState.Today.Close - CurrentState.Today.Open);
+            }
+            else
+            {
+                Earnings = 0;
+            }
+
             if (action == ActionType.Buy && capital > 0)
             {
-                var totalToBuy = inOutStrategy * capital;
-                if (totalToBuy > actionPrice)
+                var availableMoney = inOutStrategy * capital;
+                if (availableMoney >= actionPrice)
                 {
-                    var actionsToQuantity = (int)Math.Truncate(totalToBuy / actionPrice);
-                    TransactionCost = actionsToQuantity * actionPrice * Parameters.TransactionCost;
-                    if (TransactionCost <= capital)
+                    VolumeOperated = (int)Math.Truncate(availableMoney / actionPrice);
+                    var actionsCost = VolumeOperated * actionPrice;
+                    TransactionCost = actionsCost * Parameters.TransactionCost;
+                    var operationCost = actionsCost + TransactionCost;
+
+                    if (operationCost <= capital)
                     {
-                        var operationCost = actionPrice * actionsToQuantity;
-                        CurrentState.Today.ActualPosition += actionsToQuantity;
-                        CurrentState.Today.CurrentCapital -= operationCost + TransactionCost;
+                        CurrentState.Today.ActualPosition += VolumeOperated;
+                        CurrentState.Today.CurrentCapital -= operationCost;
                     }
                 }
             }
             else if (action == ActionType.Sell && position > 0)
             {
-                var actionsToSell = (int)Math.Truncate(inOutStrategy * position);
-                if (actionsToSell == 0)
+                VolumeOperated = (int)Math.Truncate(inOutStrategy * position);
+                var actionsCost = VolumeOperated * actionPrice;
+
+                if (VolumeOperated == 0)
                 {
-                    actionsToSell = position;
+                    VolumeOperated = position;
                 }
 
-                TransactionCost = actionsToSell * actionPrice * Parameters.TransactionCost;
-                CurrentState.Today.ActualPosition -= actionsToSell;
-                CurrentState.Today.CurrentCapital += (actionsToSell * actionPrice) - TransactionCost;
-
+                TransactionCost = actionsCost * Parameters.TransactionCost;
+                CurrentState.Today.ActualPosition -= VolumeOperated;
+                CurrentState.Today.CurrentCapital += actionsCost - TransactionCost;
             }
-
-            if (position > 0)
+            else if (action == ActionType.Wait)
             {
-                Earnings = position * (CurrentState.Today.Close - CurrentState.Today.Open);
+                VolumeOperated = 0;
             }
 
-            var reward = RewardCalculator.Calculate(this);
-            return reward;
+            return RewardCalculator.Calculate(this);
         }
 
         /// <summary>
         /// Generate the next state 
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<State> NextEpisode()
+        private State GenerateState()
         {
-            var upcomingDays = DataProvider.NextDays();
-            var episode = new List<State>();
-            State seedState = new State();            
-           
-            foreach (var upcomingDay in upcomingDays)
+            var upcomingDay = DataProvider.NextDay();
+
+            if (upcomingDay == null)
             {
-                upcomingDay.StockExchangeId = Parameters.Id;
-                seedState = CurrentState != null ? CurrentState.Clone() : new State();
-
-                if (seedState.Today != null)
-                {
-                    upcomingDay.ActualPosition = seedState.Today.ActualPosition;
-                    upcomingDay.CurrentCapital = seedState.Today.CurrentCapital;
-                }
-                else
-                {
-                    upcomingDay.CurrentCapital = Parameters.InitialCapital;
-                }
-
-                seedState.UpdateLayers(upcomingDay, DailyIndicators, WeeklyIndicators, MonthlyIndicators);
-                episode.Add(seedState);
+                return null;
             }
 
-            return episode;
+            State seedState = new State();
+            upcomingDay.StockExchangeId = Parameters.Id;
+            seedState = CurrentState != null ? CurrentState.Clone() : new State();
+
+            if (seedState.Today != null)
+            {
+                upcomingDay.ActualPosition = seedState.Today.ActualPosition;
+                upcomingDay.CurrentCapital = seedState.Today.CurrentCapital;
+            }
+            else
+            {
+                upcomingDay.CurrentCapital = Parameters.InitialCapital;
+            }
+
+            seedState.UpdateLayers(upcomingDay, DailyIndicators, WeeklyIndicators, MonthlyIndicators);
+
+            return seedState;
         }
 
         /// <summary>
@@ -471,6 +500,7 @@ namespace DeepQStock.Stocks
                     {
                         if (!ctx.IsAttached(state))
                         {
+                            state.InternalPeriods = null;
                             ctx.States.Attach(state);
                         }
 
@@ -500,7 +530,8 @@ namespace DeepQStock.Stocks
                 AnnualProfits = AnnualProfits,
                 AnnualRent = AnnualRent,
                 TotalOfYears = TotalOfYears,
-                Period = CurrentState.Today
+                Period = CurrentState.Today,
+                VolumeOperated = VolumeOperated
             };
 
 
@@ -512,18 +543,6 @@ namespace DeepQStock.Stocks
             }
 
             RedisManager.Publish(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(dayCompleted));
-        }
-
-        /// <summary>
-        /// Clears the desicions.
-        /// </summary>
-        private void ClearDesicions()
-        {
-            using (var DbContext = new DeepQStockContext())
-            {
-                DbContext.OnDaysCompletes.RemoveRange(Agent.Parameters.Decisions);
-                DbContext.SaveChanges();
-            }
         }
 
         /// <summary>

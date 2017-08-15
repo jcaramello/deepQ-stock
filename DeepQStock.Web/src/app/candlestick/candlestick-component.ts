@@ -85,7 +85,7 @@ export class CandlestickComponent {
           graph: this.priceGraph,
           text: day.selectedAction == ActionType.Buy ? "C" : "V",
           backgroundColor: day.selectedAction == ActionType.Buy ? "#20a8d8" : "#FFBF00",
-          description: ""
+          description: 'Numero de acciones operadas: ' + day.volumeOperated
         };
 
         this.stockEvents.push(<any>event);
@@ -188,14 +188,14 @@ export class CandlestickComponent {
       this.agent.decisions = [];
     }
 
-    dataSet.stockEvents = this.stockEvents = this.agent.decisions.map(d => {
+    dataSet.stockEvents = this.stockEvents = this.agent.decisions.filter(d => d.selectedAction != 2).map(d => {
       return <any>{
         date: new Date(d.date),
         type: "sign",
         graph: this.priceGraph,
         text: d.selectedAction == ActionType.Buy ? "C" : "V",
         backgroundColor: d.selectedAction == ActionType.Buy ? "#20a8d8" : "#FFBF00",
-        description: ""
+        description: 'Numero de acciones operadas: ' + d.volumeOperated
       };
     });
 

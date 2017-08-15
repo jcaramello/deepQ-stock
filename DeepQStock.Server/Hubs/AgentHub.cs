@@ -10,6 +10,7 @@ using System.Linq;
 using DeepQStock.Enums;
 using System.Collections.Concurrent;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.IO;
 
 namespace DeepQStock.Server.Hubs
@@ -182,7 +183,10 @@ namespace DeepQStock.Server.Hubs
             using (var ctx = new DeepQStockContext())
             {
                 agent.StockExchange.CsvDataFilePath = Path.Combine(Settings.CsvDataDirectory, string.Format("{0}.csv", agent.StockExchange.Symbol));
-                ctx.DeepRLAgentParameters.Add(agent);
+                ctx.DeepRLAgentParameters.AddOrUpdate(agent);
+                ctx.StockExchangeParameters.AddOrUpdate(agent.StockExchange);
+                ctx.QNetworkParameters.AddOrUpdate(agent.QNetwork);
+
                 ctx.SaveChanges();
             }
 

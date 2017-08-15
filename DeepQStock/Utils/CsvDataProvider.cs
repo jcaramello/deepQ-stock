@@ -76,6 +76,18 @@ namespace DeepQStock.Utils
 
 
         /// <summary>
+        /// Get the next the period.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public Period NextDay()
+        {
+            return Data.Skip(PeriodLoaded++).Take(1).FirstOrDefault();           
+        }
+
+
+        /// <summary>
         /// Return the min date in the file
         /// </summary>
         /// <returns></returns>

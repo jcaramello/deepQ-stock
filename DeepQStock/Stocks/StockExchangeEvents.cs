@@ -79,6 +79,11 @@ namespace DeepQStock.Stocks
         /// <summary>
         /// Gets or sets the actual position.
         /// </summary>                       
-        public Period Period { get; set; }        
+        public Period Period { get; set; }
+
+        /// <summary>
+        /// Number of the actions buyed or selled
+        /// </summary>
+        public int VolumeOperated { get; set; }
     }
 }

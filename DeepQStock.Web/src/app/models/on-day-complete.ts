@@ -19,6 +19,7 @@ export class OnDayComplete {
     public annualRent: number;
     public totalOfYears: number;
     public period: Period;
+    public volumeOperated:number;
 
     /**
      * Creates an instance of OnDayComplete.

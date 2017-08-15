@@ -49,6 +49,18 @@ namespace DeepQStock.Domain
         }
 
         /// <summary>
+        /// Gets the current period.
+        /// </summary>
+        [NotMapped]
+        public Period Yesterday
+        {
+            get
+            {
+                return DayLayer.Count > 2 ? DayLayer.ElementAt(DayLayer.Count - 2) : null;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the periods.
         /// </summary>
         [NotMapped]
@@ -181,14 +193,14 @@ namespace DeepQStock.Domain
                 upcomingDay.AddIndicator(new IndicatorValue(indicator.Name, values));
             }
 
-            DayLayer.Enqueue(upcomingDay);            
+            DayLayer.Enqueue(upcomingDay);
 
             UpdateLayer(PeriodType.Day, DayLayer, upcomingDay, dailyIndicators);
             UpdateLayer(PeriodType.Week, WeekLayer, upcomingDay, weeklyIndicators);
             UpdateLayer(PeriodType.Month, MonthLayer, upcomingDay, monthlyIndicators);
 
             InternalPeriods = DayLayer.Concat(WeekLayer).Concat(MonthLayer).ToList();
-        }       
+        }
 
         #endregion
 
@@ -201,7 +213,7 @@ namespace DeepQStock.Domain
         public State Clone()
         {
             var clone = new State(Size);
-           
+
             InternalPeriods?.ToList().ForEach(p => clone.InternalPeriods.Add(p));
 
             return clone;
@@ -255,7 +267,7 @@ namespace DeepQStock.Domain
         /// <param name="upcomingDay">The upcoming day.</param>
         /// <param name="Indicators">The indicators.</param>
         private void UpdateLayer(PeriodType type, CircularQueue<Period> layer, Period upcomingDay, IEnumerable<ITechnicalIndicator> indicators)
-        {           
+        {
             Period currentPeriod = null;
             bool needNewPeriod = type == PeriodType.Week ? upcomingDay.Date.IsStartOfWeek() : upcomingDay.Date.IsStartOfMonth();
 

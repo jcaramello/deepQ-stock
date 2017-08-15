@@ -47,6 +47,11 @@ namespace DeepQStock.Server
 
             var connString = new System.Data.Entity.Infrastructure.SqlConnectionFactory();
 
+            using (var ctx = new DeepQStockContext())
+            {
+                ctx.DeepRLAgentParameters.FirstOrDefault();
+            }
+
             GlobalConfiguration.Configuration.UseSqlServerStorage(@"Server=.\sqlexpress; Database=DeepQStockDB; Integrated Security=SSPI;");
             GlobalConfiguration.Configuration.UseActivator(new DependencyResolverJobActivator(GlobalHost.DependencyResolver));
 
@@ -59,6 +64,7 @@ namespace DeepQStock.Server
             ThreadPool.GetMinThreads(out minWorker, out minIOC);
             ThreadPool.SetMinThreads(8, 8);
 
+           
         }
 
         /// <summary>

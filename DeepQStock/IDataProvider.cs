@@ -11,6 +11,13 @@ namespace DeepQStock
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns></returns>
+        Period NextDay();
+
+        /// <summary>
+        /// Get the next the period.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
         IEnumerable<Period> NextDays();
 
         /// <summary>
