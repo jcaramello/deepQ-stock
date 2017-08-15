@@ -203,6 +203,10 @@ namespace DeepQStock.Stocks
                     var agentParameters = DbContext.DeepRLAgentParameters.Single(a => a.Id == agentId.Value);
                     agentParameters.Status = AgentStatus.Completed;
 
+                    // We need this assignation here because the simulation complete when the current state is null, and
+                    // now we need to store some of the values of the last State.
+                    CurrentState = PreviousState;
+
                     var result = new SimulationResult()
                     {
                         AgentId = Agent.Parameters.Id,

@@ -21,16 +21,20 @@ export const routes: Routes = [
         path: 'dashboard/:id',
         loadChildren: './dashboard/dashboard.module#DashboardModule'
       },
-       {
+      {
         path: 'introduction',
         loadChildren: './introduction/introduction.module#IntroductionModule'
+      },
+      {
+        path: 'statistics',
+        loadChildren: './statistics/statistics.module#StatisticsModule'
       }
     ]
   }
 ];
 
 @NgModule({
-  imports: [ RouterModule.forRoot(routes) ],
-  exports: [ RouterModule ]
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
