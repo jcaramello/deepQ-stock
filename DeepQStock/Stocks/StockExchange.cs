@@ -245,17 +245,17 @@ namespace DeepQStock.Stocks
         /// Simulate the enviroment and the agent integration
         /// </summary>
         protected void Simulate(IJobCancellationToken token)
-        {            
+        {
             var action = ActionType.Wait;
             double reward = 0.0;
             int? currentYear = null;
             PreviousState = null;
-            CurrentState = GenerateState();            
+            CurrentState = GenerateState();
 
             do
             {
                 for (int i = 0; i < Parameters.EpisodeLength - 1; i++)
-                {                  
+                {
                     action = Agent.Decide(CurrentState, reward);
                     reward = Execute(action, Agent.Parameters.InOutStrategy);
                     DaysSimulated++;
@@ -273,7 +273,7 @@ namespace DeepQStock.Stocks
                     {
                         Thread.Sleep(Parameters.SimulationVelocity);
                     }
-                 
+
                     PreviousState = CurrentState;
                     CurrentState = GenerateState();
                     RemoveState(PreviousState);
@@ -281,11 +281,11 @@ namespace DeepQStock.Stocks
                     if (CurrentState == null)
                     {
                         break;
-                    }                  
+                    }
                 }
 
                 Agent.OnEpisodeComplete();
-                EpisodeSimulated++;               
+                EpisodeSimulated++;
 
             } while (CurrentState != null);
         }
@@ -406,18 +406,9 @@ namespace DeepQStock.Stocks
         private double Execute(ActionType action, double inOutStrategy)
         {
             var actionPrice = CurrentState.Today.Close;
-            var capital = CurrentState.Today.CurrentCapital;
+            var capital = CurrentState.Today.CurrentCapital;            
             var position = CurrentState.Today.ActualPosition;
-
-            if (position > 0)
-            {
-                // We need to calculate Earnings first before update the current position
-                Earnings = position * (CurrentState.Today.Close - CurrentState.Today.Open);
-            }
-            else
-            {
-                Earnings = 0;
-            }
+            var previuosPosition = position;
 
             if (action == ActionType.Buy && capital > 0)
             {
@@ -454,6 +445,10 @@ namespace DeepQStock.Stocks
             {
                 VolumeOperated = 0;
             }
+
+            // We need to calculate Earnings first before update the current position
+            Earnings = previuosPosition * (CurrentState.Today.Close - CurrentState.Today.Open);
+
 
             return RewardCalculator.Calculate(this);
         }

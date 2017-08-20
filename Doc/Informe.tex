@@ -1,0 +1,48 @@
+
+\documentclass{eieproyecto}
+
+\begin{document}
+\frontmatter
+
+\title{Título del proyecto (de 10 a 12 palabras) \\¡No más de 15!}
+
+\autor{Nombre Apellidos}
+
+%fecha de la presentación oral
+\date{Mes de año}
+
+%tribunal evaluador
+%profesor guía
+\dca{GradoG NombreG ApellidosG}
+
+\maca{GradoLA NombreLA ApellidosLA}
+\mbca{GradoLB NombreLB ApellidosLB}
+ 
+ 
+\eietitlepage 
+\cleardoublepage 
+\eieaprovalpage 
+\cleardoublepage
+
+\include{resumen}
+\clearpage
+
+\tableofcontents*  
+\clearpage
+
+\listoffigures 
+\listoftables  
+\clearpage
+
+\include{nomenclatura}
+\mainmatter
+\pagestyle{eieheadings}
+\include{desarrollo}
+\bibliography{eieclases_ref}
+\clearpage
+
+\appendix
+\include{apendice}
+
+%------------------
+\end{document}

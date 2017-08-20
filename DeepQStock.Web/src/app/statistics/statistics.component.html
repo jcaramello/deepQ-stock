@@ -14,7 +14,7 @@
                                 [values]="averageAnnualRent" 
                                 [title]="'Promedio de Renta Anual por agente'" 
                                 [field]="'annualRent'" 
-                                [category]="'agentId'">
+                                [category]="'name'">
                         </barchart>
                 </div>
 
@@ -22,8 +22,8 @@
                         <linechart #progressAnnualRentChart 
                                 [values]="progressAnnualRent" 
                                 [title]="'Progreso de Renta Anual por agente'" 
-                                [field]="'annualRent'" 
-                                [category]="'agentId'"
+                                [field]="'value'" 
+                                [category]="'name'"
                                 [agents]="agents">
                         </linechart>
                 </div>

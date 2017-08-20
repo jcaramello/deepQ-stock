@@ -1,0 +1,42 @@
+\begin{thebibliography}{}
+
+\bibitem[Alfaro, 2013]{vmaeieproyman}
+Alfaro, V.~M. (2013).
+\newblock {\em Manual de usuario de la clase \texttt{eieproyecto} - {IE-0499}
+  Proyecto eléctrico}.
+\newblock Escuela de Ingeniería Eléctrica, Universidad de Costa Rica.
+
+\bibitem[{\AA}str{\"o}m y H{\"a}gglund, 2006]{astromhagglund2006}
+{\AA}str{\"o}m, K. y H{\"a}gglund, T. (2006).
+\newblock {\em Advanced {PID} Control}.
+\newblock ISA - The Instrumentation, Systems, and Automation Society, Research
+  Triangle Park, NC 27709, USA.
+
+\bibitem[Fear, 2005]{fear2005}
+Fear, S. (2005).
+\newblock {\em Publication quality tables in {\LaTeX}}.
+\newblock http://www.ctan.org/tex-archive/macros/latex/contrib/booktabs/.
+
+\bibitem[MEIC, 2010]{RTCR443-2010}
+MEIC (2010).
+\newblock {Reglamento Técnico RTCR443-2010, Metrología, Unidades de Madidas,
+  Sistema Internacional (SI)}.
+\newblock Ministerio de Economía, Industria y Comercio, San José, Costa Rica.
+
+\bibitem[Mittelbach et al., 2004]{latexcomp}
+Mittelbach, F., Goossens, M., Braams, J., Carlisle, D., y Rowley, C. (2004).
+\newblock {\em The {\LaTeX} Companion}.
+\newblock Addison-Wesley/Pearson Education, Inc, Boston, MA, EE.UU., 2da.
+  edici\'on.
+
+\bibitem[Oetiker et al., 2010]{nsces}
+Oetiker, T., Partl, H., Hyna, I., y Schlegi, E. (2010).
+\newblock {\em La introducción no tan corta a {\LaTeX} $2{\epsilon}$}.
+\newblock http://www.ctan.org/tex-archive/info/lshort/spanish.
+
+\bibitem[Wilson y Madsen, 2011]{memoir2011}
+Wilson, P.~R. y Madsen, L. (2011).
+\newblock {\em The Memoir Class for Configurable Typesetting}.
+\newblock http://www.ctan.org/pkg/memoir.
+
+\end{thebibliography}

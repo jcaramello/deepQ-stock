@@ -3,6 +3,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Agent } from '../models/agent';
 import { OnDayComplete } from '../models/on-day-complete';
 import { OnSimulationComplete } from '../models/on-simulation-complete';
+import { SimulationResult } from '../models/simulation-result';
 import { OnTrainingEpochComplete } from '../models/on-training-epoch-complete';
 import { BaseService } from './base-service';
 
@@ -47,6 +48,13 @@ export class AgentService extends BaseService {
      */
     public getAll(): Promise<Agent[]> {
         return this.execute('getAll');
+    }
+
+    /**
+     * Get all simulation result
+     */
+    public getAllResults(): Promise<SimulationResult[]> {
+        return this.execute('getAllResults');
     }
 
     /**

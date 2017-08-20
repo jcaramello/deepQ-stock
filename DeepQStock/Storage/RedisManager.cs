@@ -28,7 +28,15 @@ namespace DeepQStock.Storage
         /// <param name="message">The message.</param>
         public void Publish(string channel, string message)
         {
-            Subscriber.Publish(channel, message);
+            try
+            {
+                Subscriber.Publish(channel, message);
+            }
+            catch (Exception)
+            {
+
+               
+            }
         }
 
         /// <summary>
@@ -38,7 +46,15 @@ namespace DeepQStock.Storage
         /// <param name="message">The message.</param>
         public void Subscribe(string channel, Action<RedisChannel, RedisValue> handler)
         {
-            Subscriber.Subscribe(channel, handler);
+            try
+            {
+                Subscriber.Subscribe(channel, handler);
+            }
+            catch (Exception)
+            {
+
+                
+            }
         }       
     }
 }

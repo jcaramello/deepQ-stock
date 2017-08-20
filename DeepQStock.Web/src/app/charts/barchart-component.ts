@@ -54,7 +54,9 @@ export class BarChartComponent {
    */
   ngOnChanges(changes: SimpleChanges): void {
     this.values = changes['values'] && changes['values'].currentValue;
-    this.init();
+    if(this.values && this.values.length > 0){
+      this.init();
+    }  
   }
 
   /**

@@ -96,6 +96,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public onSimulationCompleted(args: OnSimulationComplete) {
     if (args.agentId == this.agent.id) {
       this.agent.status == AgentStatus.Completed;
+      this.today = new OnDayComplete();
     }
   }
 

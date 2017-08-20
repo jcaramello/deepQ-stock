@@ -68,6 +68,8 @@ namespace DeepQStock.Storage
         public void RemoveAgent(DeepRLAgentParameters agent)
         {
             ClearAgent(agent);
+            Experiences.RemoveRange(Experiences.Where(e => e.AgentId == agent.Id));
+            SimulationResults.RemoveRange(SimulationResults.Where(e => e.AgentId == agent.Id));
             DeepRLAgentParameters.Remove(agent);
         }
 
@@ -78,10 +80,7 @@ namespace DeepQStock.Storage
         public void ClearAgent(DeepRLAgentParameters agent)
         {
             Entry(agent).Reference(a => a.StockExchange).Load();
-            var stockId = agent.StockExchange.Id;
-
-            Experiences.RemoveRange(Experiences.Where(e => e.AgentId == agent.Id));
-            SimulationResults.RemoveRange(SimulationResults.Where(e => e.AgentId == agent.Id));
+            var stockId = agent.StockExchange.Id;           
 
             AverageTrueRanges.RemoveRange(AverageTrueRanges.Where(a => a.StockExchangeId == stockId));
             BollingerBandsPercentBs.RemoveRange(BollingerBandsPercentBs.Where(a => a.StockExchangeId == stockId));

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Input, Output, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Agent } from '../models/agent';
-import { OnSimulationComplete } from '../models/on-simulation-complete';
+import { SimulationResult } from '../models/simulation-result';
 import { AgentService } from '../services/agent-service';
 import { NotificationsService } from 'angular2-notifications';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
@@ -18,9 +18,9 @@ export class StatisticsComponent implements OnInit, OnDestroy {
 
   // Public fields
   public agents: Agent[] = [];
-  public results: OnSimulationComplete[] = [];
-  public averageAnnualRent: any[];
-  public progressAnnualRentChart: any[];
+  public results: SimulationResult[] = [];
+  public averageAnnualRent: any[] = [];
+  public progressAnnualRent: any[] = [];
 
   /**
    * Creates an instance of StatisticsComponent.
@@ -41,28 +41,56 @@ export class StatisticsComponent implements OnInit, OnDestroy {
    * @memberof StatisticsComponent
    */
   ngOnInit() {
-    this.slimLoadingBarService.start();    
-    this.agentService.onSimulationCompleted.subscribe(this.onSimulationCompleted.bind(this));    
-    this.sub = this.route.params.subscribe(params => this.loadData(+params['id']));
+    this.slimLoadingBarService.start();
+
+    this.agentService.getAll().then(a => this.agents = a).then(() => {
+
+      this.agentService
+        .getAllResults()
+        .then(r => this.results = r)
+        .then(() => this.slimLoadingBarService.complete())
+        .then(() => {
+
+          var average = [];
+          var progress = []
+
+          this.agents.forEach(a => {
+
+            var agentResults = this.results.filter(r => r.agentId == a.id);
+
+            average.push({
+              agentId: a.id,
+              name: "#" + a.id + " - " + a.name + " (" + agentResults[0].symbol + ")",
+              annualRent: (_.meanBy(agentResults, (p) => p.annualRent) * 100).toFixed(2)
+            });
+          });
+
+          var maxTotalYear = _.max(_.values(_.groupBy(this.results, r => r.agentId)).map(a => a.length));
+
+          for (var index = 1; index <= maxTotalYear; index++) {
+            var record = {
+              year: index,
+              name: "Simulacion " + index,
+            }
+
+            this.agents.forEach(a => {
+              var orderedResults = _.orderBy(this.results.filter(r => r.agentId == a.id), (r: SimulationResult) => r.createdOn);
+              record["value" + a.id] = orderedResults && orderedResults[index - 1] && (orderedResults[index - 1].annualRent * 100).toFixed(2);
+            })
+
+            progress.push(record)
+
+          }
 
 
-    this.averageAnnualRent = [
-      {agentId: 1, annualRent: 13},
-      {agentId: 2, annualRent: 4},
-      {agentId: 3, annualRent: 8},
-      {agentId: 4, annualRent: 43}
-    ]    
+          this.zone.run(() => {
+            this.averageAnnualRent = average;
+            this.progressAnnualRent = progress;
+          })
 
-    this.progressAnnualRentChart = [
-      {"annualRent-1": 2, order: 1},
-      {"annualRent-1": 7, order: 2},
-      {"annualRent-1": 11, order: 3},
-      {"annualRent-1": 18, order: 4},
-      {"annualRent-1": 16, order: 5},
-      {"annualRent-2": 0.78, order: 1},
-      {"annualRent-2": 3.4, order: 2},
-      {"annualRent-2": 5, order: 3},
-    ]
+        });
+
+    })
   }
 
   /**
@@ -70,25 +98,8 @@ export class StatisticsComponent implements OnInit, OnDestroy {
    * @memberof StatisticsComponent
    */
   ngOnDestroy() {
-    this.sub.unsubscribe();
+
   }
 
-  /**
-   * Load page data
-   * @param agentId 
-   */
-  public loadData(agentId: number) {
-    return this.agentService.getAll().then(a => {
-      this.agents = a;
-      this.slimLoadingBarService.complete();
-    })
-  }
-  /**
-  * Execute when a simulation day is completed
-  * @param args 
-  */
-  public onSimulationCompleted(args: OnSimulationComplete) {
-    this.results.push(args);
-  }
 
 }

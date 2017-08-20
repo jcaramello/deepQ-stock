@@ -12,6 +12,7 @@ using System.Collections.Concurrent;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.IO;
+using DeepQStock.Domain;
 
 namespace DeepQStock.Server.Hubs
 {
@@ -82,6 +83,21 @@ namespace DeepQStock.Server.Hubs
             }
 
             return agents;
+        }
+
+        /// <summary>
+        /// Get all simulation results
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<SimulationResult> GetAllResults()
+        {
+            var results = new List<SimulationResult>();
+            using (var ctx = new DeepQStockContext())
+            {
+                results = ctx.SimulationResults.ToList();
+            }
+
+            return results;
         }
 
         /// <summary>
@@ -200,7 +216,9 @@ namespace DeepQStock.Server.Hubs
         /// <param name="id"></param>
         public string Start(long id)
         {
-            var jobId = BackgroundJob.Enqueue<StockExchange>(s => s.Run(JobCancellationToken.Null, id));
+            if (ActiveAgents.ContainsKey(id)) return ActiveAgents[id]; 
+
+            var jobId = BackgroundJob.Enqueue<StockExchange>(s => s.Run(JobCancellationToken.Null, id));            
 
             ActiveAgents.TryAdd(id, jobId);
             Subscribe(id);

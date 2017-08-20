@@ -15,5 +15,6 @@ export enum AgentStatus {
     Running,
     Paused,
     Stoped,
+    Removed,
     Completed
 }

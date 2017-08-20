@@ -68,7 +68,7 @@ namespace DeepQStock.Stocks
         /// <returns></returns>
         private double WinningsOverLoosings(StockExchange stock)
         {            
-            var netEarnings = stock.Earnings != 0 ? stock.Earnings - stock.TransactionCost : 0;
+            var netEarnings = stock.Earnings != 0 ? (stock.Earnings - stock.TransactionCost) : 0;
             var reward = 0.0;
 
             if (netEarnings > 0)

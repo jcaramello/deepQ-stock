@@ -7,7 +7,7 @@ import * as moment from 'moment';
 */
 @Component({
   selector: 'linechart',
-  template: '<div id="linechart-container-{{id}}"></div>'
+  template: '<div id="linechart-container-{{id}}" class="barchart-container"></div>'
 })
 export class LineChartComponent {
 
@@ -58,7 +58,9 @@ export class LineChartComponent {
    */
   ngOnChanges(changes: SimpleChanges): void {
     this.values = changes['values'] && changes['values'].currentValue;
-    this.init();
+    if (this.values && this.values.length > 0) {
+      this.init();
+    }
   }
 
   /**
@@ -69,6 +71,21 @@ export class LineChartComponent {
    * @memberof CandleStickComponent
    */
   private init() {
+
+    var graphs = [];
+    this.agents.forEach(a => {
+      graphs.push({
+        "bullet": "square",
+        "bulletBorderAlpha": 1,
+        "bulletBorderThickness": 1,
+        "dashLengthField": "dashLength",
+        "legendValueText": "[[value]]",
+        "title": "Agente " + a.name + " " + a.id,
+        "fillAlphas": 0,
+        "valueField": this.field + "" + a.id,
+        "valueAxis": "annualRentAxis"
+      });
+    })
 
     this.chart = <any>AmCharts.makeChart("linechart-container-" + this.id, {
       "type": "serial",
@@ -81,40 +98,20 @@ export class LineChartComponent {
       },
       "dataProvider": this.values,
       "valueAxes": [{
-        "id": "distanceAxis",
+        "id": "annualRentAxis",
         "axisAlpha": 0,
         "gridAlpha": 0,
         "position": "left",
         "title": this.title
-      }, {
-        "id": "latitudeAxis",
-        "axisAlpha": 0,
-        "gridAlpha": 0,
-        "labelsEnabled": false,
-        "position": "right"
       }],
-      "graphs": this.agents.forEach(a => {
-        return {
-          "bullet": "square",
-          "bulletBorderAlpha": 1,
-          "bulletBorderThickness": 1,
-          "dashLengthField": "dashLength",
-          "legendValueText": "[[value]]",
-          "title": "Agente " + a.name + " " + a.id,
-          "fillAlphas": 0,
-          "valueField": this.field + "-" + a.id,
-          "valueAxis": this.field
-        };
-      }),
-      "chartCursor": {
-        "categoryBalloonDateFormat": "DD",
+      "graphs": graphs,
+      "chartCursor": {        
         "cursorAlpha": 0.1,
         "cursorColor": "#000000",
         "fullWidth": true,
         "valueBalloonsEnabled": false,
         "zoomable": false
-      },
-      "dataDateFormat": "YYYY-MM-DD",
+      },      
       "categoryField": this.category
     });
   }
