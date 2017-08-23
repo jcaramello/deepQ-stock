@@ -3,7 +3,7 @@
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{eieproyecto}[2013/02/08 Informe del Proyecto Eléctrico EIE-UCR]
-\LoadClass[letterpaper,11pt,twoside]{memoir}
+\LoadClass[a4paper,11pt,twoside]{memoir}
 
 \DeclareOption*{\PassOptionsToclass{\CurrentOption}{book}}
 
@@ -29,7 +29,7 @@
 
 \ifbtflag
 	%formato para informe en borrador
-	\settypeblocksize{20cm}{13cm}{*}
+	\settypeblocksize{25cm}{13cm}{*}
 	\setbinding{0cm}
 	\setulmargins{*}{*}{1}
 	\setlrmargins{*}{*}{1}
@@ -88,12 +88,12 @@
 %estilo de la bibliografía (formato APA modificado para español)
 \bibliographystyle{apalike_es}
 
-\newcommand{\ucreie}{Universidad de Costa Rica \\ Facultad de Ingeniería \\ Escuela de Ingeniería Eléctrica}
-\newcommand{\por}{Por:}
-\newcommand{\pie}{Ciudad Universitaria ``Rodrigo Facio'', Costa Rica}
-\newcommand{\leyenda}{IE0499 - Proyecto Eléctrico}
+\newcommand{\ucreie}{Universidad Nacional del Sur \\ Departameto de Cs e Ingeniería de Computación \\ Proyecto Final}
+\newcommand{\por}{Autor:}
+\newcommand{\pie}{Bahia Blanca, Buenos Aires}
+\newcommand{\leyenda}{Proyecto Final}
 \newcommand{\tribunal}{Aprobado por el Tribunal:}
-\newcommand{\dircasesor}{Profesor guía}
+\newcommand{\dircasesor}{Director:  }
 \newcommand{\memcasesorA}{Profesor lector}
 \newcommand{\memcasesorB}{Profesor lector}
 
@@ -113,6 +113,10 @@
 	\large\bfseries\por
 	\vskip 1em
 	\large\bfseries\@autor \\
+	\vfill
+	\large\bfseries\dircasesor
+	\vskip 1em
+	\large\bfseries\@dca \\
 	\vfill
 	\large\bfseries\pie
 	\vskip 1em 

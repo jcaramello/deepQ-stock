@@ -19,9 +19,6 @@ El informe debe escribirse utilizando \LaTeX~ y sus \emph{aspectos de forma} (``
 
 Información general sobre el uso de \LaTeX~ se puede encuentran en el folleto de \cite{nsces}, en forma más detallada en el libro de \cite{latexcomp} y en \emph{CervanTeX - Grupo de Usuarios de \TeX~ Hispanohablantes} (\url{http://www.cervantex.es/}).  Además, en el sitio web del curso se encuentra material de referencia complementario.
 
-%- sección ----------------------------------------------------------
-\section{Preámbulo}
-La parte inicial del informe está compuesta por la \emph{portada}, la \emph{hoja de aprobación}, el \emph{resumen}, el \emph{índice general}, el \emph{índice de figuras}, el \emph{índice de cuadros} y la \emph{nomenclatura}.
 
 %- sub sección ------------------------------------------------------
 \subsection{Portada}
@@ -62,60 +59,11 @@ Los acrónimos, además de incluirse en la nomenclatura, deben describirse en el
 
 %--------------------------------------------------------------------
 \section{Introducción del informe}
-El informe estará constituido por \emph{capítulos} y \emph{secciones} numeradas y  por \emph{sub secciones} no numeradas, según se requiera.
 
-El cuerpo del informe empieza con el capítulo ``Introducción''.  Este  debe incluir, según se adecuen a la naturaleza del proyecto, una descripción del \emph{alcance} del proyecto, su \emph{justificación}, la presentación del \emph{problema a resolver}, el \emph{objetivo general} propuesto, los \emph{objetivos específicos}, la \emph{metodología} seguida en su desarrollo y el alcance del informe.
-
-Para resaltar una palabra o frase, se debe utilizar el comando \emph{énfasis} (\texttt{\textbackslash emph\{énfasis\}}) y no el subrayado.
-
-\section{Alcance del proyecto}
-La descripción del alcance (límites del proyecto), justificación y presentación del problema a resolver, pueden constituir una sección.  El título de esta debe seleccionarse según corresponda.
-
-\section{Objetivos}
-Los objetivos pueden establecerse como subsecciones y deben redactarse en modo infinitivo (``acción'').
-
-\subsection{Objetivo general}
-Desarrollar un procedimiento para .... 
-
-\subsection{Objetivos específicos}
-Para el desarrollo de este proyecto se establecieron los siguientes objetivos:
-
-\begin{itemize} % lista con viñetas
-	\item Analizar ....
-	\item Determinar ....
-	\item Establecer ....
-\end{itemize}
-
-\section{Metodología}
-La metodología utilizada debe listarse en forma cronológica.
-
-El desarrollo del trabajo incluyó los siguientes pasos y procedimientos, listados en secuencia:
-
-\begin{enumerate}  %lista numerada
-	\item Revisión de ....
-	\item Utilización de ...
-	\item Análisis por simulación de ....
-\end{enumerate}
-
-\section{Desarrollo o contenido}
-Como último párrafo de la introducción, debe indicarse al lector lo que se presenta en el informe, con una breve descripción del contenido de cada capítulo, mostrando la secuencia lógica de estos.
 
 %- declaración de un capítulo ---------------------------------------
-\chapter{Antecedentes} \label{sec:L02}
+\chapter{Mercados Financieros} \label{sec:L02}
 En el segundo capítulo del informe, debe resumirse el estudio realizado sobre \emph{estado de la técnica}, en la temática relacionada con el proyecto.  Este se puede denominar ``Antecedentes'', ``Marco de referencia'', ``Base teórica'', o ``Marco teórico''.
-
-Por tratarse de una presentación con base en la recopilación, el análisis y la síntesis de trabajos de otros autores, la referencia adecuada a los mismos, es indispensable.  Toda copia (\emph{¡plagio!}), es inaceptable.
-
-Para indicar las fuentes bibliográficas puede utilizarse el comando del paquete \texttt{natbib} \texttt{\textbackslash cite\{bibtexkey\}} para utilizar el formato ``Autor (año)'' o el comando \texttt{\textbackslash citep\{bibtexkey\}} para mostrarla en el formato ``(Autor, año)''.
-
-%en el siguiente párrafo se supone que se han empleado los comandos cite o citep
-Por ejemplo se obtiene: ``Según Wang (1996) la frecuencia ...'' (si se cita con \texttt{cite}), o ``... para este diseño se han utilizado modelos determinísticos (Smith, 2005) y estocásticos (Bell et. al, 2010).''  (si se citan con \texttt{citep}).  
-
-El contenido del capítulo debe ser relevante para el proyecto y no ``material de relleno'', o incluido con el único propósito de ``engordar'' el informe.
-
-El estado de la técnica establece el \emph{punto de partida} del estudio realizado y posiblemente también, la \emph{base de comparación} para las pruebas realizadas.
-
-Este capítulo muestra la capacidad de análisis y síntesis del estudiante.
  
 %- declaración de una sección ---------------------------------------
 \section{Ecuaciones}
@@ -133,11 +81,6 @@ Las ecuaciones estarán centradas y numeradas en forma secuencial por capítulo,
 Las ecuaciones forman parte del texto, por lo que deben terminarse con el signo de puntuación requerido, una coma o un punto.
 
 Para referirse a ellas se hace uso de la etiqueta (\texttt{label}) asignada a la ecuación usando \texttt{\textbackslash eqref\{etiqueta\}} que mostrará su número.  Por ejemplo ``El modelo \eqref{ec:01} es el más utilizado para ...''
-
-%en el siguiente párrafo se supone que se ha utilizado \eqref{etiqueta} para referencias las ecuacioenes
-El texto debe mostrar ``... sustituyendo (2.4) y (2.5) en (2.2), se obtiene ...'' y no ``... sustituyendo la ecuación (2.4) y la ecuación (2.5) en la ecuación (2.2), se obtiene...''  
-
-¡Ejemplos de ecuaciones!
 
 Usando \texttt{equation}:
 \begin{equation}
@@ -267,30 +210,21 @@ Cuando los cuadros son pequeños (abarcan menos de la mitad del ancho del texto)
 \end{SCtable}
 
 %------------------------------
-\chapter{Desarrollo}
+\chapter{El Problema}
 El capítulo 3 y los subsiguientes (si fueran necesarios), mostrarán el trabajo realizado en el proyecto, por lo que su cantidad, títulos y divisiones, se dejan a discreción del estudiante, con la aprobación del profesor guía y demás miembros de Tribunal evaluador.
 
-Estos capítulos muestran el ``producto'' del trabajo realizado en el proyecto, por lo cual constituyen la parte medular del informe. Debe explicarse en forma clara, qué se hizo, cómo se hizo y qué se obtuvo.
+\chapter{Arquitectura y Diseño}
 
-Cuando se agregan o remueven del texto elementos que aparecen en los índices (general, de figuras, de cuadros) que están en el preámbulo del informe, así como cuando se agregan o remueven citas a las fuentes bibliográficas, que aparecen en la Bibliografía al final del documento, es necesario ejecutar dos o tres veces la compilación del documento, para que estas listas se confeccionen nuevamente y se muestren correctamente.  También, en el caso de agregar o quitar ecuaciones, es necesario recompilar dos o tres veces el documento, para que se renumeren las ecuaciones y  las referencias a estas.
 
-\section{Manejo de las fuentes bibliográficas}
-Cuando se realiza un trabajo de desarrollo o investigación, siempre se parte del trabajo realizado por otras personas. Es por lo tanto indispensable, hacer referencia a las fuentes bibliográficas (referencias) utilizadas.
-
-En \LaTeX se utiliza BibTeX para el manejo de la bibliografía.  La información de las fuentes consultadas (libros, artículos de revista o ponencias en congresos, tesis, etc.), se almacenan en un archivo \texttt{.bib} (base de datos de las fuentes bibiográficas), sin preocuparse del formato en que estas serán mostradas en el informe.  Para la creación y manejo de este archivo, se puede utilizar el programa JabRef\footnote{http://jabref.sourceforge.net/} o uno similar.
-
-La forma en que las fuentes son listadas en el apartado Bibliografía, y como son mostradas en el texto cuando se citan, depende del \emph{estilo} seleccionado para esto.
-
-Para el informe del proyecto eléctrico, se debe utilizar el formato APA\footnote{American Psychological Association, http://www.apa.org/}.  En inglés, este se establece utilizando el estilo \texttt{apalike}.  
-
-Junto con la clase \texttt{eieproyecto} se suministra el archivo de estilo de bibliografía \texttt{apalike\_es.bst}, en el cual se han cambiado los términos en ingles (ej. ``and'', ``In'', Edition y otros) por su equivalente en español.  Este archivo debe colocarse en la misma carpeta, en donde están los demás archivos utilizados para la confección del informe.
-
-Por lo tanto, la lista de las fuentes bibliográficas utilizadas se confecciona automáticamente, a partir de las citas hechas en el texto.  Solo las fuentes citadas aparecerán en la bibliografía.
-
-Como se indicó anteriormente, se emplean \texttt{cite} y \texttt{citep} para hacer las citas.  Cual de estos dos comandos conviene utilizar, dependerá del contexto en que se haga la cita.  Según la redacción del párrafo, puede convenir que la fuente se indique en el formato ``Autor (año)'', pero en otros casos pudiera ser preferible que esta aparezca en el formato ``(Autor, año)''.
 
 %-----------------------------
-\chapter{Conclusiones y recomendaciones}
+
+\chapter{Evaluación y Desempeño}
+
+
+
+%-----------------------------
+\chapter{Conclusiones y Recomendaciones}
 El informe debe terminarse con la enumeración de las principales conclusiones derivados del trabajo realizado.  En particular, debe verificarse el cumplimiento de los objetivos planteados para el mismo.
 
 \subsection{Conclusiones}
@@ -300,3 +234,6 @@ Las conclusiones pueden enumerarse en forma suscinta como una lista, ya sea item
 
 \subsection{Recomendaciones}
 Con base en las trabajo realizado y las conclusiones sobre el mismo, puede ser necesario incluir una sección, o lista, de recomendaciones.  Por ejemplo, sobre la utilización de otro enfoque para resolver el problema.
+
+
+\chapter{Bibliografía}

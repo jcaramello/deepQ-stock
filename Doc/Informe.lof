@@ -2,9 +2,8 @@
 \addvspace {10pt}
 \addvspace {10pt}
 \addvspace {10pt}
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Sistema de control realimentado.}}{6}
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Lazo de control de un proceso de una entrada y una salida.}}{7}
-\contentsline {figure}{\numberline {2.3}{\ignorespaces Respuesta del circuito simulado, para dos valores de $R_5$.}}{7}
+\addvspace {10pt}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Reinforcement Learning Architecture Overview.}}{11}{figure.3.1}
 \addvspace {10pt}
 \addvspace {10pt}
 \addvspace {10pt}

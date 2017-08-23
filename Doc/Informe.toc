@@ -1,30 +1,23 @@
 \select@language {spanish}
-\contentsline {chapter}{\'{I}ndice de figuras}{v}
-\contentsline {chapter}{\'{I}ndice de cuadros}{v}
-\contentsline {chapter}{Nomenclatura}{vii}
-\contentsline {chapter}{\chapternumberline {1}Introducci\IeC {\'o}n}{1}
-\contentsline {section}{\numberline {1.1}Pre\IeC {\'a}mbulo}{1}
-\contentsline {subsection}{Portada}{1}
-\contentsline {subsection}{Hoja de aprobaci\IeC {\'o}n}{2}
-\contentsline {subsection}{Resumen}{2}
-\contentsline {subsection}{\IeC {\'I}ndices}{2}
-\contentsline {subsection}{Nomenclatura}{3}
-\contentsline {section}{\numberline {1.2}Introducci\IeC {\'o}n del informe}{3}
-\contentsline {section}{\numberline {1.3}Alcance del proyecto}{3}
-\contentsline {section}{\numberline {1.4}Objetivos}{3}
-\contentsline {subsection}{Objetivo general}{3}
-\contentsline {subsection}{Objetivos espec\IeC {\'\i }ficos}{3}
-\contentsline {section}{\numberline {1.5}Metodolog\IeC {\'\i }a}{4}
-\contentsline {section}{\numberline {1.6}Desarrollo o contenido}{4}
-\contentsline {chapter}{\chapternumberline {2}Antecedentes}{5}
-\contentsline {section}{\numberline {2.1}Ecuaciones}{5}
-\contentsline {section}{\numberline {2.2}Figuras y cuadros}{6}
-\contentsline {subsection}{Figuras}{6}
-\contentsline {subsection}{Cuadros}{8}
-\contentsline {chapter}{\chapternumberline {3}Desarrollo}{11}
-\contentsline {section}{\numberline {3.1}Manejo de las fuentes bibliogr\IeC {\'a}ficas}{11}
-\contentsline {chapter}{\chapternumberline {4}Conclusiones y recomendaciones}{13}
-\contentsline {subsection}{Conclusiones}{13}
-\contentsline {subsection}{Recomendaciones}{13}
-\contentsline {chapter}{Bibliograf\'{\i }a}{15}
-\contentsline {appendix}{\chapternumberline {A}T\IeC {\'\i }tulo del ap\IeC {\'e}ndice}{17}
+\contentsline {chapter}{\'{I}ndice de figuras}{v}{section*.1}
+\contentsline {chapter}{\'{I}ndice de cuadros}{v}{section*.2}
+\contentsline {chapter}{Nomenclatura}{vii}{chapter*.3}
+\contentsline {chapter}{\chapternumberline {1}Introducci\IeC {\'o}n}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}Alcance del proyecto}{1}{section.1.1}
+\contentsline {section}{\numberline {1.2}Objetivos}{2}{section.1.2}
+\contentsline {subsection}{Objetivo general}{2}{section*.4}
+\contentsline {subsection}{Objetivos espec\IeC {\'\i }ficos}{2}{section*.5}
+\contentsline {section}{\numberline {1.3}Metodolog\IeC {\'\i }a}{2}{section.1.3}
+\contentsline {section}{\numberline {1.4}Contenido}{3}{section.1.4}
+\contentsline {chapter}{\chapternumberline {2}Mercados Financieros}{5}{chapter.2}
+\contentsline {section}{\numberline {2.1}Introduccion}{5}{section.2.1}
+\contentsline {section}{\numberline {2.2}Analisis Tecnico y Analisis Fundamental}{5}{section.2.2}
+\contentsline {section}{\numberline {2.3}Teor\IeC {\'\i }as Cl\IeC {\'a}sica}{6}{section.2.3}
+\contentsline {section}{\numberline {2.4}Fundamentos del an\IeC {\'a}lisis t\IeC {\'e}cnico}{8}{section.2.4}
+\contentsline {chapter}{\chapternumberline {3}El Problema}{11}{chapter.3}
+\contentsline {section}{\numberline {3.1}Introducci\IeC {\'o}n}{11}{section.3.1}
+\contentsline {subsection}{Deep reinforcement learning}{11}{section*.6}
+\contentsline {chapter}{\chapternumberline {4}Arquitectura y Dise\IeC {\~n}o}{13}{chapter.4}
+\contentsline {chapter}{\chapternumberline {5}Evaluaci\IeC {\'o}n y Desempe\IeC {\~n}o}{15}{chapter.5}
+\contentsline {chapter}{\chapternumberline {6}Conclusiones y Recomendaciones}{17}{chapter.6}
+\contentsline {chapter}{Bibliograf\'{\i }a}{19}{section*.8}

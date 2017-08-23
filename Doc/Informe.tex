@@ -1,28 +1,28 @@
 
 \documentclass{eieproyecto}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{wrapfig}
 
 \begin{document}
 \frontmatter
 
-\title{Título del proyecto (de 10 a 12 palabras) \\¡No más de 15!}
+\title{Sistemas de trading y Deep Reinforcement Learning}
 
-\autor{Nombre Apellidos}
+\autor{Leonardo Jose Caramello}
 
 %fecha de la presentación oral
-\date{Mes de año}
+\date{Agosto - 2017}
 
 %tribunal evaluador
 %profesor guía
-\dca{GradoG NombreG ApellidosG}
-
-\maca{GradoLA NombreLA ApellidosLA}
-\mbca{GradoLB NombreLB ApellidosLB}
+\dca{Diego Martinez}
  
  
 \eietitlepage 
 \cleardoublepage 
 \eieaprovalpage 
-\cleardoublepage
+\clearpage
 
 \include{resumen}
 \clearpage
@@ -37,12 +37,15 @@
 \include{nomenclatura}
 \mainmatter
 \pagestyle{eieheadings}
-\include{desarrollo}
+\include{Cap1.Introduccion}
+\include{Cap2.MercadosFinancieros}
+\include{Cap3.ElProblema}
+\include{Cap4.Arquitectura}
+\include{Cap5.Evaluacion}
+\include{Cap6.Conclusiones}
+\include{Cap7.Bibliografia}
 \bibliography{eieclases_ref}
 \clearpage
-
-\appendix
-\include{apendice}
 
 %------------------
 \end{document}
