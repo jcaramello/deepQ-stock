@@ -1,8 +1,14 @@
 
 \documentclass{eieproyecto}
-\usepackage{hyperref}
+\usepackage{hyperref}|
+\hypersetup{
+ colorlinks=false,
+ pdfborder={0 0 0},
+}
 \usepackage{graphicx}
 \usepackage{wrapfig}
+\usepackage{amsmath,amssymb}
+\DeclareMathOperator{\E}{\mathbb{E}}
 
 \begin{document}
 \frontmatter
@@ -39,7 +45,7 @@
 \pagestyle{eieheadings}
 \include{Cap1.Introduccion}
 \include{Cap2.MercadosFinancieros}
-\include{Cap3.ElProblema}
+\include{Cap3.DeepRL}
 \include{Cap4.Arquitectura}
 \include{Cap5.Evaluacion}
 \include{Cap6.Conclusiones}

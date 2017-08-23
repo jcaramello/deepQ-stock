@@ -7,14 +7,17 @@
 \BOOKMARK [1][-]{section.1.3}{Metodolog\355a}{chapter.1}% 7
 \BOOKMARK [1][-]{section.1.4}{Contenido}{chapter.1}% 8
 \BOOKMARK [0][-]{chapter.2}{Mercados Financieros}{}% 9
-\BOOKMARK [1][-]{section.2.1}{Introduccion}{chapter.2}% 10
-\BOOKMARK [1][-]{section.2.2}{Analisis Tecnico y Analisis Fundamental}{chapter.2}% 11
-\BOOKMARK [1][-]{section.2.3}{Teor\355as Cl\341sica}{chapter.2}% 12
+\BOOKMARK [1][-]{section.2.1}{Introducci\363n}{chapter.2}% 10
+\BOOKMARK [1][-]{section.2.2}{An\341lisis T\351cnico y An\341lisis Fundamental}{chapter.2}% 11
+\BOOKMARK [1][-]{section.2.3}{Teor\355a Cl\341sica}{chapter.2}% 12
 \BOOKMARK [1][-]{section.2.4}{Fundamentos del an\341lisis t\351cnico}{chapter.2}% 13
-\BOOKMARK [0][-]{chapter.3}{El Problema}{}% 14
+\BOOKMARK [0][-]{chapter.3}{Reinforcement Learning y Deep Learning}{}% 14
 \BOOKMARK [1][-]{section.3.1}{Introducci\363n}{chapter.3}% 15
 \BOOKMARK [1][-]{section.3.2}{Configuraci\363n de estados}{chapter.3}% 16
-\BOOKMARK [0][-]{chapter.4}{Arquitectura y Dise\361o}{}% 17
-\BOOKMARK [0][-]{chapter.5}{Evaluaci\363n y Desempe\361o}{}% 18
-\BOOKMARK [0][-]{chapter.6}{Conclusiones y Recomendaciones}{}% 19
-\BOOKMARK [0][-]{section*.7}{Bibliograf\355a}{}% 20
+\BOOKMARK [1][-]{section.3.3}{Acciones}{chapter.3}% 17
+\BOOKMARK [1][-]{section.3.4}{El Agente}{chapter.3}% 18
+\BOOKMARK [1][-]{section.3.5}{Q-Network}{chapter.3}% 19
+\BOOKMARK [0][-]{chapter.4}{Arquitectura y Dise\361o}{}% 20
+\BOOKMARK [0][-]{chapter.5}{Evaluaci\363n y Desempe\361o}{}% 21
+\BOOKMARK [0][-]{chapter.6}{Conclusiones y Recomendaciones}{}% 22
+\BOOKMARK [0][-]{section*.7}{Bibliograf\355a}{}% 23
