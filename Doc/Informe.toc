@@ -4,11 +4,11 @@
 \contentsline {chapter}{Nomenclatura}{vii}{chapter*.3}
 \contentsline {chapter}{\chapternumberline {1}Introducci\IeC {\'o}n}{1}{chapter.1}
 \contentsline {section}{\numberline {1.1}Alcance del proyecto}{1}{section.1.1}
-\contentsline {section}{\numberline {1.2}Objetivos}{2}{section.1.2}
+\contentsline {section}{\numberline {1.2}Objetivos}{1}{section.1.2}
 \contentsline {subsection}{Objetivo general}{2}{section*.4}
 \contentsline {subsection}{Objetivos espec\IeC {\'\i }ficos}{2}{section*.5}
 \contentsline {section}{\numberline {1.3}Metodolog\IeC {\'\i }a}{2}{section.1.3}
-\contentsline {section}{\numberline {1.4}Contenido}{3}{section.1.4}
+\contentsline {section}{\numberline {1.4}Contenido}{2}{section.1.4}
 \contentsline {chapter}{\chapternumberline {2}Mercados Financieros}{5}{chapter.2}
 \contentsline {section}{\numberline {2.1}Introducci\IeC {\'o}n}{5}{section.2.1}
 \contentsline {section}{\numberline {2.2}An\IeC {\'a}lisis T\IeC {\'e}cnico y An\IeC {\'a}lisis Fundamental}{5}{section.2.2}
@@ -18,10 +18,16 @@
 \contentsline {section}{\numberline {3.1}Introducci\IeC {\'o}n}{9}{section.3.1}
 \contentsline {section}{\numberline {3.2}Configuraci\IeC {\'o}n de estados}{10}{section.3.2}
 \contentsline {section}{\numberline {3.3}Acciones}{11}{section.3.3}
-\contentsline {section}{\numberline {3.4}El Agente}{12}{section.3.4}
+\contentsline {section}{\numberline {3.4}El Agente}{11}{section.3.4}
 \contentsline {section}{\numberline {3.5}Q-Network}{13}{section.3.5}
 \contentsline {section}{\numberline {3.6}Algoritmo de aprendizaje}{14}{section.3.6}
-\contentsline {chapter}{\chapternumberline {4}Arquitectura y Dise\IeC {\~n}o}{17}{chapter.4}
-\contentsline {chapter}{\chapternumberline {5}Evaluaci\IeC {\'o}n y Desempe\IeC {\~n}o}{19}{chapter.5}
-\contentsline {chapter}{\chapternumberline {6}Conclusiones y Recomendaciones}{21}{chapter.6}
-\contentsline {chapter}{Bibliograf\'{\i }a}{23}{section*.7}
+\contentsline {chapter}{\chapternumberline {4}Arquitectura y Dise\IeC {\~n}o}{15}{chapter.4}
+\contentsline {section}{\numberline {4.1}Introducci\IeC {\'o}n}{15}{section.4.1}
+\contentsline {subsection}{Aplicaci\IeC {\'o}n cliente}{15}{section*.10}
+\contentsline {subsection}{Aplicaci\IeC {\'o}n backend}{17}{section*.13}
+\contentsline {section}{\numberline {4.2}Descripci\IeC {\'o}n del c\IeC {\'o}digo}{18}{section.4.2}
+\contentsline {subsection}{Clase StockExchange}{18}{section*.14}
+\contentsline {subsection}{Clase DeepRLAgent}{20}{section*.16}
+\contentsline {chapter}{\chapternumberline {5}Evaluaci\IeC {\'o}n y Desempe\IeC {\~n}o}{23}{chapter.5}
+\contentsline {chapter}{\chapternumberline {6}Conclusiones y Recomendaciones}{25}{chapter.6}
+\contentsline {chapter}{Bibliograf\'{\i }a}{27}{section*.21}

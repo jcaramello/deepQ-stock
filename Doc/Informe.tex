@@ -6,10 +6,12 @@
  pdfborder={0 0 0},
 }
 \usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage{wrapfig}
 \usepackage{amsmath,amssymb}
 \DeclareMathOperator{\E}{\mathbb{E}}
 \usepackage[linesnumbered,ruled]{algorithm2e}
+\usepackage{wasysym}
 
 \begin{document}
 \frontmatter
@@ -34,16 +36,13 @@
 \include{resumen}
 \clearpage
 
-\tableofcontents*  
-\clearpage
-
 \listoffigures 
-\listoftables  
+\include{nomenclatura}
 \clearpage
 
-\include{nomenclatura}
 \mainmatter
 \pagestyle{eieheadings}
+
 \include{Cap1.Introduccion}
 \include{Cap2.MercadosFinancieros}
 \include{Cap3.DeepRL}
@@ -52,6 +51,7 @@
 \include{Cap6.Conclusiones}
 \include{Cap7.Bibliografia}
 \bibliography{eieclases_ref}
+
 \clearpage
 
 %------------------

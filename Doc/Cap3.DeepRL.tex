@@ -17,7 +17,7 @@ Cada interacción será llevada a cabo en episodios que tendrán una duración d
 \end{figure}
 
 
-En cada instante t, el agente tendrá que seleccionar una acción $a_t$  de un conjunto válido de acciones A = {$a_1, a_2, …, a_n$}. La acción será pasada al entorno, el cual modificará su estado interno y como respuesta a esta interacción el agente recibirá una recompensa $R_{t + 1}$, la cual será calculada por el entorno. El entorno será estocástico, es decir, su comportamiento será no determinístico. Cada uno de los estados contendrá información relevante sobre el papel, como el precio, el volumen, y diferentes indicadores bursátiles, como medias móviles, medias móviles exponenciales, etc.
+En cada instante t, el agente tendrá que seleccionar una acción $a_t$  de un conjunto válido de acciones A = {$a_1, a_2, …, a_n$}. La acción será pasada al entorno, el cual modificará su estado interno y como respuesta a esta interacción el agente recibirá una recompensa $r_{t + 1}$, la cual será calculada por el entorno. El entorno será estocástico, es decir, su comportamiento será no determinístico. Cada uno de los estados contendrá información relevante sobre el papel, como el precio, el volumen, y diferentes indicadores bursátiles, como medias móviles, medias móviles exponenciales, etc.
 
 \section{Configuración de estados}
 
@@ -38,37 +38,38 @@ La representación que vamos a adoptar para cada uno de los estados que recibir�
 Teniendo en cuenta esto, vamos a definir a cada estado $S_t$  compuesto de 3 capas o layers, de la siguiente forma:
 \\\\
 
-$ S_t = L_{dias}, L_{semanas}, L_{meses} \hspace*{1cm} donde \hspace*{0.5cm} L_i = P_1, P_2, ..., P_n $
+$ S_t = L_{dias}, L_{semanas}, L_{meses} \hspace*{1cm} donde \hspace*{0.5cm} L_i = p_1, p_2, ..., p_n $
 \\\\
-y en donde cada periodo $P_i$ tendrá la siguiente estructura:
+y en donde cada periodo $p_i$ tendrá la siguiente estructura:
 \\\\
-$P_i$ = Capital\\
-\hspace*{0.8cm} Actual Position\\
-\hspace*{0.8cm} Open Price\\
-\hspace*{0.8cm} Close Price\\
-\hspace*{0.8cm} Min Price\\
-\hspace*{0.8cm} Max Price\\
-\hspace*{0.8cm} Volume\\
-\hspace*{0.8cm} ATR\\
-\hspace*{0.8cm} MA8\\
-\hspace*{0.8cm} EMA20\\
-\hspace*{0.8cm} EMA50\\
-\hspace*{0.8cm} EMA200\\
-\hspace*{0.8cm} RSI\\
-\hspace*{0.8cm} DMI\\
-\hspace*{0.8cm} MACD\\
-\hspace*{0.8cm} BollingerBands\\
+{\small $p_i = [capital,\ position,\ open,\ close,\ min,\ max,\ vol,\ ind_1,\ ind_2,\ ...,\ ind_n]$ \\\\
+
+
+Los indicadores que se van a utilizar son los siguientes:
+
+\begin{itemize}
+ \item Promedio del rango verdadero (ATR)
+ \item Media móvil de 8 días (MA8)
+ \item Media móvil exponencial de 20 días (EMA20)
+ \item Media móvil exponencial de 50 días (EMA50)
+ \item Media móvil exponencial de 200 días (EMA200)
+ \item Indice relativo de fuerza (RSI) 
+ \item Indice de movimiento direccional (DMI)
+ \item Promedio móvil convergencia/divergencia (MACD)
+ \item Bandas de bollinger (BollingerBands)
+\end{itemize}
+}
 
 \section{Acciones}
 
-En cada instante t el agente podrá decidir comprar, vender o esperar, cada vez que decida comprar o vender, la cantidad de acciones operadas, se calculara en base a una estrategia de entrada y salida del activo pre configurada en el agente.
-El agente no tendrá limitación alguna en cuanto a la cantidad de acciones a comprar o vender. Si bien, en la realidad esto no necesariamente seria posible dado que para que pueda comprar una cantidad n a un precio p, debe existir algún vendedor dispuesto a vender n acciones a un precio p cada una.
-Ademas cada operación de venta o compra, tendrá un costo asociado c, el cual sera descontado de su capital. El agente no podrá ejecutar la acción elegida si su capital no alcanza para cubrir el costo total de la operación.
+En cada instante $t$ el agente podrá decidir comprar, vender o esperar, cada vez que decida comprar o vender, la cantidad de acciones operadas, se calculara en base a una estrategia de entrada y salida del activo pre configurada en el agente.
+El agente no tendrá limitación alguna en cuanto a la cantidad de acciones a comprar o vender. Si bien, en la realidad esto no necesariamente seria posible dado que para que pueda comprar una cantidad $n$ a un precio $p$, debe existir algún vendedor dispuesto a vender $n$ acciones a un precio $p$ cada una.
+Ademas cada operación de venta o compra, tendrá un costo asociado $c$, el cual sera descontado de su capital. El agente no podrá ejecutar la acción elegida si su capital no alcanza para cubrir el costo total de la operación.
 
 
 \section{El Agente}
 
-Recordemos que el objetivo principal de agente es seleccionar acciones que maximicen su recompensa futura, es decir, deberá de maximizar su capital inicial, para esto vamos a asumir que las recompensa futuras están descontadas por un factor $\gamma$, por cada instante de tiempo t, es decir, vamos a valorizar los rewards más cercanos en el tiempo por un factor $\gamma$. Definimos así el, future discounted reward:
+Recordemos que el objetivo principal de agente es seleccionar acciones que maximicen su recompensa futura, es decir, maximizar su capital inicial, para esto vamos a asumir que las recompensa futuras están descontadas por un factor $\gamma$, por cada instante de tiempo $t$, es decir, vamos a valorizar los rewards más cercanos en el tiempo. Definimos así el, future discounted reward:
 \\\\
 \begin{equation}
 	 R_t = \sum\limits_{t'= t}^T  \gamma^{t'-t} r_t
@@ -83,16 +84,16 @@ Q^*(s, a) = max_{\pi} \E [R_t  |  s_t = s, a_t = a, \pi]
 \\
 
 Esta función tiene una propiedad importante, conocida como Bellman equation, que intuitivamente se basa en lo siguiente: 
-Si conociéramos el valor óptimo de $Q^*(s’, a’)$ para el próximo estado s’ y para cada posible acción posible a’, entonces la estrategia óptima de selección de una acción para el estado actual s que maximice la recompensa esperada está dada por
+Si conociéramos el valor óptimo de $Q^*(s’, a’)$ para el próximo estado $s’$ y para cada posible acción posible $a’$, entonces la estrategia óptima de selección de una acción para el estado actual $s$ que maximice la recompensa esperada está dada por
 \\\\
 \begin{equation}
-Q^*(s, a) = max_{\pi} \E_{s' \approx \epsilon} [ r + \gamma max_{a'} Q^*(s', a')  |  s, a]
+Q^*(s, a) = max_{\pi} \E_{s' \AC \varepsilon} [ r + \gamma \  max_{a'} Q^*(s', a') \  |  \ s, a]
 \end{equation}
 \\
 La idea general de nuestro algoritmo de aprendizaje va a ser estimar esta función $Q^*$ usando la ecuación de bellman en forma iterativa, esto es:
 \\\\
 \begin{equation}
-Q^*_{i+1}(s, a) = max_{\pi} \E_{s' \approx \epsilon} [ r + \gamma max_{a'} Q_{i}^*(s', a')  |  s, a]
+Q^*_{i+1}(s, a) = \E\ [ r + \gamma \  max_{a'} Q_{i}^*(s', a') \  |  \ s, a]
 \end{equation}
 \\
 donde  $i\rightarrow\infty$ y $Q_i \rightarrow Q^*$
@@ -117,25 +118,52 @@ L_i(\theta) = \E_{s, a \approx p(.)}[(y_i - Q(s, a, \theta_i)^2)]
 \end{equation}
 
 \begin{equation}
-donde \hspace*{0.5cm}  y_i =  \E_{s \approx \epsilon}[r + \gamma  \hspace*{0.3cm}  max_{a'} Q(s', a', \theta_{i-1}) | s, a]
+donde \hspace*{0.5cm}  y_i =  \E_{s \approx \varepsilon}[r + \gamma  \hspace*{0.3cm}  max_{a'} Q(s', a', \theta_{i-1}) | s, a]
 \end{equation}
 \\
 
 Ademas se usara  experience replay para entrenar la Q-Network, es decir, los datos de ejemplos serán generados a partir de la propia experiencia que vaya adquiriendo el agente. Para lograr esto, en cada instante de tiempo t, el agente deberá guardar en un replay memory D, cada experiencia $\epsilon = (s_t, a_t, r_t, s_{t+1})$, observada.
 Transcurridos n días el agente deberá ejecutar la fase de entrenamiento de su Q-Network, para esto se generara un mini batch de experiencias pasadas, obtenidas de  su replay memory y con ella se procederá a realizar una última fase actualización de la función de estimación de $Q(s, a, \theta_i)$, usando la regla de actualización de Q-learning y la nueva matriz de pesos $\theta_{i+1}$.
-
-
+\\\\
+\\\\
+\\\\
+\\\\
+\\\\
 \section{Algoritmo de aprendizaje}
-
-A continuación detallamos el pseudo algoritmo de aprendizaje de nuestro agente.
-\\
-\\
-\begin{algorithm}[1]
-\State D $\gets$ new memory\_replay(n)
-\State $\theta \gets random() $
-\State $Q^*(s, a) \gets Q(\theta)$
-\While{$episode \gets generate\_episode() != null$}
-
-\EndWhile
+A continuación detallamos el pseudo algoritmo de nuestro agente.
+\begin{algorithm}
+	 D $\gets$ new memory\_replay(n)\;	
+     $\theta \gets random() $\;
+     $Q^*(s, a) \gets Q\_Network(s, a, \theta)$\;
+     $s_{t-1} \gets null$ \;
+     $a_{t-1} \gets null$ \;
+     \While{$(episode \gets generate\_episode())$  !=  $null$}{
+		\For{$s_t \in episode$}{
+			\eIf{($random(0,1) <= \varepsilon\_greedy$)}{
+				$a_t \gets random_a(A)$\;
+			}{
+			   $a_t \gets  max_a Q^*(s_t, a)$\;
+			}			
+			$r_t \gets stock\_exchange.execute(a_t)$\;
+			$D.save\_experience(s_{t-1}, a_{t-1}, r_t, s_t)$\;
+			$s_{t-1} \gets s_t $\;
+			$a_{t-1} \gets a_t $\;		
+		}
+		$mini\_batch \gets D.get\_mini\_batch(size)$\;
+		$training\_samples \gets [\ ]$\;
+		\For{$experience \in mini\_batch$}{
+			$var\  s_t \gets experience.s_t$\;
+			$var\  a_t \gets experience.a_t$\;
+			$var\  s_{t+1} \gets experience.s_{t+1}$\;
+            \ \\
+			$estimate \gets Q^*(s_t, a_t)$\;
+			$expected \gets Q^*(s_t, a_t) + \alpha \ (r_t + \gamma \  max_a Q^*(s_{t+1}, a) - Q^*(s_t, a))$\;
+		    \ \\
+			$sample \gets new\ tupla(estimated, expected)$\;
+			$training\_samples.add(sample)$\;
+		}		
+		$Q\_Network.train(training\_samples)$\;
+        $Q^*(s, a) \gets Q\_Network(s, a, \theta)$\;
+ 	 }
+	\caption{Q-Learning: Algoritmo general del funcionamiento del agente}
 \end{algorithm}
-
