@@ -89,7 +89,7 @@ Si conociéramos el valor óptimo de $Q^*(s’, a’)$ para el próximo estado s
 Q^*(s, a) = max_{\pi} \E_{s' \approx \epsilon} [ r + \gamma max_{a'} Q^*(s', a')  |  s, a]
 \end{equation}
 \\
-La idea general de nuestro algoritmo de aprendizaje va a ser estimar esta funcion $Q^*$ usando la ecuación de bellman en forma iterativa, esto es:
+La idea general de nuestro algoritmo de aprendizaje va a ser estimar esta función $Q^*$ usando la ecuación de bellman en forma iterativa, esto es:
 \\\\
 \begin{equation}
 Q^*_{i+1}(s, a) = max_{\pi} \E_{s' \approx \epsilon} [ r + \gamma max_{a'} Q_{i}^*(s', a')  |  s, a]
@@ -97,18 +97,18 @@ Q^*_{i+1}(s, a) = max_{\pi} \E_{s' \approx \epsilon} [ r + \gamma max_{a'} Q_{i}
 \\
 donde  $i\rightarrow\infty$ y $Q_i \rightarrow Q^*$
 \\\\
-Esta es la idea detrás del algoritmo de Q-learning que implementará el agente, la cual en principio, parecía suficiente para lograr que el agente aprenda a invertir, sin embargo en la práctica, veremos que en general los estados del mercado no van a repetirse en forma identica y que ademas la cantidad de estados posibles hara que sea practicamente inviable lograr la convergencia hacia $Q^*$.
+Esta es la idea detrás del algoritmo de Q-learning que implementará el agente, la cual en principio, parecía suficiente para lograr que el agente aprenda a invertir, sin embargo en la práctica, veremos que en general los estados del mercado no van a repetirse en forma idéntica y que ademas la cantidad de estados posibles hara que sea prácticamente inviable lograr la convergencia hacia $Q^*$.
 
 \section{Q-Network}
-Para poder solucionar este inconveniente, vamos a utilizar, una función de aproximación, cuyo objetivo será obtener una generalización de los estados, lo cual permitirá, en teoría, lograr más rápidamente, la convergencia a $Q^*$.\\
-Para implementar esta funcion utilizaremos un red neuronal con con una matriz de pesos $\theta$: 
+Para poder solucionar este inconveniente, vamos a utilizar una función de aproximación, cuyo objetivo será obtener una generalización de los estados, lo cual permitirá en teoría, lograr más rápidamente la convergencia a $Q^*$.\\
+Para implementar esta función utilizaremos un red neuronal con con una matriz de pesos $\theta$, inicializada aleatoriamente: 
 \\\\
 \begin{equation}
 Q(s, a, \theta) \approx Q^*(s, a) 
 \end{equation}
 \\
 a la cual denominaremos como Q-network.
-Dicha Q-network será entrenada optimizando una función de pérdida L y usando el algoritmos del gradiente descendente.
+Dicha Q-network será entrenada optimizando una función de pérdida L y usando el algoritmo del gradiente descendente.
 \\
 
 \begin{equation}
@@ -121,10 +121,21 @@ donde \hspace*{0.5cm}  y_i =  \E_{s \approx \epsilon}[r + \gamma  \hspace*{0.3cm
 \end{equation}
 \\
 
-Ademas se usara  experience replay para entrenar la Q-Network, es decir, los datos de ejemplos serán generados de la propia experiencia que vaya adquiriendo el agente. Para lograr esto, en cada instante de tiempo t, el agente deberá guardar en un replay memory D, la experiencia $\epsilon = (s_t, a_t, r_t, s_{t+1})$, observada durante esa iteración.
-Transcurridos n dias el agente deberá ejecutar la fase de entrenamiento de su Q-Network, para esto se generara un mini batch de experiencias pasadas obtenidas de  su replay memory y con ella se procedera a realizar una última fase actualización de la función de estimación de $Q(s, a, \theta_i)$, usando la regla de actualización de Q-learning y la nueva matriz de pesos $\theta_{i+1}$.
+Ademas se usara  experience replay para entrenar la Q-Network, es decir, los datos de ejemplos serán generados a partir de la propia experiencia que vaya adquiriendo el agente. Para lograr esto, en cada instante de tiempo t, el agente deberá guardar en un replay memory D, cada experiencia $\epsilon = (s_t, a_t, r_t, s_{t+1})$, observada.
+Transcurridos n días el agente deberá ejecutar la fase de entrenamiento de su Q-Network, para esto se generara un mini batch de experiencias pasadas, obtenidas de  su replay memory y con ella se procederá a realizar una última fase actualización de la función de estimación de $Q(s, a, \theta_i)$, usando la regla de actualización de Q-learning y la nueva matriz de pesos $\theta_{i+1}$.
 
 
+\section{Algoritmo de aprendizaje}
 
+A continuación detallamos el pseudo algoritmo de aprendizaje de nuestro agente.
+\\
+\\
+\begin{algorithm}[1]
+\State D $\gets$ new memory\_replay(n)
+\State $\theta \gets random() $
+\State $Q^*(s, a) \gets Q(\theta)$
+\While{$episode \gets generate\_episode() != null$}
 
+\EndWhile
+\end{algorithm}
 

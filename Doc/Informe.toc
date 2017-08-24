@@ -20,7 +20,8 @@
 \contentsline {section}{\numberline {3.3}Acciones}{11}{section.3.3}
 \contentsline {section}{\numberline {3.4}El Agente}{12}{section.3.4}
 \contentsline {section}{\numberline {3.5}Q-Network}{13}{section.3.5}
-\contentsline {chapter}{\chapternumberline {4}Arquitectura y Dise\IeC {\~n}o}{15}{chapter.4}
-\contentsline {chapter}{\chapternumberline {5}Evaluaci\IeC {\'o}n y Desempe\IeC {\~n}o}{17}{chapter.5}
-\contentsline {chapter}{\chapternumberline {6}Conclusiones y Recomendaciones}{19}{chapter.6}
-\contentsline {chapter}{Bibliograf\'{\i }a}{21}{section*.7}
+\contentsline {section}{\numberline {3.6}Algoritmo de aprendizaje}{14}{section.3.6}
+\contentsline {chapter}{\chapternumberline {4}Arquitectura y Dise\IeC {\~n}o}{17}{chapter.4}
+\contentsline {chapter}{\chapternumberline {5}Evaluaci\IeC {\'o}n y Desempe\IeC {\~n}o}{19}{chapter.5}
+\contentsline {chapter}{\chapternumberline {6}Conclusiones y Recomendaciones}{21}{chapter.6}
+\contentsline {chapter}{Bibliograf\'{\i }a}{23}{section*.7}
