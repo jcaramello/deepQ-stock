@@ -4,7 +4,7 @@
 \section{Introducción}
 
 Para poder ejecutar el agente, se desarrollaron un conjunto de aplicaciones que permiten la ejecución del algoritmo presentado en el capitulo anterior en un entorno simulado, que representara nuestro mercado financiero.
-El código puede verse y descargarse de \href{https://github.com/jcaramello/deepQ-stock}{github}, en el también podrá encontrarse las instrucciones para su ejecución. El sistema implementado que acompaña a este documento, esta compuesto por dos componentes principales, una aplicación cliente, desarrollada en Typescript y Angular 4, y una aplicación de backend, 
+El código puede verse y descargarse de \href{https://github.com/jcaramello/deepQ-stock}{\textcolor{blue}{github}}, en el también podrá encontrarse las instrucciones para su ejecución. El sistema implementado que acompaña a este documento, esta compuesto por dos soluciones principales, una aplicación cliente, desarrollada en Typescript y Angular 4, y una aplicación de backend, 
 encargada de emular el mercado financiero y ejecutar los agentes en el.
 
 \begin{figure}[h!]
@@ -65,8 +65,8 @@ Desde la pantalla de creación también podrá setearse parámetros de configura
 
 \subsection{Aplicación backend}
 
-La aplicación de backend en .NET, consta de una API implementada con SignalR 2, SQL Server, Hangfire y Redis. 
-Los clientes conectados coh la aplicación de angular, se comunicaran con el backend a través de un hub de comunicación implementado con signalR 2, este hub es el que permitirá la comunicación bi-direccional en tiempo real, es decir, desde aplicación cliente hacia el server backend, como desde el server hacia los clientes conectados con la aplicación angular. Este es un requerimiento necesario, dado que los agentes y los simuladores son ejecutados en threads independientes, para lograr esto se necesito integrar el backend con hangfire, un servidor de jobs. 
+La aplicación de backend fue implementada en .NET, consta de una servidor de backend, implementado con SignalR 2, SQL Server, Hangfire y Redis. 
+Los clientes conectados cons la aplicación de angular, se comunicaran con el backend a través de un hub de comunicación implementado con signalR 2, este hub es el que permitirá la comunicación bi-direccional en tiempo real, es decir, desde aplicación cliente hacia el server backend, como desde el server hacia los clientes conectados con la aplicación angular. Este es un requerimiento necesario, dado que los agentes y los simuladores son ejecutados en threads independientes, para lograr esto se necesito integrar el backend con hangfire, un servidor de jobs. 
 Cada vez que se inicie la ejecución de un agente, se solicitara a hangfire la creación de un nuevo job o worker, donde se ejecutara el agente y el entorno simulado. El agente comenzara a trader en el entorno configurado para el, e ira notificando a través de una cola de mensajes implementada con redis, todas las decisión y el progreso que esta teniendo al servicio de backend, una vez que el servicio de backend es notificado por redis, este utilizara el hub de comunicación para notificar a el clientes que esten subscritos a escuchar los mensajes de progreso de dicho agente.
 
 \section{Descripción del código}
@@ -74,10 +74,10 @@ A continuación describiremos algunas secciones mas relevantes e interesantes de
 
 \subsection{Clase StockExchange}
 
-Esta clase es la que representa nuestro entorno, en nuestro caso, un mercado financiera, ella sera la responsable de calcular los rewards y de ir actualizando los estados $s_t$. También sera responsable de la inicializacion de agente como así también del salvado del estado del agente cada vez q el proceso de ejecución sea pausado. Tal vez el punto de entrada de esta clase sea el método Simulate().
+Esta clase es la que representa nuestro entorno, en nuestro caso, un mercado financiero, ella sera la responsable de calcular los rewards y de ir actualizando los estados $s_t$. También sera responsable de la inicializacion de agente como así también del salvado del estado del agente cada vez q el proceso de ejecución sea pausado. El punto de entrada de esta clase sea el método Simulate().
 \\\\
 Como se puede observar en la imagen, este método sera el responsable de la generación de los estados y de la simulación de cada episodio. Cada episodio estará compuesto por una cantidad n de días, en el que en cada día, el agente
-deberá tomar una decisión acerca de su situación, es decir, deberá decir, si compra, vende o espera. Al finalizar cada episodio, el entorno invocara al método OnEpisodeComplete que como se vera mas adelante sera el responsable de entrenamiento de la red neuronal del agente.\\
+deberá tomar una decisión acerca de su situación, es decir, deberá decidir, si compra, vende o espera. Al finalizar cada episodio, el entorno invocara al método OnEpisodeComplete que como se vera mas adelante sera el responsable de entrenamiento de la red neuronal del agente.\\
 
 \begin{figure}[h!]
 	\centering
