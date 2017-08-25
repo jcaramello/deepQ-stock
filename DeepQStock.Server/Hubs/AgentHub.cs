@@ -145,6 +145,8 @@ namespace DeepQStock.Server.Hubs
         /// <param name="args">The arguments.</param>
         public void OnSimulationComplete(OnSimulationComplete args)
         {
+            var jobId = string.Empty;
+            ActiveAgents.TryRemove(args.AgentId, out jobId);
             var group = Clients.Group(string.Format(GroupNameTemplate, args.AgentId));
             group?.onSimulationCompleted(args);
         }

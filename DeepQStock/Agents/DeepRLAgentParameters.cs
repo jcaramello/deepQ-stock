@@ -28,6 +28,11 @@ namespace DeepQStock.Agents
         public double DiscountFactor { get; set; }
 
         /// <summary>
+        /// Get or sets the learning rate
+        /// </summary>
+        public double LearningRate { get; set; }
+
+        /// <summary>
         /// Get or set the size of the internal agent's memory replay
         /// </summary>
         public int MemoryReplaySize { get; set; }
@@ -60,6 +65,7 @@ namespace DeepQStock.Agents
             InOutStrategy = 0.33;
             MiniBatchSize = 50;
             DiscountFactor = 0.8;
+            LearningRate = 0.3;
             MemoryReplaySize = 500;
             QNetwork = new QNetworkParameters();
             Decisions = new List<OnDayComplete>();

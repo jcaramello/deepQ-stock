@@ -311,9 +311,15 @@ namespace DeepQStock.Agents
         /// <returns></returns>
         private double QUpdate(Experience e, ActionType action, double estimated)
         {
-            var estimation = e.Action == action ? e.Reward + (Parameters.DiscountFactor * estimated) : estimated;
 
-            return Normalizers.Reward.Normalize(estimation);
+            var newEstimation = estimated;
+            if (e.Action == action)
+            {
+                var maxAction = Q[e.To].MaxBy(i => i.Value).Value;
+                newEstimation = estimated + Parameters.LearningRate * (e.Reward + (Parameters.DiscountFactor * maxAction) - estimated);
+            }
+
+            return Normalizers.Reward.Normalize(newEstimation);
         }
 
         /// <summary>

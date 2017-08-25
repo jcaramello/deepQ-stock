@@ -57,12 +57,13 @@ export class StatisticsComponent implements OnInit, OnDestroy {
           this.agents.forEach(a => {
 
             var agentResults = this.results.filter(r => r.agentId == a.id);
-
-            average.push({
-              agentId: a.id,
-              name: "#" + a.id + " - " + a.name + " (" + agentResults[0].symbol + ")",
-              annualRent: (_.meanBy(agentResults, (p) => p.annualRent) * 100).toFixed(2)
-            });
+            if (agentResults.length > 0) {
+              average.push({
+                agentId: a.id,
+                name: "#" + a.id + " - " + a.name + " (" + agentResults[0].symbol + ")",
+                annualRent: (_.meanBy(agentResults, (p) => p.annualRent) * 100).toFixed(2)
+              });
+            }
           });
 
           var maxTotalYear = _.max(_.values(_.groupBy(this.results, r => r.agentId)).map(a => a.length));

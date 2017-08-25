@@ -50,8 +50,8 @@ Una vez iniciada la simulación, podrá visualizarse en tiempo real, en todos lo
 entre otras cosas, el capital actual, la ganancia acumulada, cantidad de acciones que posee el agente, etc.
 
 \begin{figure}[h!]
-	\includegraphics[scale=0.5]{imagenes/screen1.png}
-	\caption{Arquitectura del sistema}
+	\includegraphics[scale=0.3]{imagenes/screen4.png}
+	\caption{Evolución del agente}
 \end{figure}
 
 
@@ -75,7 +75,6 @@ A continuación describiremos algunas secciones mas relevantes e interesantes de
 \subsection{Clase StockExchange}
 
 Esta clase es la que representa nuestro entorno, en nuestro caso, un mercado financiero, ella sera la responsable de calcular los rewards y de ir actualizando los estados $s_t$. También sera responsable de la inicializacion de agente como así también del salvado del estado del agente cada vez q el proceso de ejecución sea pausado. El punto de entrada de esta clase sea el método Simulate().
-\\\\
 Como se puede observar en la imagen, este método sera el responsable de la generación de los estados y de la simulación de cada episodio. Cada episodio estará compuesto por una cantidad n de días, en el que en cada día, el agente
 deberá tomar una decisión acerca de su situación, es decir, deberá decidir, si compra, vende o espera. Al finalizar cada episodio, el entorno invocara al método OnEpisodeComplete que como se vera mas adelante sera el responsable de entrenamiento de la red neuronal del agente.\\
 
@@ -89,12 +88,11 @@ deberá tomar una decisión acerca de su situación, es decir, deberá decidir, 
 \subsection{Clase DeepRLAgent}
 
 Esta clase es la que implementa al agente, en ella se implementara la policy de decisión usada por el agente, así como también la Q\_Network y los métodos necesarios para entrenarla.
-\\\\
 Como podemos ver, el agente usara este método para decidir en base a una $policy_\pi$
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.6]{imagenes/screen6.png}
-	\caption{Método Decide}
+	\caption{Método Decide()}
 \end{figure}
 
 Se decidió optar por una policy $\varepsilon-greedy$, la cual consiste en elegir siempre la acción que maximiza el reward esperado, según la función estado-acción $Q^*(s_t, a_t)$ con una probabilidad $\varepsilon$ de elegir aleatoriamente, lo cual le permitirá balancear el dilema de exploración vs explotación
@@ -102,12 +100,18 @@ Se decidió optar por una policy $\varepsilon-greedy$, la cual consiste en elegi
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.5]{imagenes/screen7.png}
-	\caption{Método PolicyPi}
+	\caption{Método PolicyPi()}
 \end{figure}
 
 Por ultimo, una vez finalizado un episodio se ejecutara el método UpdateUknowledge el cual sera el responsable de re-entrenar la red neuronal. Como podemos ver en la imagen, el método generar un mini batch según los parámetros seteados durante la creación del agente, para luego generar los samples de entrenamiento en base a la estimación actual y al valor actualizado usando el algoritmo de Q-learning.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.7]{imagenes/screen8.png}
-	\caption{Método UpdateUknowledge}
+	\caption{Método UpdateUknowledge()}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.7]{imagenes/screen9.png}
+	\caption{Método QUpdate()}
 \end{figure}

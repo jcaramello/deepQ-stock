@@ -31,28 +31,26 @@
  
 \eietitlepage 
 \cleardoublepage 
-\eieaprovalpage 
+
+\input{resumen}
 \clearpage
 
-\include{resumen}
+\tableofcontents  
 \clearpage
 
 \listoffigures 
-\include{nomenclatura}
+\input{nomenclatura}
 \clearpage
 
 \mainmatter
-\pagestyle{eieheadings}
 
-\include{Cap1.Introduccion}
-\include{Cap2.MercadosFinancieros}
-\include{Cap3.DeepRL}
-\include{Cap4.Arquitectura}
-\include{Cap5.Evaluacion}
-\include{Cap6.Conclusiones}
-\include{Cap7.Bibliografia}
-\bibliography{eieclases_ref}
-
+\input{Cap1.Introduccion}
+\input{Cap2.MercadosFinancieros}
+\input{Cap3.DeepRL}
+\input{Cap4.Arquitectura}
+\input{Cap5.Evaluacion}
+\input{Cap6.Conclusiones}
+\input{Cap7.Bibliografia}
 \clearpage
 
 %------------------
