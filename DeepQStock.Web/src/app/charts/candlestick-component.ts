@@ -119,7 +119,7 @@ export class CandlestickComponent {
     this.chart = new AmCharts.AmStockChart();
     this.chart['theme'] = 'light';
     this.chart['language'] = 'es';
-    this.chart['pathToImages'] = "/bower_components/amCharts3/amCharts/images/";
+    this.chart['pathToImages'] = "amCharts/images/";
     this.chart['dataDateFormat'] = "YYYY/MM/DD";
     this.chart['mouseWheelScrollEnabled'] = true;
     this.chart.glueToTheEnd = false;
