@@ -36,6 +36,10 @@ Instalar Redis desde [Microsoft Open Tech](https://msopentech.com/blog/2015/03/0
 
 *port*: 6379
 
+### SQL Server
+
+Es necesario instalar una instancia de sql server express.
+
 ### Servidor 
 
 El Servidor consta de una api self-hosted, implementada con Owin y signalR.

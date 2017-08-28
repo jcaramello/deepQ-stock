@@ -2,6 +2,7 @@ select * from [dbo].[OnDayCompletes] where Agent_Id = 1
 select * from [dbo].[DeepRLAgentParameters]
 select * from [dbo].[StockExchangeParameters]
 
+delete from [dbo].[StockExchangeParameters]
 UPDATE DeepRLAgentParameters SET Status= 4 WHERE ID =3
 
 select * from [dbo].[AverageTrueRanges] where StockExchangeId = 1

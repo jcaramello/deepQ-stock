@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,  
+  signalrUrl: 'http://localhost:9000',
+  signalRloggingEnabled: false
 };

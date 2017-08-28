@@ -362,6 +362,19 @@ namespace DeepQStock.Stocks
                     Agent.SaveQNetwork();
                     CurrentState.StockExchangeId = Parameters.Id;
 
+
+                    foreach (var p in CurrentState.InternalPeriods)
+                    {
+                        if (p.Id > 0 && !DbContext.IsAttached(p))
+                        {
+                            DbContext.Entry(p).State = EntityState.Unchanged;
+                        }
+                        else
+                        {
+                            DbContext.Periods.AddOrUpdate(p);
+                        }
+                    }
+
                     if (CurrentState.Id > 0)
                     {
                         var currentStateInDb = DbContext.States.Single(s => s.Id == CurrentState.Id);
@@ -375,13 +388,8 @@ namespace DeepQStock.Stocks
                         {
                             DbContext.States.Remove(oldState);
                         }
-
-                        DbContext.States.Add(CurrentState);
-                    }
-
-                    foreach (var p in CurrentState.InternalPeriods)
-                    {
-                        DbContext.Periods.AddOrUpdate(p);
+                       
+                        DbContext.States.Add(CurrentState);                                                
                     }
 
                     foreach (var indicator in DailyIndicators.Concat(WeeklyIndicators).Concat(MonthlyIndicators))
@@ -406,7 +414,7 @@ namespace DeepQStock.Stocks
         private double Execute(ActionType action, double inOutStrategy)
         {
             var actionPrice = CurrentState.Today.Close;
-            var capital = CurrentState.Today.CurrentCapital;            
+            var capital = CurrentState.Today.CurrentCapital;
             var position = CurrentState.Today.ActualPosition;
             var previuosPosition = position;
 
@@ -517,31 +525,33 @@ namespace DeepQStock.Stocks
         /// <param name="reward">The reward.</param>
         private void DayCompleted(ActionType action, double reward)
         {
-            var dayCompleted = new OnDayComplete()
-            {
-                Agent = Agent.Parameters,
-                AgentId = Agent.Parameters.Id,
-                DayNumber = DaysSimulated,
-                Date = CurrentState.Today.Date,
-                SelectedAction = action,
-                Reward = reward,
-                AccumulatedProfit = Profits,
-                AnnualProfits = AnnualProfits,
-                AnnualRent = AnnualRent,
-                TotalOfYears = TotalOfYears,
-                Period = CurrentState.Today,
-                VolumeOperated = VolumeOperated
-            };
-
-
             using (var DbContext = new DeepQStockContext())
             {
-                DbContext.DeepRLAgentParameters.Attach(Agent.Parameters);
+                var deepRLagentParameters = DbContext.DeepRLAgentParameters.Single(a => a.Id == Agent.Parameters.Id);
+
+                var dayCompleted = new OnDayComplete()
+                {
+                    Agent = deepRLagentParameters,
+                    AgentId = deepRLagentParameters.Id,
+                    DayNumber = DaysSimulated,
+                    Date = CurrentState.Today.Date,
+                    SelectedAction = action,
+                    Reward = reward,
+                    AccumulatedProfit = Profits,
+                    AnnualProfits = AnnualProfits,
+                    AnnualRent = AnnualRent,
+                    TotalOfYears = TotalOfYears,
+                    Period = CurrentState.Today,
+                    VolumeOperated = VolumeOperated
+                };
+
+
+
                 DbContext.OnDaysCompletes.Add(dayCompleted);
                 DbContext.SaveChanges();
-            }
 
-            RedisManager.Publish(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(dayCompleted));
+                RedisManager.Publish(RedisPubSubChannels.OnDayComplete, JsonConvert.SerializeObject(dayCompleted));
+            }            
         }
 
         /// <summary>

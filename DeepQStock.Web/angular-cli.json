@@ -6,7 +6,7 @@
   "apps": [{
     "root": "src",
     "outDir": "dist",
-    "assets": ["assets", "../bower_components/amcharts3"],
+    "assets": ["assets"],
     "index": "index.html",
     "main": "main.ts",
     "polyfills": "polyfills.ts",

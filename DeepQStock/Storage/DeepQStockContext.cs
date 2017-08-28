@@ -34,12 +34,6 @@ namespace DeepQStock.Storage
 
         #endregion
 
-        #region << Private Properties >>
-
-
-
-        #endregion
-
         #region << Constructor >> 
 
         public DeepQStockContext() : base("DeepQStockDB")
@@ -49,6 +43,19 @@ namespace DeepQStock.Storage
         #endregion       
 
         #region << Public Methods >>
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {           
+            modelBuilder.Entity<State>()
+               .HasMany(e => e.InternalPeriods)
+               .WithMany()
+               .Map(m =>
+               {
+                   m.MapLeftKey("StateId");
+                   m.MapRightKey("PeriodId");
+                   m.ToTable("StatesPeriods");
+               });
+        }
 
         /// <summary>
         /// Check fi an entity is attached or not
@@ -70,6 +77,10 @@ namespace DeepQStock.Storage
             ClearAgent(agent);
             Experiences.RemoveRange(Experiences.Where(e => e.AgentId == agent.Id));
             SimulationResults.RemoveRange(SimulationResults.Where(e => e.AgentId == agent.Id));
+
+            Entry(agent).Reference(a => a.StockExchange).Load();
+            StockExchangeParameters.Remove(agent.StockExchange);
+
             DeepRLAgentParameters.Remove(agent);
         }
 
@@ -80,7 +91,7 @@ namespace DeepQStock.Storage
         public void ClearAgent(DeepRLAgentParameters agent)
         {
             Entry(agent).Reference(a => a.StockExchange).Load();
-            var stockId = agent.StockExchange.Id;           
+            var stockId = agent.StockExchange.Id;
 
             AverageTrueRanges.RemoveRange(AverageTrueRanges.Where(a => a.StockExchangeId == stockId));
             BollingerBandsPercentBs.RemoveRange(BollingerBandsPercentBs.Where(a => a.StockExchangeId == stockId));
@@ -91,7 +102,8 @@ namespace DeepQStock.Storage
             SimpleMovingAverages.RemoveRange(SimpleMovingAverages.Where(a => a.StockExchangeId == stockId));
 
             var periodsToDelete = Periods.Where(p => p.StockExchangeId == stockId);
-            IndicatorValues.RemoveRange(IndicatorValues.Where(i => i.Period.StockExchangeId == stockId));
+            var indicatorsToDelete = periodsToDelete.SelectMany(p => p.InternalIndicators).Distinct();
+            IndicatorValues.RemoveRange(indicatorsToDelete);
             Periods.RemoveRange(periodsToDelete);
 
             States.RemoveRange(States.Where(e => e.StockExchangeId == stockId));
