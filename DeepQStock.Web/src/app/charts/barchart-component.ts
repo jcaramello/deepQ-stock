@@ -13,7 +13,7 @@ import * as moment from 'moment';
 export class BarChartComponent {
 
   private static IdGenerator: number = 0;
-  private id: number;
+  public id: number;
 
   @Input()
   public values: any[];

@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
 using System.Data.Entity;
+using Newtonsoft.Json;
 
 namespace DeepQStock.Domain
 {
@@ -94,17 +95,20 @@ namespace DeepQStock.Domain
                 return InternalIndicators.ToList().AsReadOnly();
             }
         }
-        
+
+        [JsonIgnore]
         public ICollection<IndicatorValue> InternalIndicators { get; set; }
 
+
         /// <summary>
-        /// States
+        /// Gets or sets the state identifier.
         /// </summary>
-        public ICollection<State> States { get; set; }
+        public int StateId { get; set; }
 
         /// <summary>
         /// Averages
         /// </summary>
+        [JsonIgnore]
         public ICollection<SimpleMovingAverage> Averages { get; set; }
 
         #endregion

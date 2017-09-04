@@ -15,10 +15,7 @@ namespace DeepQStock.Domain
 
         public string Name { get; set; }
 
-        public string ValuesString { get; set; }
-
-        [JsonIgnore]
-        public Period Period { get; set; }
+        public string ValuesString { get; set; }      
 
         [NotMapped]
         public IEnumerable<double> Values

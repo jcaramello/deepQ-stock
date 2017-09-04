@@ -29,7 +29,7 @@ export class LineChartComponent {
   private chart: any;
 
   private static IdGenerator: number = 0;
-  private id: number;
+  public id: number;
 
   /**
    * Creates an instance of BreadcrumbsComponent.
