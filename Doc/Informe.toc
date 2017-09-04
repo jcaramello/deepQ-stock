@@ -18,19 +18,24 @@
 \contentsline {section}{\numberline {3.1}Introducci\IeC {\'o}n}{9}{section.3.1}
 \contentsline {section}{\numberline {3.2}Configuraci\IeC {\'o}n de estados}{10}{section.3.2}
 \contentsline {section}{\numberline {3.3}Acciones}{11}{section.3.3}
-\contentsline {section}{\numberline {3.4}El Agente}{11}{section.3.4}
-\contentsline {section}{\numberline {3.5}Q-Network}{13}{section.3.5}
-\contentsline {section}{\numberline {3.6}Algoritmo de aprendizaje}{14}{section.3.6}
-\contentsline {chapter}{\chapternumberline {4}Arquitectura y Dise\IeC {\~n}o}{15}{chapter.4}
-\contentsline {section}{\numberline {4.1}Introducci\IeC {\'o}n}{15}{section.4.1}
-\contentsline {subsection}{Aplicaci\IeC {\'o}n cliente}{15}{section*.10}
-\contentsline {subsection}{Aplicaci\IeC {\'o}n backend}{17}{section*.13}
-\contentsline {section}{\numberline {4.2}Descripci\IeC {\'o}n del c\IeC {\'o}digo}{18}{section.4.2}
-\contentsline {subsection}{Clase StockExchange}{18}{section*.14}
-\contentsline {subsection}{Clase DeepRLAgent}{20}{section*.16}
-\contentsline {chapter}{\chapternumberline {5}Evaluaci\IeC {\'o}n y Desempe\IeC {\~n}o}{23}{chapter.5}
-\contentsline {section}{\numberline {5.1}Introducci\IeC {\'o}n}{23}{section.5.1}
-\contentsline {section}{\numberline {5.2}Configuraciones}{23}{section.5.2}
-\contentsline {section}{\numberline {5.3}moe}{24}{section.5.3}
-\contentsline {chapter}{\chapternumberline {6}Recomendaciones finales}{27}{chapter.6}
-\contentsline {chapter}{\chapternumberline {7}Bibliograf\IeC {\'\i }a}{29}{chapter.7}
+\contentsline {section}{\numberline {3.4}Reward}{11}{section.3.4}
+\contentsline {section}{\numberline {3.5}El Agente}{12}{section.3.5}
+\contentsline {section}{\numberline {3.6}Q-Network}{13}{section.3.6}
+\contentsline {section}{\numberline {3.7}Algoritmo de aprendizaje}{15}{section.3.7}
+\contentsline {chapter}{\chapternumberline {4}Arquitectura y Dise\IeC {\~n}o}{17}{chapter.4}
+\contentsline {section}{\numberline {4.1}Introducci\IeC {\'o}n}{17}{section.4.1}
+\contentsline {subsection}{Aplicaci\IeC {\'o}n cliente}{17}{section*.10}
+\contentsline {subsection}{Aplicaci\IeC {\'o}n backend}{19}{section*.13}
+\contentsline {section}{\numberline {4.2}Descripci\IeC {\'o}n del c\IeC {\'o}digo}{20}{section.4.2}
+\contentsline {subsection}{Clase StockExchange}{20}{section*.14}
+\contentsline {subsection}{Clase DeepRLAgent}{22}{section*.16}
+\contentsline {chapter}{\chapternumberline {5}Evaluaci\IeC {\'o}n y Desempe\IeC {\~n}o}{25}{chapter.5}
+\contentsline {section}{\numberline {5.1}Introducci\IeC {\'o}n}{25}{section.5.1}
+\contentsline {section}{\numberline {5.2}Configuraciones}{25}{section.5.2}
+\contentsline {section}{\numberline {5.3}Resultados}{26}{section.5.3}
+\contentsline {subsection}{moe}{26}{section*.22}
+\contentsline {subsection}{lenny}{29}{section*.32}
+\contentsline {subsection}{ralph}{29}{section*.35}
+\contentsline {section}{\numberline {5.4}Gr\IeC {\'a}ficos}{30}{section.5.4}
+\contentsline {chapter}{\chapternumberline {6}Recomendaciones finales}{33}{chapter.6}
+\contentsline {chapter}{\chapternumberline {7}Bibliograf\IeC {\'\i }a}{35}{chapter.7}

@@ -5,10 +5,20 @@
 %--------------------------------------------------------------------
 
 \begin{description}[labelindent=1cm,labelwidth=2.25cm,align=left,leftmargin=3.45cm]  %no cambiar esta línea
-	\item[$a$] razón de contantes de tiempo del proceso (modelo).
-	\item[$\beta$] factor de peso del valor deseado del controlador.
-	\item[$C(s)$] función de transferencia del controlador.
-	\item[$C_r(s)$] función de transferencia del controlador de valor deseado.
-	\item[$y(t)$, $y(s)$] ... \emph{La nomenclatura debe listarse en orden alfabético}.
-	\item[$\zeta$] Este es un ejemplo de una lista con ``descripción''.
+	\item[$s$] estado
+	\item[$a$] acción
+	\item[$t$] tiempo discreto
+	\item[$T$] Instante final de la simulación o el episodio
+	\item[$S$] Conjunto de estados
+	\item[$A(s)$] conjunto de acciones validas en el estado s.
+	\item[$S_t$] Estado en el que se encuentra el agente en el instante t.
+	\item[$A_t$] Acción elegida por el agente en el instante t.
+	\item[$R_t$] Reward obtenido por el agente en el instante t+1
+	\item[$\pi$] política de decisión, regla de decisión.
+	\item[$\pi(s)$] acción tomada en el estado s, siguiendo la política determinista $\pi$ 
+	\item[$q_\pi(s, a)$] el valor de tomar la acción a, en el estado s, bajo la política de decisión $\pi$
+	\item[$q_*(s, a)$] el valor de tomar la acción a, en el estado s, bajo la política de decisión $\pi$
+	\item[$\gamma$] factor de descuento de rewards.
+    \item[$\alpha$] razón de aprendizaje
+    \item[$\varepsilon$] probabilidad de elegir una acción aleatoria en una política de decisión greedy
 \end{description}

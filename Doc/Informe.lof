@@ -6,20 +6,27 @@
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Reinforcement Learning Architecture Overview.\relax }}{10}{figure.caption.6}
 \contentsline {figure}{\numberline {3.2}{\ignorespaces Gr\IeC {\'a}fico de vela.\relax }}{10}{figure.caption.7}
 \addvspace {10pt}
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Arquitectura del sistema\relax }}{15}{figure.caption.9}
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Creaci\IeC {\'o}n de agentes\relax }}{16}{figure.caption.11}
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Evoluci\IeC {\'o}n del agente\relax }}{17}{figure.caption.12}
-\contentsline {figure}{\numberline {4.4}{\ignorespaces M\IeC {\'e}todo Simulate\relax }}{19}{figure.caption.15}
-\contentsline {figure}{\numberline {4.5}{\ignorespaces M\IeC {\'e}todo Decide()\relax }}{20}{figure.caption.17}
-\contentsline {figure}{\numberline {4.6}{\ignorespaces M\IeC {\'e}todo PolicyPi()\relax }}{20}{figure.caption.18}
-\contentsline {figure}{\numberline {4.7}{\ignorespaces M\IeC {\'e}todo UpdateUknowledge()\relax }}{21}{figure.caption.19}
-\contentsline {figure}{\numberline {4.8}{\ignorespaces M\IeC {\'e}todo QUpdate()\relax }}{21}{figure.caption.20}
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Arquitectura del sistema\relax }}{17}{figure.caption.9}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Creaci\IeC {\'o}n de agentes\relax }}{18}{figure.caption.11}
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Evoluci\IeC {\'o}n del agente\relax }}{19}{figure.caption.12}
+\contentsline {figure}{\numberline {4.4}{\ignorespaces M\IeC {\'e}todo Simulate\relax }}{21}{figure.caption.15}
+\contentsline {figure}{\numberline {4.5}{\ignorespaces M\IeC {\'e}todo Decide()\relax }}{22}{figure.caption.17}
+\contentsline {figure}{\numberline {4.6}{\ignorespaces M\IeC {\'e}todo PolicyPi()\relax }}{22}{figure.caption.18}
+\contentsline {figure}{\numberline {4.7}{\ignorespaces M\IeC {\'e}todo UpdateUknowledge()\relax }}{23}{figure.caption.19}
+\contentsline {figure}{\numberline {4.8}{\ignorespaces M\IeC {\'e}todo QUpdate()\relax }}{23}{figure.caption.20}
 \addvspace {10pt}
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Resultados de moe sobre apple\relax }}{24}{figure.caption.22}
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Resultados de moe sobre microsoft\relax }}{24}{figure.caption.23}
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Primeros d\IeC {\'\i }as de trading sobre apple\relax }}{24}{figure.caption.24}
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Primeros d\IeC {\'\i }as de trading sobre microsoft\relax }}{25}{figure.caption.25}
-\contentsline {figure}{\numberline {5.5}{\ignorespaces \IeC {\'U}ltimos d\IeC {\'\i }as de trading sobre apple\relax }}{25}{figure.caption.26}
-\contentsline {figure}{\numberline {5.6}{\ignorespaces \IeC {\'U}ltimos d\IeC {\'\i }as de trading sobre microsoft\relax }}{25}{figure.caption.27}
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Resultados de moe sobre apple\relax }}{26}{figure.caption.23}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Resultados de moe sobre microsoft\relax }}{26}{figure.caption.24}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Primeros d\IeC {\'\i }as de trading sobre apple\relax }}{26}{figure.caption.25}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Primeros d\IeC {\'\i }as de trading sobre microsoft\relax }}{27}{figure.caption.26}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces \IeC {\'U}ltimos d\IeC {\'\i }as de trading sobre apple\relax }}{27}{figure.caption.27}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces \IeC {\'U}ltimos d\IeC {\'\i }as de trading sobre microsoft\relax }}{27}{figure.caption.28}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Promedio del rate de ganancias finales\relax }}{28}{figure.caption.29}
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Evoluci\IeC {\'o}n de ganancias\relax }}{29}{figure.caption.30}
+\contentsline {figure}{\numberline {5.9}{\ignorespaces Resultados de moe luego de 6 ejecuciones\relax }}{29}{figure.caption.31}
+\contentsline {figure}{\numberline {5.10}{\ignorespaces Ejecuci\IeC {\'o}n de lenny sobre apple\relax }}{30}{figure.caption.33}
+\contentsline {figure}{\numberline {5.11}{\ignorespaces Ejecuci\IeC {\'o}n de lenny sobre microsoft\relax }}{30}{figure.caption.34}
+\contentsline {figure}{\numberline {5.12}{\ignorespaces Ejecuci\IeC {\'o}n de ralph sobre apple\relax }}{31}{figure.caption.36}
+\contentsline {figure}{\numberline {5.13}{\ignorespaces Ejecuci\IeC {\'o}n de ralph sobre microsoft\relax }}{31}{figure.caption.37}
 \addvspace {10pt}
 \addvspace {10pt}

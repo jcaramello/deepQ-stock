@@ -20,8 +20,8 @@ En principio hemos considerado 3 configuración que según creemos una sera la  
 		$\varepsilon$-greedy       & 0.1 & 0.3   & 1     \\
 		learnig rate    $\alpha$   & 0.3 & 0.3   & 0.3   \\
 		discount factor $\gamma$   & 0.8 & 0.5   & 0.1   \\
-		mini batch                 & 50  & 100   & 10    \\
-		memory replay      		   & 500 & 1000  & 5     \\
+		mini batch                 & 50  & 100   & 5    \\
+		memory replay      		   & 500 & 1000  & 10     \\
 		hidden layers     		   & 4   & 8     & 2     \\
 		neurons per layer  		   & 16  & 32    & 4    
 	\end{tabular}
@@ -30,9 +30,10 @@ En principio hemos considerado 3 configuración que según creemos una sera la  
 Ambas configuraciones se ejecutaran sobre dos compañías cuyos papeles tienen comportamientos completamente diferentes.
 Una apple donde claramente puede verse que el valor de las acciones generalmente se encuentra dentro de un tendencias alcista durante los 10 años y la otra es microsoft la cual posee un comportamiento mas estable, con tramos alcistas, bajistas y tramos donde el papel lateraliza. Las decisiones del agente se mostraran con burbujas de color azul para las compras, y burbujas de color amarillo para las ventas, a media que transcurran los días, se irán marcado cada vela, con una burbuja indicando la acción, para poder simplificar la visualización del gráfico, hemos decidido, no marcar con ningún marcador, los decisiones de esperar.
 
-\section{moe}
+\section{Resultados}
 
-Estos son los resultados de la primera ejecución de moe sobre ambas compañías.
+\subsection{moe}
+Estos son algunos de los resultados de la primera ejecución de moe sobre ambas compañías.
 
 \begin{figure}[h!]
 	\includegraphics[scale=0.5]{imagenes/moe_appl_ex1_1_summary.png}
@@ -73,3 +74,59 @@ Veamos ahora que sucede con los últimos días de trading:
 
 En ambos casos, puede observarse una mejoría, tal vez, en el caso de apple sea mas marcada, dado que hasta puede observarse que durante varios días, el agente solo decide esperar, y especular esperando que el precio suba para vender luego de varios días gran parte de sus acciones a un precio mucho mayor al que las compro.
 Para el caso de microsoft, no es tan claro, pero sin embargo, puede verse que cada 4 o  5 días, el agente compra, para luego vender. Es importante notar aquí, que dado el esquema de entrada y salida que se decidió adoptar, los días en que compra, comprar mucho mas de lo que luego vende en los días siguientes.
+
+Un aspecto interesante que surgió durante la investigación, fe preguntarnos que sucedería si volviéramos a ejecutar el agente ya entrado, es decir, reutilizando la matriz de pesos de su red neuronal.
+¿Podría el agente mejorar su performance?.
+
+Estos son los resultados que obtuvimos para moe
+
+\begin{figure}[h!]
+	\includegraphics[scale=0.7]{imagenes/moe_results_1.png}
+	\caption{Promedio del rate de ganancias finales}
+\end{figure}
+
+\begin{figure}[h!]
+	\includegraphics[scale=0.7]{imagenes/moe_results_2.png}
+	\caption{Evolución de ganancias}
+\end{figure}
+
+Mirando los gráficos resultantes, no pareciera a ver una mejoría significativa, aunque si podemos afirmar que los agentes en general, repitieron su performance. Sin embargo pudimos observar una notoria modificación en el patrón de decisiones del agente:
+
+\begin{figure}[h!]
+	\includegraphics[scale=0.4]{imagenes/moe_appl_ex6_1.png}
+	\caption{Resultados de moe luego de 6 ejecuciones}
+\end{figure}
+
+Claramente podemos notar, que el agente toma decisiones de compra y/o venta mucho mas espaciadas en el tiempo, a comparación de las primeras ejecuciones, donde el agente tendía a sobre operar en el mercado, y terminaba realizado compras y ventas diariamente. No podemos concluir si esto significa una mejora o no, aunque si es posible asociar este tipo de patrón a un comportamiento mucho mas especulativo.
+
+\subsection{lenny}
+
+Como podíamos esperar, efectivamente lenny, se desempeño peor que moe.
+Sin embargo también podemos observar un cambio en el patrón de desicion a lo largo del tiempo.
+
+\begin{figure}[h!]
+	\includegraphics[scale=0.5]{imagenes/lenny_appl_ex1_1.png}
+	\caption{Ejecución de lenny sobre apple}
+\end{figure}
+
+\begin{figure}[h!]
+	\includegraphics[scale=0.5]{imagenes/lenny_msft_ex1_1.png}
+	\caption{Ejecución de lenny sobre microsoft}
+\end{figure}
+
+
+\subsection{ralph}
+Por ultimo, nos que analizar con ralp, y nuevamente, se dio lo que esperamos, si bien los resultados en términos del rate de ganancias, no difieren tanto, si podemos observa que el patrón de decisiones del agente se mantiene en el tiempo, dado que efectivamente siempre elige aleatoriamente. También pudimos observar un error muy grande durante el entrenamiento de la QNetwork, y que en general, dicho error no se reduce, provocando la no convergencia de la función Q
+
+\begin{figure}[h!]
+	\includegraphics[scale=0.4]{imagenes/lenny_appl_ex1_1.png}
+	\caption{Ejecución de ralph sobre apple}
+\end{figure}
+
+\begin{figure}[h!]
+	\includegraphics[scale=0.4]{imagenes/lenny_msft_ex1_1.png}
+	\caption{Ejecución de ralph sobre microsoft}
+\end{figure}
+
+\section{Gráficos}
+

@@ -15,15 +15,17 @@
 \BOOKMARK [1][-]{section.3.1}{Introducci\363n}{chapter.3}% 15
 \BOOKMARK [1][-]{section.3.2}{Configuraci\363n de estados}{chapter.3}% 16
 \BOOKMARK [1][-]{section.3.3}{Acciones}{chapter.3}% 17
-\BOOKMARK [1][-]{section.3.4}{El Agente}{chapter.3}% 18
-\BOOKMARK [1][-]{section.3.5}{Q-Network}{chapter.3}% 19
-\BOOKMARK [1][-]{section.3.6}{Algoritmo de aprendizaje}{chapter.3}% 20
-\BOOKMARK [0][-]{chapter.4}{Arquitectura y Dise\361o}{}% 21
-\BOOKMARK [1][-]{section.4.1}{Introducci\363n}{chapter.4}% 22
-\BOOKMARK [1][-]{section.4.2}{Descripci\363n del c\363digo}{chapter.4}% 23
-\BOOKMARK [0][-]{chapter.5}{Evaluaci\363n y Desempe\361o}{}% 24
-\BOOKMARK [1][-]{section.5.1}{Introducci\363n}{chapter.5}% 25
-\BOOKMARK [1][-]{section.5.2}{Configuraciones}{chapter.5}% 26
-\BOOKMARK [1][-]{section.5.3}{moe}{chapter.5}% 27
-\BOOKMARK [0][-]{chapter.6}{Recomendaciones finales}{}% 28
-\BOOKMARK [0][-]{chapter.7}{Bibliograf\355a}{}% 29
+\BOOKMARK [1][-]{section.3.4}{Reward}{chapter.3}% 18
+\BOOKMARK [1][-]{section.3.5}{El Agente}{chapter.3}% 19
+\BOOKMARK [1][-]{section.3.6}{Q-Network}{chapter.3}% 20
+\BOOKMARK [1][-]{section.3.7}{Algoritmo de aprendizaje}{chapter.3}% 21
+\BOOKMARK [0][-]{chapter.4}{Arquitectura y Dise\361o}{}% 22
+\BOOKMARK [1][-]{section.4.1}{Introducci\363n}{chapter.4}% 23
+\BOOKMARK [1][-]{section.4.2}{Descripci\363n del c\363digo}{chapter.4}% 24
+\BOOKMARK [0][-]{chapter.5}{Evaluaci\363n y Desempe\361o}{}% 25
+\BOOKMARK [1][-]{section.5.1}{Introducci\363n}{chapter.5}% 26
+\BOOKMARK [1][-]{section.5.2}{Configuraciones}{chapter.5}% 27
+\BOOKMARK [1][-]{section.5.3}{Resultados}{chapter.5}% 28
+\BOOKMARK [1][-]{section.5.4}{Gr\341ficos}{chapter.5}% 29
+\BOOKMARK [0][-]{chapter.6}{Recomendaciones finales}{}% 30
+\BOOKMARK [0][-]{chapter.7}{Bibliograf\355a}{}% 31

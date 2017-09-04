@@ -67,9 +67,13 @@ El agente no tendrá limitación alguna en cuanto a la cantidad de acciones a co
 Ademas cada operación de venta o compra, tendrá un costo asociado $c$, el cual sera descontado de su capital. El agente no podrá ejecutar la acción elegida si su capital no alcanza para cubrir el costo total de la operación.
 
 
+\section{Reward}
+
+El entorno deberá calcular, en cada instante $t$, la recompensa asociada a la acción elegida por el agente en el instante $t-1$. Recordemos que según lo que nos plantea el framework de reinforcement learning, la recompensa sera el mecanismo con el cual deberemos ir induciendo el aprendizaje del agente. Una mala elección de este, podría terminar en un mal desempeño de nuestro algoritmo. Para ello, hemos elegido la siguiente estrategia que vamos a denominar Winnings Over Loosings. Bajo esta estrategia, el entorno ira calculando el factor de ganancias $R$ que va teniendo el agente. Dicho factor estará dado por suma total de ganancias durante los últimos 14 días, sobre la suma total de perdidas de los últimos 14 días.
+
 \section{El Agente}
 
-Recordemos que el objetivo principal de agente es seleccionar acciones que maximicen su recompensa futura, es decir, maximizar su capital inicial, para esto vamos a asumir que las recompensa futuras están descontadas por un factor $\gamma$, por cada instante de tiempo $t$, es decir, vamos a valorizar los rewards más cercanos en el tiempo. Definimos así el, future discounted reward:
+Dado que el objetivo principal de nuestro agente es seleccionar acciones que maximicen su recompensa futura, es decir, maximizar la cantidad de trades con ganancias, para esto vamos a asumir que las recompensa futuras están descontadas por un factor $\gamma$, por cada instante de tiempo $t$, es decir, vamos a valorizar los rewards más cercanos en el tiempo. Definimos así el, future discounted reward:
 \\\\
 \begin{equation}
 	 R_t = \sum\limits_{t'= t}^T  \gamma^{t'-t} r_t
@@ -83,7 +87,7 @@ Q^*(s, a) = max_{\pi} \E [R_t  |  s_t = s, a_t = a, \pi]
 \end{equation}
 \\
 
-Esta función tiene una propiedad importante, conocida como Bellman equation, que intuitivamente se basa en lo siguiente: 
+Esta función tiene una propiedad importante, conocida como ecuación de Bellman, que intuitivamente se basa en lo siguiente: 
 Si conociéramos el valor óptimo de $Q^*(s’, a’)$ para el próximo estado $s’$ y para cada posible acción posible $a’$, entonces la estrategia óptima de selección de una acción para el estado actual $s$ que maximice la recompensa esperada está dada por
 \\\\
 \begin{equation}
@@ -98,7 +102,7 @@ Q^*_{i+1}(s, a) = \E\ [ r + \gamma \  max_{a'} Q_{i}^*(s', a') \  |  \ s, a]
 \\
 donde  $i\rightarrow\infty$ y $Q_i \rightarrow Q^*$
 \\\\
-Esta es la idea detrás del algoritmo de Q-learning que implementará el agente, la cual en principio, parecía suficiente para lograr que el agente aprenda a invertir, sin embargo en la práctica, veremos que en general los estados del mercado no van a repetirse en forma idéntica y que ademas la cantidad de estados posibles hara que sea prácticamente inviable lograr la convergencia hacia $Q^*$.
+Esta es la idea detrás del algoritmo de Q-learning que implementará el agente, la cual en principio, parecía suficiente para lograr que el agente aprenda a invertir, sin embargo en la práctica, veremos que en general los estados del mercado no van a repetirse en forma idéntica y que ademas la cantidad de estados posibles hará que sea prácticamente inviable lograr la convergencia hacia $Q^*$.
 
 \section{Q-Network}
 Para poder solucionar este inconveniente, vamos a utilizar una función de aproximación, cuyo objetivo será obtener una generalización de los estados, lo cual permitirá en teoría, lograr más rápidamente la convergencia a $Q^*$.\\
@@ -108,7 +112,7 @@ Para implementar esta función utilizaremos un red neuronal con con una matriz d
 Q(s, a, \theta) \approx Q^*(s, a) 
 \end{equation}
 \\
-a la cual denominaremos como Q-network.
+a la cual denominaremos como Q-Network.
 Dicha Q-network será entrenada optimizando una función de pérdida L y usando el algoritmo del gradiente descendente.
 \\
 
@@ -122,13 +126,9 @@ donde \hspace*{0.5cm}  y_i =  \E_{s \approx \varepsilon}[r + \gamma  \hspace*{0.
 \end{equation}
 \\
 
-Ademas se usara  experience replay para entrenar la Q-Network, es decir, los datos de ejemplos serán generados a partir de la propia experiencia que vaya adquiriendo el agente. Para lograr esto, en cada instante de tiempo t, el agente deberá guardar en un replay memory D, cada experiencia $\epsilon = (s_t, a_t, r_t, s_{t+1})$, observada.
+Ademas se usara experience replay para entrenar la Q-Network, es decir, los datos de ejemplos serán generados a partir de la propia experiencia que vaya adquiriendo el agente. Para lograr esto, en cada instante de tiempo t, el agente deberá guardar en un replay memory D, cada experiencia $\epsilon = (s_t, a_t, r_t, s_{t+1})$, observada.
 Transcurridos n días el agente deberá ejecutar la fase de entrenamiento de su Q-Network, para esto se generara un mini batch de experiencias pasadas, obtenidas de  su replay memory y con ella se procederá a realizar una última fase actualización de la función de estimación de $Q(s, a, \theta_i)$, usando la regla de actualización de Q-learning y la nueva matriz de pesos $\theta_{i+1}$.
-\\\\
-\\\\
-\\\\
-\\\\
-\\\\
+\clearpage
 \section{Algoritmo de aprendizaje}
 A continuación detallamos el pseudo algoritmo de nuestro agente.
 \begin{algorithm}
