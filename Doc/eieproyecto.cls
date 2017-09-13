@@ -22,7 +22,6 @@
 \RequirePackage{amsmath}
 \RequirePackage{enumitem}
 \RequirePackage{graphicx}
-\RequirePackage{natbib}
 \RequirePackage{url}
 \RequirePackage[leftcaption]{sidecap}
 \sidecaptionvpos{figure}{t}
@@ -84,9 +83,6 @@
 %centrado de figuras y cuadros
 \setfloatadjustment{figure}{\centering}
 \setfloatadjustment{table}{\centering}
-
-%estilo de la bibliografía (formato APA modificado para español)
-\bibliographystyle{apalike_es}
 
 \newcommand{\ucreie}{Universidad Nacional del Sur \\ Departameto de Cs e Ingeniería de Computación \\ Proyecto Final}
 \newcommand{\por}{Autor:}

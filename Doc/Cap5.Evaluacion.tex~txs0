@@ -142,7 +142,7 @@ Por ultimo, nos queda analizar que sucedió con ralp, y nuevamente, se dio lo qu
 
 \section{Resultados Finales}
 
-Por ultimo, podemos ver los resultados finales de toda las ejecuciones y de todos los agentes en dos gráficos. El primero, muestra el promedio del rate de ganancias de cada agente (Figura \ref{fig:cap5:14}) y el segundo la evolución de las ganancias de cada agente (Figura \ref{fig:cap5:15}).
+Por ultimo, podemos ver los resultados finales de toda las ejecuciones y de todos los agentes en dos gráficos. El primero, mostrar el promedio del rate de ganancias de cada agente (Figura \ref{fig:cap5:14}) y el segundo la evolución de las ganancias de cada agente (Figura \ref{fig:cap5:14}).
 
 \begin{figure}[h!]
 	\includegraphics[scale=0.8]{imagenes/resultadofinal1.png}
@@ -156,4 +156,4 @@ Por ultimo, podemos ver los resultados finales de toda las ejecuciones y de todo
 	\label{fig:cap5:15}
 \end{figure}
 
-Claramente podemos ver que las ganancias obtenidas no son las mejores, sin embargo, podemos observar una leve mejoría luego de las primeras 2 o 3 simulaciones y ademas, y tal vez, lo mas interesante, es que resulta claro que el agente puede repetir su desempeño, lo cual, nos permite pensar que si lográramos encontrar alguna configuración mejor, podríamos acercarnos a un rate de ganancias mejor y con ello un nivel de ganancias mucho mayor.
+Claramente podemos ver que las ganancias obtenidas no son las mejores, sin embargo, podemos observar una leve mejoría luego de las primeras 2 o 3 simulaciones y ademas, y tal vez, lo mas interesante, es que resulta claro que el agente puede repetir su desempeño, lo cual, nos permite pensar que si lográramos encontrar alguna configuración mejor, podríamos acercarnos a un rate de ganancias mucho mejor.

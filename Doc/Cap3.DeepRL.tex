@@ -3,9 +3,9 @@
 
 \section{Introducción}
 
-En esta sección buscaremos dar una descripción mas detallada, tanto del problema a resolver, como así también de como se aplicaron los conceptos de reinforcement learning y deep learning a las soluciones adoptas durante el desarrollo del mismo. Esta sección no pretende ser una guía o una introducción a reinforcement learning, ni a deep learning, sin embargo es necesario contar con conocimientos básicos de ellos para poder comprender los detalles de la solución propuesta. Dejamos en manos del lector la capacitación en estos a través de los diferentes recursos que pueden hallarse en linea. (ver Capitulo 7 - Bibliografía).
+En esta sección buscaremos dar una descripción mas detallada, tanto del problema a resolver, como así también de como se aplicaron los conceptos de reinforcement learning y deep learning a las soluciones adoptas durante el desarrollo del mismo. Esta sección no pretende ser una guía o una introducción a reinforcement learning, ni a deep learning, sin embargo es necesario contar con conocimientos básicos de ellos para poder comprender los detalles de la solución propuesta. Dejamos en manos del lector la capacitación en estos a través de los diferentes recursos que pueden hallarse en linea. Ver \cite{1},\cite{2},\cite{3},\cite{4},\cite{5},\cite{6},
 \\\\
-Recordemos que el objetivo es desarrollar un agente inteligente, que a partir de un capital inicial, sea capaz de realizar compras y ventas de un activo financiero. El agente no poseerá ningún conocimiento previo acerca del funcionamiento del mercado, ni de la empresa sobre la que opera, ni ningún otro tipo de información. Solo conocerá el precio actual de la acción, y su evolución durante los días previos, junto un conjunto de indicadores bursátiles. 
+Recordemos que el objetivo es desarrollar un agente inteligente, que a partir de un capital inicial, sea capaz de realizar compras y/o ventas de un activo financiero. El agente no poseerá ningún conocimiento previo acerca del funcionamiento de un mercado, ni de la empresa sobre la que opera, ni ningún otro tipo de información. Solo conocerá el precio actual de la acción, y su evolución durante los días previos, junto un conjunto de indicadores bursátiles. 
 \\
 El agente va a interactuar con un simulador de un mercado bursátil, esta interacción se llevará a cabo siguiendo una serie de acciones, observaciones y recompensas.
 Cada interacción será llevada a cabo en episodios que tendrán una duración de m días
@@ -23,12 +23,13 @@ En cada instante t, el agente tendrá que seleccionar una acción $a_t$  de un c
 
 Ya sea de que se trate de un inversor experimentado o un agente inteligente, difícilmente sea posible tomar una decisión acertada sobre, la compra o venta de un activo, solamente mirando lo que sucede con el precio actual 
 del activo, es necesario considerar una ventana de tiempo de tamaño n, para poder analizar la variación que ha tenido y así poder determinar la situación actual del activo, es decir, si se encuentra en una tendencia
-alcista o bajista, si se encuentra realizando una corrección de precio o no, si se encuentra en sobre compra o sobre venta, etc. Una manera eficiente de ver esto, es a través, de un gráfico de vela, donde cada vela, representa un periodo, el cual puede ser, un año, una semana, o un mes.
+alcista o bajista, si se encuentra realizando una corrección de precio o no, si se encuentra en sobre compra o sobre venta, etc. Una manera eficiente de ver esto, es a través, de un gráfico de vela, donde cada vela, representa un periodo, el cual puede ser, un año, una semana, o un mes (Figura \ref{fig:cap3:1}).
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.75]{imagenes/candleChart.png}
 	\caption{Gráfico de vela.}
+	\label{fig:cap3:1}
 \end{figure}
 
 La representación que vamos a adoptar para cada uno de los estados que recibirá el agente, consiste en tomar esta idea de time frame y plasmarla en la estructura de los estados, es decir, el agente será capaz de ver una ventana de tiempo de tamaño n hacia atrás y de diferentes tipos de periodos.
@@ -126,11 +127,18 @@ donde \hspace*{0.5cm}  y_i =  \E_{s \approx \varepsilon}[r + \gamma  \hspace*{0.
 \end{equation}
 \\
 
+Intuitivamente esta función de perdida L nos permitirá ir midiendo el error de la red en cada fase de entrenamiento, para luego, aplicando la técnica de gradiente descendente ajustar los pesos de la matrix $\theta$ y con ello reducir el error de la red.
+\\
+
 Ademas se usara experience replay para entrenar la Q-Network, es decir, los datos de ejemplos serán generados a partir de la propia experiencia que vaya adquiriendo el agente. Para lograr esto, en cada instante de tiempo t, el agente deberá guardar en un replay memory D, cada experiencia $\epsilon = (s_t, a_t, r_t, s_{t+1})$, observada.
 Transcurridos n días el agente deberá ejecutar la fase de entrenamiento de su Q-Network, para esto se generara un mini batch de experiencias pasadas, obtenidas de  su replay memory y con ella se procederá a realizar una última fase actualización de la función de estimación de $Q(s, a, \theta_i)$, usando la regla de actualización de Q-learning y la nueva matriz de pesos $\theta_{i+1}$.
-\clearpage
+
 \section{Algoritmo de aprendizaje}
 A continuación detallamos el pseudo algoritmo de nuestro agente.
+\\
+El algoritmo de aprendizaje consta principalmente de 3 secciones. Una primera sección de inicializacion, que va desde la linea 1 a la linea 5, una sección de simulación, que va desde la linea 7 hasta la 17, en la cual el agente simulara cada dia del episodio y tomara las decisiones siguiendo una policy $\varepsilon$-greedy, y por ultimo una sección de entrenamiento, que va desde la linea 18 a la 32, donde se generaran los tuplas de entrenamiento para luego entrenar y ajustar la matriz de pesos $\theta$ de la Q-Network.
+
+
 \begin{algorithm}
 	 D $\gets$ new memory\_replay(n)\;	
      $\theta \gets random() $\;
